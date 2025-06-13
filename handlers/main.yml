@@ -150,7 +150,7 @@
   ansible.posix.mount:
     path: "{{ mount_point }}"
     state: remounted
-  notify: Change_requires_reboot
+  notify: Set reboot required
   listen: "Remount /boot/efi"
 
 - name: Reload sysctl

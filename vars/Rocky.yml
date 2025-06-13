@@ -1,5 +1,5 @@
 ---
 # OS Specific Settings
 
-os_gpg_key_pubkey_name: gpg-pubkey-350d275d-6279464b
-os_gpg_key_pubkey_content: "Rocky Enterprise Software Foundation - Release key 2022 <releng@rockylinux.org> 350d275d"
+os_gpg_key_pubkey_name: gpg-pubkey-6fedfc85-682ae1a9
+os_gpg_key_pubkey_content: "Release Engineering (Rocky Linux 10) <releng@rockylinux.org> 6fedfc85"
