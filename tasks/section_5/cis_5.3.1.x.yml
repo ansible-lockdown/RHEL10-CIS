@@ -1,9 +1,7 @@
 ---
 
 - name: "5.3.1.1 | PATCH | Ensure latest version of pam is installed"
-  when:
-    - rhel10cis_rule_5_3_1_1
-    - ansible_facts.packages['pam'][0]['version'] is version('1.5.1-19', '<') or "'pam' not in ansible_facts.packages"
+  when: rhel10cis_rule_5_3_1_1
   tags:
     - level1-server
     - level1-workstation
@@ -15,10 +13,7 @@
     state: latest
 
 - name: "5.3.1.2 | PATCH | Ensure latest version of authselect is installed"
-  when:
-    - rhel10cis_rule_5_3_1_2
-    - rhel10cis_authselect_pkg_update
-    - ansible_facts.packages['authselect'][0]['version'] is version('1.2.6-2', '<') or "'authselect' not in ansible_facts.packages"
+  when: rhel10cis_rule_5_3_1_2
   tags:
     - level1-server
     - level1-workstation
@@ -38,9 +33,7 @@
         authselect_update: OK
 
 - name: "5.3.1.3 | PATCH | Ensure libpwquality is installed"
-  when:
-    - rhel10cis_rule_5_3_1_3
-    - ansible_facts.packages['libpwquality'][0]['version'] is version('1.4.4-8', '<') or "'libpwquality' not in ansible_facts.packages"
+  when: rhel10cis_rule_5_3_1_3
   tags:
     - level1-server
     - level1-workstation
@@ -49,4 +42,3 @@
     - rule_5.3.1.3
   ansible.builtin.package:
     name: libpwquality
-    state: latest

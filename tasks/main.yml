@@ -42,7 +42,7 @@
     fail_msg: "Crypto policy is not a permitted version"
     success_msg: "Crypto policy is a permitted version"
 
-- name: "Check rhel10cis_bootloader_password_hash variable has been changed"
+- name: "Check rhel10cis_bootloader_password variable has been changed"
   when:
     - rhel10cis_set_boot_pass
     - rhel10cis_rule_1_4_1
@@ -100,7 +100,7 @@
 
         - name: "Check account is not locked for {{ ansible_env.SUDO_USER }} | Assert local account not locked" # noqa name[template]
           ansible.builtin.assert:
-            that: (not prelim_ansible_user_password_set.stdout.startswith("!")) or (ansible_env.SUDO_USER in rhel9cis_sudoers_exclude_nopasswd_list)
+            that: (not prelim_ansible_user_password_set.stdout.startswith("!")) or (ansible_env.SUDO_USER in rhel10cis_sudoers_exclude_nopasswd_list)
             fail_msg: "You have {{ sudo_password_rule }} enabled but the user = {{ ansible_env.SUDO_USER }} is locked - It can break access"
             success_msg: "The local account {{ ansible_env.SUDO_USER }} is not locked or included in the exception list for rule 5.2.4"
 

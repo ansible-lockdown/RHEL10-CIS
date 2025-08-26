@@ -50,7 +50,7 @@
     - NIST800-53R5_AU-12
     - NIST800-53R5_MP-2
   ansible.builtin.lineinfile:
-    path: /etc/systemd/journald.conf
+    path: /usr/lib/systemd/journald.conf
     regexp: "^#ForwardToSyslog=|^ForwardToSyslog="
     line: ForwardToSyslog=yes
   notify: Restart rsyslog
@@ -135,8 +135,8 @@
           # misc. logging additions to meet CIS standards
           *.=warning;*.=err                                        -/var/log/warn
           *.crit                                                   /var/log/warn
-          *.*;mail.none;news.none                                  /var/log/messages
-        insertafter: "#### RULES ####"
+          *.*;news.none                                            /var/log/messages
+        insertbefore: '# ### sample forwarding rule ###'
       notify: Restart rsyslog
 
     - name: "6.2.3.5 | PATCH | Ensure logging is configured | Local log settings"
