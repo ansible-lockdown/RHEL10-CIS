@@ -49,7 +49,7 @@ rhel10cis_legacy_boot: false
 ## Benchmark name used by auditing control role
 # The audit variable found at the base
 ## metadata for Audit benchmark
-benchmark_version: 'v0.0.9'
+benchmark_version: 'v1.0.0'
 
 benchmark: RHEL10-CIS
 
@@ -165,6 +165,8 @@ rhel10cis_rule_1_1_1_6: true
 rhel10cis_rule_1_1_1_7: true
 rhel10cis_rule_1_1_1_8: true
 rhel10cis_rule_1_1_1_9: true
+rhel10cis_rule_1_1_1_10: true
+rhel10cis_rule_1_1_1_11: true
 # Filesystems
 # /tmp
 rhel10cis_rule_1_1_2_1_1: true
@@ -205,6 +207,7 @@ rhel10cis_rule_1_2_1_1: true
 rhel10cis_rule_1_2_1_2: true
 rhel10cis_rule_1_2_1_3: true
 rhel10cis_rule_1_2_1_4: true
+rhel10cis_rule_1_2_1_5: true
 # Package updates
 rhel10cis_rule_1_2_2_1: true
 # Selinux
@@ -224,14 +227,20 @@ rhel10cis_rule_1_5_1: true
 rhel10cis_rule_1_5_2: true
 rhel10cis_rule_1_5_3: true
 rhel10cis_rule_1_5_4: true
+rhel10cis_rule_1_5_5: true
+rhel10cis_rule_1_5_6: true
+rhel10cis_rule_1_5_7: true
+rhel10cis_rule_1_5_8: true
+rhel10cis_rule_1_5_9: true
+rhel10cis_rule_1_5_10: true
+rhel10cis_rule_1_5_11: true
+
 # Config system wide Crypto
 rhel10cis_rule_1_6_1: true
 rhel10cis_rule_1_6_2: true
 rhel10cis_rule_1_6_3: true
 rhel10cis_rule_1_6_4: true
-rhel10cis_rule_1_6_5: true
-rhel10cis_rule_1_6_6: true
-rhel10cis_rule_1_6_7: true
+
 # Command line warning banners
 rhel10cis_rule_1_7_1: true
 rhel10cis_rule_1_7_2: true
@@ -240,16 +249,12 @@ rhel10cis_rule_1_7_4: true
 rhel10cis_rule_1_7_5: true
 rhel10cis_rule_1_7_6: true
 # Gnome Display Manager
-rhel10cis_rule_1_8_1: "{{ not desktop_required }}"
+rhel10cis_rule_1_8_1: true
 rhel10cis_rule_1_8_2: true
 rhel10cis_rule_1_8_3: true
 rhel10cis_rule_1_8_4: true
 rhel10cis_rule_1_8_5: true
 rhel10cis_rule_1_8_6: true
-rhel10cis_rule_1_8_7: true
-rhel10cis_rule_1_8_8: true
-rhel10cis_rule_1_8_9: true
-rhel10cis_rule_1_8_10: true
 
 ## Section 2 Fixes
 # Section 2 rules are controlling Services (Special Purpose Services, and service clients)
@@ -281,7 +286,7 @@ rhel10cis_rule_2_2_1: true
 rhel10cis_rule_2_2_2: true
 rhel10cis_rule_2_2_3: true
 rhel10cis_rule_2_2_4: true
-rhel10cis_rule_2_2_5: true
+
 # Configure Time Synchronization
 rhel10cis_rule_2_3_1: true
 rhel10cis_rule_2_3_2: true
@@ -576,6 +581,11 @@ rhel10cis_selinux_pol: targeted
 # Even though logging still occurs.
 rhel10cis_selinux_enforce: enforcing
 
+# If changing to selinux state from disabled the file will need to be relabelled
+# This sets the file and upon reboot will relabel the filesystem
+# This can take a long time and disruption is high
+rhel10cis_selinux_relabel_enabled: false
+
 ## Control 1.4.1
 # This variable governs whether a bootloader password should be set in '/boot/grub2/user.cfg' file.
 rhel10cis_set_boot_pass: true
@@ -585,6 +595,37 @@ rhel10cis_bootloader_password: password  # pragma: allowlist secret
 
 # Set this value to anything secure to have predictable hashes, which will prevent unnecessary changes
 rhel10cis_bootloader_salt: ''
+
+## Controls 1.5.x
+
+## Control 1.5.6 - ktpr_restrict
+## Masking the kernel symbols in /proc/kallsyms reduces the ability of an attacker using them to learn more about what to attack on your system.
+# kptr_restrict = 1 - kernel pointers printed using the %pK format specifier will be replaced with 0's.
+# kptr_restrict = 2 - kernel pointers printed using %pK will be replaced with 0's regardless of privileges.
+# kernel.kptr_restrict is set to a value of: 1 or 2.
+rhel10cis_ktpr_restrict_value: 1
+
+## Control 1.5.7 - yama.ptrace_scope
+# The ptrace() system call provides a means by which one process (the "tracer") may
+# observe and control the execution of another process (the "tracee"), and examine and
+# change the tracee's memory and registers.
+# The sysctl settings (writable only with CAP_SYS_PTRACE) are:
+# 0 - classic ptrace permissions: a process can PTRACE_ATTACH to any other
+# process running under the same uid, as long as it is dumpable (i.e. did not
+# transition uids, start privileged, or have called prctl(PR_SET_DUMPABLE...)
+#
+# already). Similarly, PTRACE_TRACEME is unchanged.
+# 1 - restricted ptrace: a process must have a predefined relationship with the
+# inferior it wants to call PTRACE_ATTACH on. By default, this relationship is that
+# of only its descendants when the above classic criteria is also met. To change
+# the relationship, an inferior can call prctl(PR_SET_PTRACER, debugger, ...) to
+# declare an allowed debugger PID to call PTRACE_ATTACH on the inferior.
+# Using PTRACE_TRACEME is unchanged.
+#
+# 2 - admin-only attach: only processes with CAP_SYS_PTRACE may use ptrace with PTRACE_ATTACH, or through children calling PTRACE_TRACEME.
+# 3 - no attach: no processes may use ptrace with PTRACE_ATTACH nor via PTRACE_TRACEME.
+# Once set, this sysctl value cannot be changed.
+rhel10cis_yama_ptrace_scope_value: 1
 
 ## Controls 1.6.x
 # This variable contains the value to be set as the system-wide crypto policy. Current rule enforces NOT USING
@@ -617,22 +658,10 @@ rhel10cis_warning_banner: Authorized users only. All activity may be monitored a
 # End Banner
 
 ## Control 1.8.x - Settings for GDM
-# do not run Control 1.8.x if using a display manager different than gdm
-rhel10cis_display_manager: "gdm"
 # If the system is running a desktop this will turn off removal of the GUI pkgs
 # and configure the required settings
 desktop_required: false
-# This variable governs whether rules dealing with GUI specific packages(and/or their settings) should
-# be executed either to:
-# - secure GDM, if GUI is needed('rhel10cis_gui: true')
-# - or remove GDM and X-Windows-system, if no GUI is needed('rhel10cis_gui: false')
-# The value of this variable is set automatically, if gnome is present this variable
-# will always have `true` as a value, and `false` otherwise.
-rhel10cis_gui: "{{ prelim_gnome_present.stat.exists | default(false) }}"
-# This variable specifies the GNOME configuration database file to which configurations are written.
-# (See "https://help.gnome.org/admin/system-admin-guide/stable/dconf-keyfiles.html.en")
-# The default database is 'local'.
-rhel10cis_dconf_db_name: local
+
 # This variable governs the number of seconds of inactivity before the screen goes blank.
 # Set max value for idle-delay in seconds (between 1 and 900)
 rhel10cis_screensaver_idle_delay: 900
@@ -695,6 +724,10 @@ rhel10cis_autofs_mask: false
 rhel10cis_avahi_server: false
 # Set this variable to `true` to mask service `avahi`.
 rhel10cis_avahi_mask: false
+# Set this variable to `true` to keep service `cockpit`; otherwise, the service is uninstalled.
+rhel10cis_cockpit: false
+# Set this variable to `true` to mask services `cockpit`.
+rhel10cis_cockpit_mask: false
 # Set this variable to `true` to keep service `dhcp`; otherwise, the service is uninstalled.
 rhel10cis_dhcp_server: false
 # Set this variable to `true` to mask service `dhcp`.
@@ -707,10 +740,6 @@ rhel10cis_dns_mask: false
 rhel10cis_dnsmasq_server: false
 # Set this variable to `true` to mask service `dnsmasq`.
 rhel10cis_dnsmasq_mask: false
-# Set this variable to `true` to keep service `samba`; otherwise, the service is uninstalled.
-rhel10cis_samba_server: false
-# Set this variable to `true` to mask service `samba`.
-rhel10cis_samba_mask: false
 # Set this variable to `true` to keep service `ftp`; otherwise, the service is uninstalled.
 rhel10cis_ftp_server: false
 # Set this variable to `true` to mask service `ftp`.
@@ -723,10 +752,6 @@ rhel10cis_message_mask: false
 rhel10cis_nfs_server: true
 # Set this variable to `true` to mask service `nfs`.
 rhel10cis_nfs_mask: true
-# Set this variable to `true` to keep service `nis`; otherwise, the service is uninstalled.
-rhel10cis_nis_server: true  # set to mask if nis client required
-# Set this variable to `true` to mask service `nis`.
-rhel10cis_nis_mask: false
 # Set this variable to `true` to keep service `print`; otherwise, the service is uninstalled.
 rhel10cis_print_server: false  # replaces cups
 # Set this variable to `true` to mask service `print`.
@@ -739,6 +764,10 @@ rhel10cis_rpc_mask: true
 rhel10cis_rsync_server: false
 # Set this variable to `true` to mask service `rsync`.
 rhel10cis_rsync_mask: false
+# Set this variable to `true` to keep service `samba`; otherwise, the service is uninstalled.
+rhel10cis_samba_server: false
+# Set this variable to `true` to mask service `samba`.
+rhel10cis_samba_mask: false
 # Set this variable to `true` to keep service `snmp`; otherwise, the service is uninstalled.
 rhel10cis_snmp_server: false
 # Set this variable to `true` to mask service `snmp`.
@@ -783,13 +812,10 @@ rhel10cis_ftp_client: false
 ## Control - 2.2.2 - Ensure LDAP client is not installed
 # Set this variable to `true` to keep package `openldap-clients`; otherwise, the package is uninstalled.
 rhel10cis_openldap_clients_required: false
-## Control - 2.2.3 - Ensure nis client is not installed
-# Set this variable to `true` to keep package `nis`(`ypbind`); otherwise, the package is uninstalled.
-rhel10cis_ypbind_required: false
-## Control - 2.2.4 - Ensure telnet client is not installed
+## Control - 2.2.3 - Ensure telnet client is not installed
 # Set this variable to `true` to keep package `telnet`; otherwise, the package is uninstalled.
 rhel10cis_telnet_required: false
-## Control - 2.2.5 - Ensure tftp client is not installed
+## Control - 2.2.4 - Ensure tftp client is not installed
 # Set this variable to `true` to keep package `tftp`; otherwise, the package is uninstalled.
 rhel10cis_tftp_client: false
 

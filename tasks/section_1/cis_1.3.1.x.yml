@@ -64,12 +64,12 @@
     - selinux
     - patch
     - rule_1.3.1.4
-    - NIST800-53R5_AC-3
-    - NIST800-53R5_MP-2
+    - NIST800-53R5_SC-3
   ansible.posix.selinux:
     conf: /etc/selinux/config
     policy: "{{ rhel10cis_selinux_pol }}"
     state: "{{ rhel10cis_selinux_enforce }}"
+  notify: Selinux relabel
 
 - name: "1.3.1.5 | PATCH | Ensure the SELinux state is enforcing"
   when:
@@ -88,6 +88,7 @@
     conf: /etc/selinux/config
     policy: "{{ rhel10cis_selinux_pol }}"
     state: enforcing
+  notify: Selinux relabel
 
 - name: "1.3.1.6 | AUDIT | Ensure no unconfined services exist"
   when:

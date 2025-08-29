@@ -1,12 +1,20 @@
-## This file is managed by Ansible, YOUR CHANGES WILL BE LOST!
+# File managed by ansible as part of RHEL10 CIS benchmark
+# Provided by Ansible-lockdown by Tyto Athene
 
-{% if rhel10cis_rule_1_5_1 %}
-# Adress space randomise
-# CIS 1.5.1
-kernel.randomize_va_space = 2
+{% if rhel10cis_rule_1_5_5 %}
+# Control 1.5.5 - kernel.dmesg_restrict
+kernel.dmesg_restrict = 1
 {% endif %}
-{% if rhel10cis_rule_1_5_2 %}
-# Ptrace scope
-# CIS 1.5.2
-kernel.yama.ptrace_scope = 1
+{% if rhel10cis_rule_1_5_6 %}
+# Control 1.5.6 - kernel.fs.ktpr_restrict
+# kernel.kptr_restrict is set to a value of: 1 or 2.
+kernel.ktpr_restrict = {{ rhel10cis_ktpr_restrict_value }}
+{% endif %}
+{% if rhel10cis_rule_1_5_7 %}
+# Control 1.5.7 - kernel.yama.ptrace_scope
+kernel.yama.ptrace_scope = {{ rhel10cis_yama_ptrace_scope_value }}
+{% endif %}
+{% if rhel10cis_rule_1_5_8 %}
+# Control 1.5.8 - kernel.randomize_va_space
+kernel.randomize_va_space = 2
 {% endif %}

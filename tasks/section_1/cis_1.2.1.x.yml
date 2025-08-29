@@ -1,4 +1,5 @@
 ---
+
 - name: "1.2.1.1 | AUDIT | Ensure GPG keys are configured"
   when:
     - rhel10cis_rule_1_2_1_1
@@ -6,7 +7,6 @@
   tags:
     - level1-server
     - level1-workstation
-    - manual
     - patch
     - rule_1.2.1.1
     - NIST800-53R5_SI-2
@@ -29,25 +29,25 @@
       ansible.builtin.fail:
         msg: Installed GPG Keys do not meet expected values or expected keys are not installed
 
-- name: "1.2.1.2 | PATCH | Ensure gpgcheck is globally activated"
+- name: "1.2.1.2 | PATCH | Ensure gpgcheck is configured"
   when: rhel10cis_rule_1_2_1_2
   tags:
     - level1-server
     - level1-workstation
     - patch
     - rule_1.2.1.2
-    - NIST800-53R5_SI-2
+    - NIST800-53R5_CM-14
   block:
-    - name: "1.2.1.2 | AUDIT | Ensure gpgcheck is globally activated | Find repos"
+    - name: "1.2.1.2 | AUDIT | Ensure gpgcheck is configured | Find repos"
       ansible.builtin.find:
         paths: /etc/yum.repos.d
         patterns: "*.repo"
       register: discovered_yum_repos
 
-    - name: "1.2.1.2 | PATCH | Ensure gpgcheck is globally activated | Update yum.repos"
+    - name: "1.2.1.2 | PATCH | Ensure gpgcheck is configured | Update yum.repos"
       ansible.builtin.replace:
         name: "{{ item.path }}"
-        regexp: ^gpgcheck\s*=\s*0
+        regexp: ^gpgcheck\s*=\s*(0|false|no)
         replace: "gpgcheck=1"
       loop: "{{ discovered_yum_repos.files }}"
       loop_control:
@@ -61,8 +61,7 @@
   tags:
     - level1-server
     - level1-workstation
-    - manual
-    - audit
+    - patch
     - rule_1.2.1.3
     - NIST800-53R5_SI-2
   block:
@@ -115,3 +114,16 @@
     - name: "1.2.1.4 | AUDIT | Ensure package manager repositories are configured | Warn Count"
       ansible.builtin.import_tasks:
         file: warning_facts.yml
+
+- name: "1.2.1.5 | PATCH | Ensure weak dependencies are configured"
+  when: rhel10cis_rule_1_2_1_5
+  tags:
+    - level2-server
+    - level2-workstation
+    - patch
+    - rule_1.2.1.5
+    - NIST800-53R5_SI-2
+  ansible.builtin.lineinfile:
+    path: /etc/dnf/dnf.conf
+    regexp: ^install_weak_deps\s*=\s*(1|true|yes)
+    line: install_weak_deps=0

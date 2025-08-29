@@ -57,6 +57,8 @@ rhel10cis_rule_1_1_1_6: {{ rhel10cis_rule_1_1_1_6 }}
 rhel10cis_rule_1_1_1_7: {{ rhel10cis_rule_1_1_1_7 }}
 rhel10cis_rule_1_1_1_8: {{ rhel10cis_rule_1_1_1_8 }}
 rhel10cis_rule_1_1_1_9: {{ rhel10cis_rule_1_1_1_9 }}
+rhel10cis_rule_1_1_1_10: {{ rhel10cis_rule_1_1_1_10 }} ## New
+rhel10cis_rule_1_1_1_11: {{ rhel10cis_rule_1_1_1_11 }} ## New
 # Filesystems
 # /tmp
 rhel10cis_rule_1_1_2_1_1: {{ rhel10cis_rule_1_1_2_1_1 }}
@@ -98,6 +100,7 @@ rhel10cis_rule_1_2_1_1: {{ rhel10cis_rule_1_2_1_1 }}
 rhel10cis_rule_1_2_1_2: {{ rhel10cis_rule_1_2_1_2 }}
 rhel10cis_rule_1_2_1_3: {{ rhel10cis_rule_1_2_1_3 }}
 rhel10cis_rule_1_2_1_4: {{ rhel10cis_rule_1_2_1_4 }}
+rhel10cis_rule_1_2_1_5: {{ rhel10cis_rule_1_2_1_5 }}. ## New
 # Package updates
 rhel10cis_rule_1_2_2_1: {{ rhel10cis_rule_1_2_2_1 }}
 
@@ -120,15 +123,18 @@ rhel10cis_rule_1_5_1: {{ rhel10cis_rule_1_5_1 }}
 rhel10cis_rule_1_5_2: {{ rhel10cis_rule_1_5_2 }}
 rhel10cis_rule_1_5_3: {{ rhel10cis_rule_1_5_3 }}
 rhel10cis_rule_1_5_4: {{ rhel10cis_rule_1_5_4 }}
+rhel10cis_rule_1_5_5: {{ rhel10cis_rule_1_5_5 }}
+rhel10cis_rule_1_5_6: {{ rhel10cis_rule_1_5_6 }}
+rhel10cis_rule_1_5_7: {{ rhel10cis_rule_1_5_7 }}
+rhel10cis_rule_1_5_8: {{ rhel10cis_rule_1_5_8 }}
+rhel10cis_rule_1_5_9: {{ rhel10cis_rule_1_5_9 }}
+rhel10cis_rule_1_5_10: {{ rhel10cis_rule_1_5_10 }}
 
 # Config system wide Crypto
 rhel10cis_rule_1_6_1: {{ rhel10cis_rule_1_6_1 }}
 rhel10cis_rule_1_6_2: {{ rhel10cis_rule_1_6_2 }}
 rhel10cis_rule_1_6_3: {{ rhel10cis_rule_1_6_3 }}
 rhel10cis_rule_1_6_4: {{ rhel10cis_rule_1_6_4 }}
-rhel10cis_rule_1_6_5: {{ rhel10cis_rule_1_6_5 }}
-rhel10cis_rule_1_6_6: {{ rhel10cis_rule_1_6_6 }}
-rhel10cis_rule_1_6_7: {{ rhel10cis_rule_1_6_7 }}
 
 # Command line warning banners
 rhel10cis_rule_1_7_1: {{ rhel10cis_rule_1_7_1 }}
@@ -180,7 +186,6 @@ rhel10cis_rule_2_2_1: {{ rhel10cis_rule_2_2_1 }}
 rhel10cis_rule_2_2_2: {{ rhel10cis_rule_2_2_2 }}
 rhel10cis_rule_2_2_3: {{ rhel10cis_rule_2_2_3 }}
 rhel10cis_rule_2_2_4: {{ rhel10cis_rule_2_2_4 }}
-rhel10cis_rule_2_2_5: {{ rhel10cis_rule_2_2_5 }}
 
 ## Configure Time Synchronization
 rhel10cis_rule_2_3_1: {{ rhel10cis_rule_2_3_1 }}
@@ -439,13 +444,7 @@ rhel10cis_warning_banner: {{ rhel10cis_warning_banner }}
 
 ## Control 1.8.x - Settings for GDM
 ## 1.8 GDM graphical interface
-rhel10cis_gui: {{ rhel10cis_gui }}
-
-# This variable specifies the GNOME configuration database file to which configurations are written.
-# (See "https://help.gnome.org/admin/system-admin-guide/stable/dconf-keyfiles.html.en")
-# The default database is 'local'.
-rhel10cis_dconf_db_name: {{ rhel10cis_dconf_db_name }}
-
+desktop_required: {{ desktop_required }}
 
 ## Section 2. Services
 
@@ -469,22 +468,20 @@ rhel10cis_dns_server: {{ rhel10cis_dns_server }}
 rhel10cis_dns_mask: {{ rhel10cis_dns_mask }}
 rhel10cis_dnsmasq_server: {{ rhel10cis_dnsmasq_server }}
 rhel10cis_dnsmasq_mask: {{ rhel10cis_dnsmasq_mask }}
-rhel10cis_samba_server: {{ rhel10cis_samba_server }}
-rhel10cis_samba_mask: {{ rhel10cis_samba_mask }}
 rhel10cis_ftp_server: {{ rhel10cis_ftp_server }}
 rhel10cis_ftp_mask: {{ rhel10cis_ftp_mask }}
 rhel10cis_message_server: {{ rhel10cis_message_server }}  # This is for messaging dovecot and cyrus-imap
 rhel10cis_message_mask: {{ rhel10cis_message_mask }}
 rhel10cis_nfs_server: {{ rhel10cis_nfs_server }}
 rhel10cis_nfs_mask: {{ rhel10cis_nfs_mask }}
-rhel10cis_nis_server: {{ rhel10cis_nis_server }}  # set to mask if nis client required
-rhel10cis_nis_mask: {{ rhel10cis_nis_mask }}
 rhel10cis_print_server: {{ rhel10cis_print_server }}  # replaces cups
 rhel10cis_print_mask: {{ rhel10cis_print_mask }}
 rhel10cis_rpc_server: {{ rhel10cis_rpc_server }}
 rhel10cis_rpc_mask: {{ rhel10cis_rpc_mask }}
 rhel10cis_rsync_server: {{ rhel10cis_rsync_server }}
 rhel10cis_rsync_mask: {{ rhel10cis_rsync_mask }}
+rhel10cis_samba_server: {{ rhel10cis_samba_server }}
+rhel10cis_samba_mask: {{ rhel10cis_samba_mask }}
 rhel10cis_snmp_server: {{ rhel10cis_snmp_server }}
 rhel10cis_snmp_mask: {{ rhel10cis_snmp_mask }}
 rhel10cis_telnet_server: {{ rhel10cis_telnet_server }}
@@ -506,7 +503,6 @@ rhel10cis_is_mail_server: {{ rhel10cis_is_mail_server }}
 
 rhel10cis_ftp_client: {{ rhel10cis_ftp_client }}
 rhel10cis_openldap_clients_required: {{ rhel10cis_openldap_clients_required }}
-rhel10cis_ypbind_required: {{ rhel10cis_ypbind_required }}  # Same package as NIS server
 rhel10cis_telnet_required: {{ rhel10cis_telnet_required }}
 rhel10cis_tftp_client: {{ rhel10cis_tftp_client }}
 
