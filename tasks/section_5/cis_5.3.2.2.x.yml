@@ -1,16 +1,16 @@
 ---
 
-- name: "5.3.3.2.1 | PATCH | Ensure password number of changed characters is configured"
-  when: rhel10cis_rule_5_3_3_2_1
+- name: "5.3.2.2.1 | PATCH | Ensure password number of changed characters is configured"
+  when: rhel10cis_rule_5_3_2_2_1
   tags:
     - level1-server
     - level1-workstation
     - patch
-    - rule_5.3.3.2.1
+    - rule_5.3.2.2.1
     - NIST800-53R5_IA-5
     - pam
   block:
-    - name: "5.3.3.2.1 | PATCH | Ensure password number of changed characters is configured | Remove difok from conf files except expected file"
+    - name: "5.3.2.2.1 | PATCH | Ensure password number of changed characters is configured | Remove difok from conf files except expected file"
       when:
         - "rhel10cis_passwd_difok_file not in item.path"
         - rhel10cis_disruption_high
@@ -22,7 +22,7 @@
         - "{{ prelim_pam_pwquality_confs.files }}"
         - { path: '/etc/security/pwquality.conf'}
 
-    - name: "5.3.3.2.1 | PATCH | Ensure password number of changed characters is configured | Ensure difok file exists"
+    - name: "5.3.2.2.1 | PATCH | Ensure password number of changed characters is configured | Ensure difok file exists"
       ansible.builtin.template:
         src: "{{ rhel10cis_passwd_difok_file }}.j2"
         dest: "/{{ rhel10cis_passwd_difok_file }}"
@@ -30,7 +30,7 @@
         group: root
         mode: 'u-x,go-rwx'
 
-    - name: "5.3.3.2.1 | PATCH | Ensure password number of changed characters is configured | Remove difok from pam files Not AuthSelect"
+    - name: "5.3.2.2.1 | PATCH | Ensure password number of changed characters is configured | Remove difok from pam files Not AuthSelect"
       when:
         - not rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -42,7 +42,7 @@
         - password
         - system
 
-    - name: "5.3.3.2.1 | PATCH | Ensure password number of changed characters is configured | Remove difok from pam files AuthSelect"
+    - name: "5.3.2.2.1 | PATCH | Ensure password number of changed characters is configured | Remove difok from pam files AuthSelect"
       when:
         - rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -55,17 +55,17 @@
         - system
       notify: Authselect update
 
-- name: "5.3.3.2.2 | PATCH | Ensure password length is configured"
-  when: rhel10cis_rule_5_3_3_2_2
+- name: "5.3.2.2.2 | PATCH | Ensure password length is configured"
+  when: rhel10cis_rule_5_3_2_2_2
   tags:
     - level1-server
     - level1-workstation
     - patch
-    - rule_5.3.3.2.2
+    - rule_5.3.2.2.2
     - NIST800-53R5_IA-5
     - pam
   block:
-    - name: "5.3.3.2.2 | PATCH | Ensure minimum password length is configured | Remove minlen from conf files except expected file"
+    - name: "5.3.2.2.2 | PATCH | Ensure minimum password length is configured | Remove minlen from conf files except expected file"
       when:
         - "rhel10cis_passwd_minlen_file not in item.path"
         - rhel10cis_disruption_high
@@ -76,7 +76,7 @@
       with_items:
         - "{{ prelim_pam_pwquality_confs.files }}"
         - { path: '/etc/security/pwquality.conf'}
-    - name: "5.3.3.2.2 | PATCH | Ensure minimum password length is configured | Ensure minlen file exists"
+    - name: "5.3.2.2.2 | PATCH | Ensure minimum password length is configured | Ensure minlen file exists"
       ansible.builtin.template:
         src: "{{ rhel10cis_passwd_minlen_file }}.j2"
         dest: "/{{ rhel10cis_passwd_minlen_file }}"
@@ -84,7 +84,7 @@
         group: root
         mode: 'u-x,go-rwx'
 
-    - name: "5.3.3.2.2 | PATCH | Ensure minimum password length is configured | Remove minlen from pam files NOT AuthSelect"
+    - name: "5.3.2.2.2 | PATCH | Ensure minimum password length is configured | Remove minlen from pam files NOT AuthSelect"
       when:
         - not rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -96,7 +96,7 @@
         - password
         - system
 
-    - name: "5.3.3.2.2 | PATCH | Ensure minimum password length is configured | Remove minlen from pam files AuthSelect"
+    - name: "5.3.2.2.2 | PATCH | Ensure minimum password length is configured | Remove minlen from pam files AuthSelect"
       when:
         - rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -109,17 +109,17 @@
         - system
       notify: Authselect update
 
-- name: "5.3.3.2.3 | PATCH | Ensure password complexity is configured"
-  when: rhel10cis_rule_5_3_3_2_3
+- name: "5.3.2.2.3 | PATCH | Ensure password complexity is configured"
+  when: rhel10cis_rule_5_3_2_2_3
   tags:
     - level1-server
     - level1-workstation
     - patch
-    - rule_5.3.3.2.3
+    - rule_5.3.2.2.3
     - NIST800-53R5_IA-5
     - pam
   block:
-    - name: "5.3.3.2.3 | PATCH | Ensure password complexity is configured | Remove pwd complex settings from conf files except expected file"
+    - name: "5.3.2.2.3 | PATCH | Ensure password complexity is configured | Remove pwd complex settings from conf files except expected file"
       when:
         - "rhel10cis_passwd_complex_file not in item.path"
         - rhel10cis_disruption_high
@@ -131,7 +131,7 @@
         - "{{ prelim_pam_pwquality_confs.files }}"
         - { path: '/etc/security/pwquality.conf'}
 
-    - name: "5.3.3.2.3 | PATCH | Ensure password complexity is configured | Ensure complexity file exists"
+    - name: "5.3.2.2.3 | PATCH | Ensure password complexity is configured | Ensure complexity file exists"
       ansible.builtin.template:
         src: "{{ rhel10cis_passwd_complex_file }}.j2"
         dest: "/{{ rhel10cis_passwd_complex_file }}"
@@ -139,7 +139,7 @@
         group: root
         mode: 'u-x,go-rwx'
 
-    - name: "5.3.3.2.3 | PATCH | Ensure password complexity is configured | Remove complexity from pam files NOT AuthSelect"
+    - name: "5.3.2.2.3 | PATCH | Ensure password complexity is configured | Remove complexity from pam files NOT AuthSelect"
       when:
         - not rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -151,7 +151,7 @@
         - password
         - system
 
-    - name: "5.3.3.2.3 | PATCH | Ensure password complexity is configured | Remove complexity from pam files AuthSelect"
+    - name: "5.3.2.2.3 | PATCH | Ensure password complexity is configured | Remove complexity from pam files AuthSelect"
       when:
         - rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -164,17 +164,17 @@
         - system
       notify: Authselect update
 
-- name: "5.3.3.2.4 | PATCH | Ensure password same consecutive characters is configured"
-  when: rhel10cis_rule_5_3_3_2_4
+- name: "5.3.2.2.4 | PATCH | Ensure password same consecutive characters is configured"
+  when: rhel10cis_rule_5_3_2_2_4
   tags:
     - level1-server
     - level1-workstation
     - patch
-    - rule_5.3.3.2.4
+    - rule_5.3.2.2.4
     - NIST800-53R5_IA-5
     - pam
   block:
-    - name: "5.3.3.2.4 | PATCH | Ensure password same consecutive characters is configured | Remove maxrepeat settings from conf files except expected file"
+    - name: "5.3.2.2.4 | PATCH | Ensure password same consecutive characters is configured | Remove maxrepeat settings from conf files except expected file"
       when: "rhel10cis_passwd_maxrepeat_file not in item.path"
       ansible.builtin.replace:
         path: "{{ item.path }}"
@@ -184,7 +184,7 @@
         - "{{ prelim_pam_pwquality_confs.files }}"
         - { path: '/etc/security/pwquality.conf'}
 
-    - name: "5.3.3.2.4 | PATCH | Ensure password same consecutive characters is configured | Ensure maxrepeat file exists"
+    - name: "5.3.2.2.4 | PATCH | Ensure password same consecutive characters is configured | Ensure maxrepeat file exists"
       ansible.builtin.template:
         src: "{{ rhel10cis_passwd_maxrepeat_file }}.j2"
         dest: "/{{ rhel10cis_passwd_maxrepeat_file }}"
@@ -192,7 +192,7 @@
         group: root
         mode: 'u-x,go-rwx'
 
-    - name: "5.3.3.2.4 | PATCH | Ensure password same consecutive characters is configured | Remove maxrepeat from pam files NOT AuthSelect"
+    - name: "5.3.2.2.4 | PATCH | Ensure password same consecutive characters is configured | Remove maxrepeat from pam files NOT AuthSelect"
       when:
         - not rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -204,7 +204,7 @@
         - password
         - system
 
-    - name: "5.3.3.2.4 | PATCH | Ensure password same consecutive characters is configured | Remove maxrepeat from pam files AuthSelect"
+    - name: "5.3.2.2.4 | PATCH | Ensure password same consecutive characters is configured | Remove maxrepeat from pam files AuthSelect"
       when:
         - rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -217,17 +217,17 @@
         - system
       notify: Authselect update
 
-- name: "5.3.3.2.5 | PATCH | Ensure password maximum sequential characters is is configured"
-  when: rhel10cis_rule_5_3_3_2_5
+- name: "5.3.2.2.5 | PATCH | Ensure password maximum sequential characters is is configured"
+  when: rhel10cis_rule_5_3_2_2_5
   tags:
     - level1-server
     - level1-workstation
     - patch
-    - rule_5.3.3.2.5
+    - rule_5.3.2.2.5
     - NIST800-53R5_IA-5
     - pam
   block:
-    - name: "5.3.3.2.5 | PATCH | Ensure password maximum sequential characters is configured | Remove maxsequence settings from conf files except expected file"
+    - name: "5.3.2.2.5 | PATCH | Ensure password maximum sequential characters is configured | Remove maxsequence settings from conf files except expected file"
       when:
         - "rhel10cis_passwd_maxsequence_file not in item.path"
         - rhel10cis_disruption_high
@@ -239,7 +239,7 @@
         - "{{ prelim_pam_pwquality_confs.files }}"
         - { path: '/etc/security/pwquality.conf'}
 
-    - name: "5.3.3.2.5 | PATCH | Ensure password maximum sequential characters is configured | Ensure maxsequence file exists"
+    - name: "5.3.2.2.5 | PATCH | Ensure password maximum sequential characters is configured | Ensure maxsequence file exists"
       ansible.builtin.template:
         src: "{{ rhel10cis_passwd_maxsequence_file }}.j2"
         dest: "/{{ rhel10cis_passwd_maxsequence_file }}"
@@ -247,7 +247,7 @@
         group: root
         mode: 'u-x,go-rwx'
 
-    - name: "5.3.3.2.5 | PATCH | Ensure password maximum sequential characters is configured | Remove maxsequence from pam files NOT AuthSelect"
+    - name: "5.3.2.2.5 | PATCH | Ensure password maximum sequential characters is configured | Remove maxsequence from pam files NOT AuthSelect"
       when:
         - not rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -259,7 +259,7 @@
         - password
         - system
 
-    - name: "5.3.3.2.5 | PATCH | Ensure password maximum sequential characters is configured | Remove maxsequence from pam files AuthSelect"
+    - name: "5.3.2.2.5 | PATCH | Ensure password maximum sequential characters is configured | Remove maxsequence from pam files AuthSelect"
       when:
         - rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -272,17 +272,17 @@
         - system
       notify: Authselect update
 
-- name: "5.3.3.2.6 | PATCH | Ensure password dictionary check is enabled"
-  when: rhel10cis_rule_5_3_3_2_6
+- name: "5.3.2.2.6 | PATCH | Ensure password dictionary check is enabled"
+  when: rhel10cis_rule_5_3_2_2_6
   tags:
     - level1-server
     - level1-workstation
     - patch
-    - rule_5.3.3.2.6
+    - rule_5.3.2.2.6
     - NIST800-53R5_IA-5
     - pam
   block:
-    - name: "5.3.3.2.6 | PATCH | Ensure password dictionary check is enabled | Remove dictcheck settings from conf files except expected file"
+    - name: "5.3.2.2.6 | PATCH | Ensure password dictionary check is enabled | Remove dictcheck settings from conf files except expected file"
       when: "rhel10cis_passwd_dictcheck_file not in item.path"
       ansible.builtin.replace:
         path: "{{ item.path }}"
@@ -292,7 +292,7 @@
         - "{{ prelim_pam_pwquality_confs.files }}"
         - { path: '/etc/security/pwquality.conf'}
 
-    - name: "5.3.3.2.6 | PATCH | Ensure password dictionary check is enabled | Ensure dictcheck file exists"
+    - name: "5.3.2.2.6 | PATCH | Ensure password dictionary check is enabled | Ensure dictcheck file exists"
       ansible.builtin.template:
         src: "{{ rhel10cis_passwd_dictcheck_file }}.j2"
         dest: "/{{ rhel10cis_passwd_dictcheck_file }}"
@@ -300,7 +300,7 @@
         group: root
         mode: 'u-x,go-rwx'
 
-    - name: "5.3.3.2.6 | PATCH | Ensure password dictionary check is enabled | Remove dictcheck from pam files NOT AuthSelect"
+    - name: "5.3.2.2.6 | PATCH | Ensure password dictionary check is enabled | Remove dictcheck from pam files NOT AuthSelect"
       when:
         - not rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -313,7 +313,7 @@
         - system
       notify: Authselect update
 
-    - name: "5.3.3.2.6 | PATCH | Ensure password dictionary check is enabled | Remove dictcheck from pam files AuthSelect"
+    - name: "5.3.2.2.6 | PATCH | Ensure password dictionary check is enabled | Remove dictcheck from pam files AuthSelect"
       when:
         - rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -326,13 +326,13 @@
         - system
       notify: Authselect update
 
-- name: "5.3.3.2.7 | PATCH | Ensure password quality is enforced for the root user"
-  when: rhel10cis_rule_5_3_3_2_7
+- name: "5.3.2.2.7 | PATCH | Ensure password quality is enforced for the root user"
+  when: rhel10cis_rule_5_3_2_2_7
   tags:
     - level1-server
     - level1-workstation
     - patch
-    - rule_5.3.3.2.7
+    - rule_5.3.2.2.7
     - NIST800-53R5_IA-5
     - pam
   ansible.builtin.template:

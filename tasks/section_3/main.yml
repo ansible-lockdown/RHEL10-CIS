@@ -8,6 +8,11 @@
   ansible.builtin.import_tasks:
     file: cis_3.2.x.yml
 
-- name: "SECTION | 3.3.x | Configure Network Kernel Parameters"
+- name: "SECTION | 3.3.1.x | Configure IPv4 Parameters"
   ansible.builtin.import_tasks:
-    file: cis_3.3.x.yml
+    file: cis_3.3.1.x.yml
+
+- name: "SECTION | 3.3.2.x | Configure IPv6 Parameters"
+  when: rhel10cis_ipv6_required
+  ansible.builtin.import_tasks:
+    file: cis_3.3.2.x.yml

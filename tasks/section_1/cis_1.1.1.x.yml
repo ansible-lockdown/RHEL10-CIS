@@ -234,7 +234,7 @@
 - name: "1.1.1.8 | PATCH | Ensure udf kernel module is not available"
   when:
     - rhel10cis_rule_1_1_1_8
-    - not virtualization_type == 'VirtualPC'
+    - not ansible_facts.virtualization_type == 'VirtualPC'
   tags:
     - level2-server
     - level2-workstation

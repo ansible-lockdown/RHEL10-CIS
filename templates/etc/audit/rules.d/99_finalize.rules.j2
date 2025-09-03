@@ -1,0 +1,9 @@
+# File managed by ansible as part of RHEL10 CIS benchmark
+# Provided by Ansible-lockdown by Tyto Athene
+
+# This template will set all of the auditd configurations via a handler in the role in one task instead of individually
+
+{% if rhel10cis_rule_6_3_3_36 %}
+# Make changes immutable - cant be changed without a system restart
+-e 2
+{% endif %}

@@ -1,6 +1,6 @@
 ---
 
-- name: "5.1.1 | PATCH | Ensure permissions on /etc/ssh/sshd_config are configured"
+- name: "5.1.1 | PATCH | Ensure access to /etc/ssh/sshd_config is configured"
   when: rhel10cis_rule_5_1_1
   tags:
     - level1-server
@@ -11,11 +11,29 @@
     - rule_5.1.1
     - NIST800-53R5_AC-3
     - NIST800-53R5_MP-2
-  ansible.builtin.file:
-    path: "/etc/ssh/sshd_config"
-    owner: root
-    group: root
-    mode: 'go-rwx'
+  block:
+    - name: "5.1.1 | PATCH | Ensure access to /etc/ssh/sshd_config is configured | find files"
+      ansible.builtin.find:
+        path: /etc/ssh/sshd.config.d
+        patterns: '*.conf'
+      register: discovered_sshd_conf
+
+    - name: "5.1.1 | PATCH | Ensure access to /etc/ssh/sshd_config is configured"
+      when: discovered_sshd_conf.files is defined
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        owner: root
+        group: root
+        mode: 'go-rwx'
+      loop: "{{ discovered_sshd_conf.files }}"
+
+    - name: "5.1.1 | PATCH | Ensure access to /etc/ssh/sshd_config is configured"
+      ansible.builtin.file:
+        path: /etc/ssh/sshd_config
+        owner: root
+        group: root
+        mode: 'go-rwx'
+      loop: "{{ discovered_sshd_conf.files }}"
 
 - name: "5.1.2 | PATCH | Ensure permissions on SSH private host key files are configured"
   when: rhel10cis_rule_5_1_2
@@ -26,8 +44,8 @@
     - sshd
     - permissions
     - rule_5.1.2
-    - NIST800-53R5_AC-3
-    - NIST800-53R5_MP-2
+    - CCI-000366
+    - NIST800-53R5_CM-6
   block:
     - name: "5.1.2 | AUDIT | Ensure permissions on SSH private host key files are configured | Find the SSH private host keys"
       ansible.builtin.find:
@@ -55,8 +73,8 @@
     - patch
     - sshd
     - rule_5.1.3
-    - NIST800-53R5_AC-3
-    - NIST800-53R5_MP-2
+    - CCI-000366
+    - NIST800-53R5_CM-6
   block:
     - name: "5.1.3 | AUDIT | Ensure permissions on SSH public host key files are configured | Find the SSH public host keys"
       ansible.builtin.find:
@@ -76,105 +94,18 @@
       loop_control:
         label: "{{ item.path }}"
 
-- name: "5.1.4 | PATCH | Ensure sshd Ciphers are configured"
-  when:
-    - rhel10cis_rule_5_1_4
-    - "'NO-SSHWEAKCIPHERS' not in rhel10cis_crypto_policy_module"
+- name: "5.1.4 | PATCH | Ensure sshd access is configured"
+  when: rhel10cis_rule_5_1_4
   tags:
     - level1-server
     - level1-workstation
-    - automated
     - patch
     - sshd
-    - crypto
     - rule_5.1.4
-    - NIST800-53R5_SC-8
-  block:
-    - name: "5.1.4 | PATCH | Ensure sshd Ciphers are configured | Add submodule exclusion"
-      ansible.builtin.template:
-        src: etc/crypto-policies/policies/modules/NO-SSHWEAKCIPHERS.pmod.j2
-        dest: /etc/crypto-policies/policies/modules/NO-SSHWEAKCIPHERS.pmod
-        owner: root
-        group: root
-        mode: 'g-wx,o-rwx'
-      notify:
-        - Update Crypto Policy
-        - Set Crypto Policy
-
-    - name: "5.1.4 | PATCH | Ensure sshd Ciphers are configured | submodule to crypto policy modules"
-      ansible.builtin.set_fact:
-        rhel10cis_crypto_policy_module: "{{ rhel10cis_crypto_policy_module + ':NO-SSHWEAKCIPHERS' }}"
-
-- name: "5.1.5 | PATCH | Ensure sshd KexAlgorithms is configured"
-  when:
-    - rhel10cis_rule_5_1_5
-    - "'NO-SHA1' not in rhel10cis_crypto_policy_module"
-  tags:
-    - level1-server
-    - level1-workstation
-    - automated
-    - patch
-    - sshd
-    - crypto
-    - rule_5.1.5
-    - NIST800-53R5_SC-6
-  block:
-    - name: "5.1.5 | PATCH | Ensure sshd KexAlgorithms is configured | Add submodule exclusion"
-      ansible.builtin.template:
-        src: etc/crypto-policies/policies/modules/NO-SHA1.pmod.j2
-        dest: /etc/crypto-policies/policies/modules/NO-SHA1.pmod
-        owner: root
-        group: root
-        mode: 'g-wx,o-rwx'
-      notify:
-        - Update Crypto Policy
-        - Set Crypto Policy
-
-    - name: "5.1.5 | PATCH | Ensure sshd KexAlgorithms is configured | submodule to crypto policy modules"
-      ansible.builtin.set_fact:
-        rhel10cis_crypto_policy_module: "{{ rhel10cis_crypto_policy_module + ':NO-SHA1' }}"
-
-- name: "5.1.6 | PATCH | Ensure sshd KexAlgorithms is configured"
-  when:
-    - rhel10cis_rule_5_1_6
-    - "'NO-SSHWEAKMACS' not in rhel10cis_crypto_policy_module"
-  tags:
-    - level1-server
-    - level1-workstation
-    - automated
-    - patch
-    - crypto
-    - sshd
-    - rule_5.1.6
-    - NIST800-53R5_SC-6
-  block:
-    - name: "5.1.6 | PATCH | Ensure sshd KexAlgorithms is configured | Add submodule exclusion"
-      ansible.builtin.template:
-        src: etc/crypto-policies/policies/modules/NO-SSHWEAKMACS.pmod.j2
-        dest: /etc/crypto-policies/policies/modules/NO-SSHWEAKMACS.pmod
-        owner: root
-        group: root
-        mode: 'g-wx,o-rwx'
-      notify:
-        - Update Crypto Policy
-        - Set Crypto Policy
-
-    - name: "5.1.6 | PATCH | Ensure sshd KexAlgorithms is configured | submodule to crypto policy modules"
-      ansible.builtin.set_fact:
-        rhel10cis_crypto_policy_module: "{{ rhel10cis_crypto_policy_module + ':' + 'NO-SSHWEAKMACS' }}"
-
-- name: "5.1.7 | PATCH | Ensure sshd access is configured"
-  when: rhel10cis_rule_5_1_7
-  tags:
-    - level1-server
-    - level1-workstation
-    - patch
-    - sshd
-    - rule_5.1.7
     - NIST800-53R5_AC-3
     - NIST800-53R5_MP-2
   block:
-    - name: "5.1.7 | PATCH | Ensure sshd access is configured | Add line to sshd_config for allowusers"
+    - name: "5.1.4 | PATCH | Ensure sshd access is configured | Add line to sshd_config for allowusers"
       when: "rhel10cis_sshd_allowusers | length > 0"
       ansible.builtin.lineinfile:
         path: "{{ rhel10cis_sshd_config_file }}"
@@ -183,7 +114,7 @@
         validate: sshd -t -f %s
       notify: Restart sshd
 
-    - name: "5.1.7 | PATCH | Ensure sshd access is configured | Add line to sshd_config for allowgroups"
+    - name: "5.1.4 | PATCH | Ensure sshd access is configured | Add line to sshd_config for allowgroups"
       when: "rhel10cis_sshd_allowgroups | length > 0"
       ansible.builtin.lineinfile:
         path: "{{ rhel10cis_sshd_config_file }}"
@@ -192,7 +123,7 @@
         validate: sshd -t -f %s
       notify: Restart sshd
 
-    - name: "5.1.7 | PATCH | Ensure sshd access is configured | Add line to sshd_config for denyusers"
+    - name: "5.1.4 | PATCH | Ensure sshd access is configured | Add line to sshd_config for denyusers"
       when: "rhel10cis_sshd_denyusers | length > 0"
       ansible.builtin.lineinfile:
         path: "{{ rhel10cis_sshd_config_file }}"
@@ -203,7 +134,7 @@
         validate: sshd -t -f %s
       notify: Restart sshd
 
-    - name: "5.1.7 | PATCH | Ensure sshd access is configured | Add line to sshd_config for denygroups"
+    - name: "5.1.4 | PATCH | Ensure sshd access is configured | Add line to sshd_config for denygroups"
       when: "rhel10cis_sshd_denygroups | length > 0"
       ansible.builtin.lineinfile:
         path: "{{ rhel10cis_sshd_config_file }}"
@@ -212,14 +143,14 @@
         validate: sshd -t -f %s
       notify: Restart sshd
 
-- name: "5.1.8 | PATCH | Ensure sshd Banner is configured"
-  when: rhel10cis_rule_5_1_8
+- name: "5.1.5 | PATCH | Ensure sshd Banner is configured"
+  when: rhel10cis_rule_5_1_5
   tags:
     - level1-server
     - level1-workstation
     - patch
     - sshd
-    - rule_5.1.8
+    - rule_5.1.5
     - NIST800-53R5_CM-1
     - NIST800-53R5_CM-2
     - NIST800-53R5_CM-6
@@ -230,21 +161,54 @@
     regexp: '^Banner'
     line: 'Banner /etc/issue.net'
 
-- name: "5.1.9 | PATCH | Ensure sshd ClientAliveInterval and ClientAliveCountMax are configured"
-  when: rhel10cis_rule_5_1_9
+- name: "5.1.6 | PATCH | Ensure sshd Ciphers are configured"
+  when:
+    - rhel10cis_rule_5_1_6
+    - "'NO-SSHWEAKCIPHERS' not in rhel10cis_crypto_policy_module"
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - sshd
+    - crypto
+    - rule_5.1.6
+    - CCI-001453
+    - CCI-000877
+    - CCI-002421
+    - NIST800-53R5_AC-17
+    - NIST800-53R5_MA-4
+  block:
+    - name: "5.1.6 | PATCH | Ensure sshd Ciphers are configured | Add submodule exclusion"
+      ansible.builtin.template:
+        src: etc/crypto-policies/policies/modules/NO-SSHWEAKCIPHERS.pmod.j2
+        dest: /etc/crypto-policies/policies/modules/NO-SSHWEAKCIPHERS.pmod
+        owner: root
+        group: root
+        mode: 'g-wx,o-rwx'
+      notify:
+        - Update Crypto Policy
+        - Set Crypto Policy
+
+    - name: "5.1.6 | PATCH | Ensure sshd Ciphers are configured | submodule to crypto policy modules"
+      ansible.builtin.set_fact:
+        rhel10cis_crypto_policy_module: "{{ rhel10cis_crypto_policy_module + ':NO-SSHWEAKCIPHERS' }}"
+
+- name: "5.1.7 | PATCH | Ensure sshd ClientAliveInterval and ClientAliveCountMax are configured"
+  when: rhel10cis_rule_5_1_7
   tags:
     - level1-server
     - level1-workstation
     - patch
     - sshd
-    - rule_5.1.9
+    - rule_5.1.7
     - NIST800-53R5_CM-1
     - NIST800-53R5_CM-2
     - NIST800-53R5_CM-6
     - NIST800-53R5_CM-7
     - NIST800-53R5_IA-5
   block:
-    - name: "5.1.9 | PATCH | Ensure sshd ClientAliveInterval and ClientAliveCountMax are configured | Add line in sshd_config for ClientAliveInterval"
+    - name: "5.1.7 | PATCH | Ensure sshd ClientAliveInterval and ClientAliveCountMax are configured | Add line in sshd_config for ClientAliveInterval"
       ansible.builtin.lineinfile:
         path: "{{ rhel10cis_sshd_config_file }}"
         regexp: '^ClientAliveInterval'
@@ -252,7 +216,7 @@
         validate: sshd -t -f %s
       notify: Restart sshd
 
-    - name: "5.1.9 | PATCH | Ensure sshd ClientAliveInterval and ClientAliveCountMax are configured | Ensure SSH ClientAliveCountMax set to <= 3"
+    - name: "5.1.7 | PATCH | Ensure sshd ClientAliveInterval and ClientAliveCountMax are configured | Ensure SSH ClientAliveCountMax set to <= 3"
       ansible.builtin.lineinfile:
         path: "{{ rhel10cis_sshd_config_file }}"
         regexp: '^ClientAliveCountMax'
@@ -260,25 +224,25 @@
         validate: sshd -t -f %s
       notify: Restart sshd
 
-- name: "5.1.10 | PATCH | Ensure sshd DisableForwarding is enabled"
-  when: rhel10cis_rule_5_1_10
+- name: "5.1.8 | PATCH | Ensure sshd DisableForwarding is enabled"
+  when: rhel10cis_rule_5_1_8
   tags:
     - level2-server
     - level1-workstation
     - patch
     - sshd
-    - rule_5.1.10
+    - rule_5.1.8
     - NIST800-53R5_CM-7
   block:
-    - name: "5.1.10 | PATCH | Ensure sshd DisableForwarding is enabled | config file"
+    - name: "5.1.8 | PATCH | Ensure sshd DisableForwarding is enabled | config file"
       ansible.builtin.lineinfile:
         path: "{{ rhel10cis_sshd_config_file }}"
-        regexp: ^(#|)\s*DisableForwarding
+        regexp: (?i)^(#|)\s*DisableForwarding
         line: 'DisableForwarding yes'
         validate: sshd -t -f %s
       notify: Restart sshd
 
-    - name: "5.1.10 | PATCH | Ensure sshd DisableForwarding is enabled | override if redhat-50 exists"
+    - name: "5.1.8 | PATCH | Ensure sshd DisableForwarding is enabled | override if redhat-50 exists"
       when: prelim_sshd_50_redhat_file.stat.exists
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config.d/50-redhat.conf
@@ -288,21 +252,17 @@
       register: discovered_redhat_conf_exists
       notify: Restart sshd
 
-- name: "5.1.11 | PATCH | Ensure sshd GSSAPIAuthentication is disabled"
-  when: rhel10cis_rule_5_1_11
+- name: "5.1.9 | PATCH | Ensure sshd GSSAPIAuthentication is disabled"
+  when: rhel10cis_rule_5_1_9
   tags:
-    - level1-server
+    - level2-server
     - level1-workstation
     - patch
     - sshd
-    - rule_5.1.11
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
+    - rule_5.1.9
     - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
   block:
-    - name: "5.1.11 | PATCH | Ensure sshd GSSAPIAuthentication is disabled | ssh config"
+    - name: "5.1.9 | PATCH | Ensure sshd GSSAPIAuthentication is disabled | ssh config"
       ansible.builtin.lineinfile:
         path: "{{ rhel10cis_sshd_config_file }}"
         regexp: (?i)^(#|)\s*GSSAPIAuthentication
@@ -310,7 +270,7 @@
         validate: sshd -t -f %s
       notify: Restart sshd
 
-    - name: "5.1.11 | PATCH | Ensure sshd GSSAPIAuthentication is disabled | override if redhat-50 exists"
+    - name: "5.1.9 | PATCH | Ensure sshd GSSAPIAuthentication is disabled | override if redhat-50 exists"
       when: prelim_sshd_50_redhat_file.stat.exists
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config.d/50-redhat.conf
@@ -319,19 +279,15 @@
         validate: sshd -t -f %s
       notify: Restart sshd
 
-- name: "5.1.12 | PATCH | Ensure sshd HostbasedAuthentication is disabled"
-  when: rhel10cis_rule_5_1_12
+- name: "5.1.10 | PATCH | Ensure sshd HostbasedAuthentication is disabled"
+  when: rhel10cis_rule_5_1_10
   tags:
     - level1-server
     - level1-workstation
     - patch
     - sshd
-    - rule_5.1.12
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
+    - rule_5.1.10
     - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
   ansible.builtin.lineinfile:
     path: "{{ rhel10cis_sshd_config_file }}"
     regexp: (?i)^(#|)\s*HostbasedAuthentication
@@ -339,14 +295,14 @@
     validate: sshd -t -f %s
   notify: Restart sshd
 
-- name: "5.1.13 | PATCH | Ensure sshd IgnoreRhosts is enabled"
-  when: rhel10cis_rule_5_1_13
+- name: "5.1.11 | PATCH | Ensure sshd IgnoreRhosts is enabled"
+  when: rhel10cis_rule_5_1_11
   tags:
     - level1-server
     - level1-workstation
     - patch
     - sshd
-    - rule_5.1.13
+    - rule_5.1.11
     - NIST800-53R5_CM-1
     - NIST800-53R5_CM-2
     - NIST800-53R5_CM-6
@@ -361,14 +317,45 @@
     validate: sshd -t -f %s
   notify: Restart sshd
 
-- name: "5.1.14 | PATCH | Ensure sshd LoginGraceTime is set to one minute or less"
-  when: rhel10cis_rule_5_1_14
+- name: "5.1.12 | PATCH | Ensure sshd KexAlgorithms is configured"
+  when:
+    - rhel10cis_rule_5_1_12
+    - "'NO-SHA1' not in rhel10cis_crypto_policy_module"
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - sshd
+    - crypto
+    - rule_5.1.12
+    - CCI-001453
+    - CCI-000068
+    - NIST800-53R5_AC-17
+  block:
+    - name: "5.1.12 | PATCH | Ensure sshd KexAlgorithms is configured | Add submodule exclusion"
+      ansible.builtin.template:
+        src: etc/crypto-policies/policies/modules/NO-SHA1.pmod.j2
+        dest: /etc/crypto-policies/policies/modules/NO-SHA1.pmod
+        owner: root
+        group: root
+        mode: 'g-wx,o-rwx'
+      notify:
+        - Update Crypto Policy
+        - Set Crypto Policy
+
+    - name: "5.1.12 | PATCH | Ensure sshd KexAlgorithms is configured | submodule to crypto policy modules"
+      ansible.builtin.set_fact:
+        rhel10cis_crypto_policy_module: "{{ rhel10cis_crypto_policy_module + ':NO-SHA1' }}"
+
+- name: "5.1.13 | PATCH | Ensure sshd LoginGraceTime is set to one minute or less"
+  when: rhel10cis_rule_5_1_13
   tags:
     - level1-server
     - level1-workstation
     - patch
     - sshd
-    - rule_5.1.14
+    - rule_5.1.13
     - NIST800-53R5_CM-6
   ansible.builtin.lineinfile:
     path: "{{ rhel10cis_sshd_config_file }}"
@@ -379,14 +366,14 @@
     validate: sshd -t -f %s
   notify: Restart sshd
 
-- name: "5.1.15 | PATCH | Ensure sshd LogLevel is appropriate"
-  when: rhel10cis_rule_5_1_15
+- name: "5.1.14 | PATCH | Ensure sshd LogLevel is appropriate"
+  when: rhel10cis_rule_5_1_14
   tags:
     - level1-server
     - level1-workstation
     - patch
     - sshd
-    - rule_5.1.15
+    - rule_5.1.14
     - NIST800-53R5_AU-3
     - NIST800-53R5_AU-12
     - NIST800-53R5_SI-5
@@ -399,6 +386,40 @@
     validate: sshd -t -f %s
   notify: Restart sshd
 
+- name: "5.1.15 | PATCH | Ensure sshd MACs are configured"
+  when:
+    - rhel10cis_rule_5_1_15
+    - "'NO-SSHWEAKMACS' not in rhel10cis_crypto_policy_module"
+  tags:
+    - level1-server
+    - level1-workstation
+    - automated
+    - patch
+    - crypto
+    - sshd
+    - rule_5.1.15
+    - CCI-001453
+    - CCI-000877
+    - CCI-002421
+    - NIST800-53R5_AC-17
+    - NIST800-53R5_MA-4
+    - NIST800-53R5_SC-8
+  block:
+    - name: "5.1.15 | PATCH | Ensure sshd KexAlgorithms is configured | Add submodule exclusion"
+      ansible.builtin.template:
+        src: etc/crypto-policies/policies/modules/NO-SSHWEAKMACS.pmod.j2
+        dest: /etc/crypto-policies/policies/modules/NO-SSHWEAKMACS.pmod
+        owner: root
+        group: root
+        mode: 'g-wx,o-rwx'
+      notify:
+        - Update Crypto Policy
+        - Set Crypto Policy
+
+    - name: "5.1.15 | PATCH | Ensure sshd KexAlgorithms is configured | submodule to crypto policy modules"
+      ansible.builtin.set_fact:
+        rhel10cis_crypto_policy_module: "{{ rhel10cis_crypto_policy_module + ':' + 'NO-SSHWEAKMACS' }}"
+
 - name: "5.1.16 | PATCH | Ensure sshd MaxAuthTries is set to 4 or less"
   when: rhel10cis_rule_5_1_16
   tags:
@@ -410,7 +431,7 @@
     - NIST800-53R5_AU-3
   ansible.builtin.lineinfile:
     path: "{{ rhel10cis_sshd_config_file }}"
-    regexp: '^(#)?MaxAuthTries \d'
+    regexp: (?i)^(#)?MaxAuthTries \d
     line: 'MaxAuthTries {{ rhel10cis_ssh_maxauthtries }}'
     validate: sshd -t -f %s
   notify: Restart sshd
@@ -463,11 +484,7 @@
     - patch
     - sshd
     - rule_5.1.19
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
     - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
   ansible.builtin.lineinfile:
     path: "{{ rhel10cis_sshd_config_file }}"
     regexp: (?i)^(#|)\s*PermitEmptyPasswords
@@ -484,6 +501,7 @@
     - sshd
     - rule_5.1.20
     - NIST800-53R5_AC-6
+    - NIST800-53R5_IA-2
   block:
     - name: "5.1.20 | PATCH | Ensure sshd PermitRootLogin is disabled | config file"
       ansible.builtin.lineinfile:

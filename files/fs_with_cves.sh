@@ -32,7 +32,7 @@
       fi
    done
    [ "${#a_output[@]}" -gt 0 ] && printf '%s\n' "" \
-   "- There are \"${#a_output[@}]}\" kernel modules currently mounted:" "${a_output[@]}"
+   "- There are \"${#a_output[@]}\" kernel modules currently mounted:" "${a_output[@]}"
    [ "${#a_output2[@]}" -gt 0 ] && printf '%s\n' "" \
    "- There are \"${#a_output2[@]}\" kernel modules currently loaded:" "${a_output2[@]}"
    [ "${#a_output3[@]}" -gt 0 ] && printf '%s\n' "" \

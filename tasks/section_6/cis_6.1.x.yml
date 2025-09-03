@@ -75,6 +75,7 @@
     - patch
     - rule_6.1.2
     - NIST800-53R5_AU-2
+    - NIST800-53R5_CM-3
   block:
     - name: "6.1.2 | PATCH | Ensure filesystem integrity is regularly checked"
       when: rhel10cis_aide_scan == "cron"

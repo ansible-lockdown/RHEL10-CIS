@@ -208,10 +208,10 @@
     - Set reboot required
     - Restart sshd
 
-- name: Restart firewalld
+- name: Reload firewalld
   ansible.builtin.systemd:
     name: firewalld
-    state: restarted
+    state: reloaded
 
 - name: Restart sshd
   ansible.builtin.systemd:
@@ -263,7 +263,7 @@
 ## Auditd tasks note order for handlers to run
 
 - name: Auditd immutable check
-  ansible.builtin.command: grep -c "^-e 2" /etc/audit/rules.d/99_auditd.rules
+  ansible.builtin.command: grep -c "^-e 2" /etc/audit/rules.d/99_finalize.rules
   changed_when: false
   register: discovered_auditd_immutable_check
 

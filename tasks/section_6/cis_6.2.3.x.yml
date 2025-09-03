@@ -10,9 +10,7 @@
     - patch
     - rsyslog
     - rule_6.2.3.1
-    - NIST800-53R5_AU-2
-    - NIST800-53R5_AU-3
-    - NIST800-53R5_AU-12
+    - NIST800-53R5_CM-6
   ansible.builtin.package:
     name: rsyslog
     state: present

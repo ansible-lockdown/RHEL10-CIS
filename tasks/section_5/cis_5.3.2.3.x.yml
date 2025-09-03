@@ -1,27 +1,28 @@
 ---
 
-- name: "5.3.3.3.1 | PATCH | Ensure password history remember is configured"
-  when: rhel10cis_rule_5_3_3_3_1
+- name: "5.3.2.3.1 | PATCH | Ensure password history remember is configured"
+  when: rhel10cis_rule_5_3_2_3_1
   tags:
     - level1-server
     - level1-workstation
     - patch
-    - rule_5.3.3.3.1
+    - rule_5.3.2.3.1
     - pam
+    - NIST800-53R5_IA-5
   block:
-    - name: "5.3.3.3.1 | AUDIT | Ensure password history remember is configured | Check existing files"
+    - name: "5.3.2.3.1 | AUDIT | Ensure password history remember is configured | Check existing files"
       ansible.builtin.shell: grep -Psi -- '^\h*password\s+[^#\n\r]+\h+pam_pwhistory\.so\s+([^#\n\r]+\s+)?remember=\d+\b' /etc/pam.d/password-auth /etc/pam.d/system-auth
       changed_when: false
       failed_when: discovered_pwhistory_remember.rc not in [0, 1]
       register: discovered_pwhistory_remember
 
-    - name: "5.3.3.3.1 | PATCH | Ensure password number of changed characters is configured | Ensure remember is set pwhistory file"
+    - name: "5.3.2.3.1 | PATCH | Ensure password number of changed characters is configured | Ensure remember is set pwhistory file"
       ansible.builtin.lineinfile:
         path: "/etc/security/pwhistory.conf"
         regexp: remember\s*=\s*\d*
         line: remember = {{ rhel10cis_pamd_pwhistory_remember }}
 
-    - name: "5.3.3.3.1 | PATCH | Ensure password number of changed characters is configured | Remove remember from pam files NOT AuthSelect"
+    - name: "5.3.2.3.1 | PATCH | Ensure password number of changed characters is configured | Remove remember from pam files NOT AuthSelect"
       when:
         - not rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -33,7 +34,7 @@
         - password
         - system
 
-    - name: "5.3.3.3.1 | PATCH | Ensure password number of changed characters is configured | Remove remember from pam files AuthSelect"
+    - name: "5.3.2.3.1 | PATCH | Ensure password number of changed characters is configured | Remove remember from pam files AuthSelect"
       when:
         - rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -46,41 +47,43 @@
         - system
       notify: Authselect update
 
-- name: "5.3.3.3.2 | PATCH | Ensure password history is enforced for the root user"
-  when: rhel10cis_rule_5_3_3_3_2
+- name: "5.3.2.3.2 | PATCH | Ensure password history is enforced for the root user"
+  when: rhel10cis_rule_5_3_2_3_2
   tags:
     - level1-server
     - level1-workstation
     - patch
-    - rule_5.3.3.3.2
+    - rule_5.3.2.3.2
     - pam
+    - NIST800-53R5_IA-5
   ansible.builtin.lineinfile:
     path: "/etc/security/pwhistory.conf"
     regexp: ^\s*(?#)enforce_for_root
     line: enforce_for_root
 
-- name: "5.3.3.3.3 | PATCH | Ensure pam_pwhistory includes use_authtok"
-  when: rhel10cis_rule_5_3_3_3_3
+- name: "5.3.2.3.3 | PATCH | Ensure pam_pwhistory includes use_authtok"
+  when: rhel10cis_rule_5_3_2_3_3
   tags:
     - level1-server
     - level1-workstation
     - patch
-    - rule_5.3.3.3.3
+    - rule_5.3.2.3.3
     - pam
+    - NIST800-53R5_IA-5
   block:
-    - name: "5.3.3.3.3 | AUDIT | Ensure pam_pwhistory includes use_authtok | Check existing files"
+    - name: "5.3.2.3.3 | AUDIT | Ensure pam_pwhistory includes use_authtok | Check existing files"
       ansible.builtin.shell: grep -Psi -- '^\h*password\h+[^#\n\r]+\h+pam_pwhistory\.so\h+([^#\n\r]+\h+)?use_authtok\b' /etc/pam.d/{system,password}-auth
       register: discovered_pwhistory_use_authtok
       changed_when: false
       failed_when: discovered_pwhistory_use_authtok.rc not in [0, 1]
 
-    - name: "5.3.3.3.3 | PATCH | Ensure pam_pwhistory includes use_authtok | Update pwhistory for use_authtok"
+    - name: "5.3.2.3.3 | PATCH | Ensure pam_pwhistory includes use_authtok | Update pwhistory for use_authtok"
       ansible.builtin.lineinfile:
         path: "/etc/security/pwhistory.conf"
         regexp: ^\s*(?#)use_authtok
         line: use_authtok
 
-    - name: "5.3.3.3.3 | PATCH | Ensure pam_pwhistory includes use_authtok | Ensure use_authtok is set"
+    - name: "5.3.2.3.3 | PATCH | Ensure pam_pwhistory includes use_authtok | Ensure use_authtok is set"
       when:
         - not rhel10cis_allow_authselect_updates
         - discovered_pwhistory_use_authtok.stdout | length == 0

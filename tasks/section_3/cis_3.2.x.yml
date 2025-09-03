@@ -1,17 +1,77 @@
 ---
 
-- name: "3.2.1 | PATCH | Ensure dccp kernel module is not available"
+- name: "3.2.1 | PATCH | Ensure atm kernel module is not available"
   when: rhel10cis_rule_3_2_1
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_3.2.1
+    - atm
+    - CCI-000381
+    - NIST800-53R5_CM-7
+  block:
+    - name: "3.2.1 | PATCH | Ensure atm kernel module is not available | modprobe"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/atm.conf
+        regexp: "^(#)?install atm(\\\\s|$)"
+        line: "{{ item }}"
+        mode: 'u-x,go-rwx'
+        create: true
+      loop:
+        - install atm /bin/true
+        - blacklist atm
+
+    - name: "3.2.1 | PATCH | Ensure atm kernel module is not available | blacklist"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        regexp: "^(#)?blacklist ats(\\s|$)"
+        line: "blacklist ats"
+        mode: 'u-x,go-rwx'
+        create: true
+
+- name: "3.2.2 | PATCH | Ensure can kernel module is not available"
+  when: rhel10cis_rule_3_2_2
   tags:
     - level2-server
     - level2-workstation
     - patch
-    - rule_3.2.1
-    - dccp
+    - rule_3.2.2
+    - can
+    - CCI-000381
     - NIST800-53R5_CM-7
-    - NIST800-53R5_SI-4
   block:
-    - name: "3.2.1 | PATCH | Ensure dccp kernel module is not available | modprobe"
+    - name: "3.2.2 | PATCH | Ensure can kernel module is not available | modprobe"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/can.conf
+        regexp: "^(#)?install can(\\\\s|$)"
+        line: "{{ item }}"
+        mode: 'u-x,go-rwx'
+        create: true
+      loop:
+        - install can /bin/true
+        - blacklist can
+
+    - name: "3.2.2 | PATCH | Ensure can kernel module is not available | blacklist"
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        regexp: "^(#)?blacklist can(\\s|$)"
+        line: "blacklist can"
+        mode: 'u-x,go-rwx'
+        create: true
+
+- name: "3.2.3 | PATCH | Ensure dccp kernel module is not available"
+  when: rhel10cis_rule_3_2_3
+  tags:
+    - level2-server
+    - level2-workstation
+    - patch
+    - rule_3.2.3
+    - dccp
+    - CCI-000381
+    - NIST800-53R5_CM-7
+  block:
+    - name: "3.2.3 | PATCH | Ensure dccp kernel module is not available | modprobe"
       ansible.builtin.lineinfile:
         path: /etc/modprobe.d/dccp.conf
         regexp: "^(#)?install dccp(\\\\s|$)"
@@ -22,26 +82,26 @@
         - install dccp /bin/true
         - blacklist dccp
 
-    - name: "3.2.1 | PATCH | Ensure dccp kernel module is not available | blacklist"
+    - name: "3.2.3 | PATCH | Ensure dccp kernel module is not available | blacklist"
       ansible.builtin.lineinfile:
         path: /etc/modprobe.d/blacklist.conf
-        regexp: "^(#)?blacklist cramfs(\\s|$)"
-        line: "blacklist cramfs"
+        regexp: "^(#)?blacklist dccp(\\s|$)"
+        line: "blacklist dccp"
         mode: 'u-x,go-rwx'
         create: true
 
-- name: "3.2.2 | PATCH | Ensure tipc kernel module is not available"
-  when: rhel10cis_rule_3_2_2
+- name: "3.2.4 | PATCH | Ensure tipc kernel module is not available"
+  when: rhel10cis_rule_3_2_4
   tags:
     - level2-server
     - level2-workstation
     - patch
-    - rule_3.2.2
+    - rule_3.2.4
     - tipc
+    - CCI-000381
     - NIST800-53R5_CM-7
-    - NIST800-53R5_SI-4
   block:
-    - name: "3.2.2 | PATCH | Ensure tipc kernel module is not available | modprobe"
+    - name: "3.2.4 | PATCH | Ensure tipc kernel module is not available | modprobe"
       ansible.builtin.lineinfile:
         path: /etc/modprobe.d/tipc.conf
         regexp: "^(#)?install tipc(\\\\s|$)"
@@ -52,7 +112,7 @@
         - install tipc /bin/true
         - blacklist tipc
 
-    - name: "3.2.2 | PATCH | Ensure tipc kernel module is not available | blacklist"
+    - name: "3.2.4 | PATCH | Ensure tipc kernel module is not available | blacklist"
       ansible.builtin.lineinfile:
         path: /etc/modprobe.d/blacklist.conf
         regexp: "^(#)?blacklist tipc(\\s|$)"
@@ -60,18 +120,18 @@
         mode: 'u-x,go-rwx'
         create: true
 
-- name: "3.2.3 | PATCH | Ensure rds kernel module is not available"
-  when: rhel10cis_rule_3_2_3
+- name: "3.2.5 | PATCH | Ensure rds kernel module is not available"
+  when: rhel10cis_rule_3_2_5
   tags:
-    - level2-server
-    - level2-workstation
+    - level1-server
+    - level1-workstation
     - patch
-    - rule_3.2.3
+    - rule_3.2.5
     - rds
+    - CCI-000381
     - NIST800-53R5_CM-7
-    - NIST800-53R5_SI-4
   block:
-    - name: "3.2.3 | PATCH | Ensure rds kernel module is not available | modprobe"
+    - name: "3.2.5 | PATCH | Ensure rds kernel module is not available | modprobe"
       ansible.builtin.lineinfile:
         path: /etc/modprobe.d/rds.conf
         regexp: "^(#)?install rds(\\\\s|$)"
@@ -82,7 +142,7 @@
         - install rds /bin/true
         - blacklist rds
 
-    - name: "3.2.3 | PATCH | Ensure rds kernel module is not available | blacklist"
+    - name: "3.2.5 | PATCH | Ensure rds kernel module is not available | blacklist"
       ansible.builtin.lineinfile:
         path: /etc/modprobe.d/blacklist.conf
         regexp: "^(#)?blacklist rds(\\s|$)"
@@ -90,18 +150,18 @@
         mode: 'u-x,go-rwx'
         create: true
 
-- name: "3.2.4 | PATCH | Ensure sctp kernel module is not available"
-  when: rhel10cis_rule_3_2_4
+- name: "3.2.6 | PATCH | Ensure sctp kernel module is not available"
+  when: rhel10cis_rule_3_2_6
   tags:
     - level2-server
     - level2-workstation
     - patch
-    - rule_3.2.4
+    - rule_3.2.6
     - sctp
+    - CCI-000381
     - NIST800-53R5_CM-7
-    - NIST800-53R5_SI-4
   block:
-    - name: "3.2.4 | PATCH | Ensure sctp kernel module is not available | modprobe"
+    - name: "3.2.6 | PATCH | Ensure sctp kernel module is not available | modprobe"
       ansible.builtin.lineinfile:
         path: /etc/modprobe.d/sctp.conf
         regexp: "^(#)?install sctp(\\\\s|$)"
@@ -113,7 +173,7 @@
         - install sctp /bin/true
         - blacklist sctp
 
-    - name: "3.2.4 | PATCH | Ensure sctp kernel module is not available | blacklist"
+    - name: "3.2.6 | PATCH | Ensure sctp kernel module is not available | blacklist"
       ansible.builtin.lineinfile:
         path: /etc/modprobe.d/blacklist.conf
         regexp: "^(#)?blacklist sctp(\\s|$)"

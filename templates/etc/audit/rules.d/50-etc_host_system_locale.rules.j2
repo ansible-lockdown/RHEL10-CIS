@@ -1,0 +1,8 @@
+# File managed by ansible as part of RHEL10 CIS benchmark
+# Provided by Ansible-lockdown by Tyto Athene
+
+# This template will set all of the auditd configurations via a handler in the role in one task instead of individually
+{% if rhel10cis_rule_6_3_3_7 %}
+-w /etc/hosts -p wa -k system-locale
+-w /etc/hostname -p wa -k system-locale
+{% endif %}

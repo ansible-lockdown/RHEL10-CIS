@@ -39,7 +39,7 @@
     - rule_7.2.2
     - user
     - permissions
-    - NIST800-53R5_IA-5
+    - NIST800-53R5_CM-6
   block:
     - name: "7.2.2 | AUDIT | Ensure /etc/shadow password fields are not empty | Find users with no password"
       ansible.builtin.shell: awk -F":" '($2 == "" ) { print $1 }' /etc/shadow
@@ -96,11 +96,7 @@
     - audit
     - rule_7.2.4
     - user
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
-    - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
+    - NIST800-53R5_IA-4
   vars:
     warn_control_id: "7.2.4"
   block:
@@ -228,6 +224,7 @@
     - patch
     - users
     - rule_7.2.8
+    - NIST800-53R5_CM-6
   block:
     - name: "7.2.8 | PATCH | Ensure local interactive user home directories are configured | Create dir if absent" # noqa risky-file-permissions
       ansible.builtin.file:

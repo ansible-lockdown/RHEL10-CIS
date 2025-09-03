@@ -76,7 +76,7 @@
   block:
     - name: "2.1.3 | PATCH | Ensure cockpit web services are not in use | Remove package"
       when:
-        - not rhel10cis_cockpit
+        - not rhel10cis_cockpit_server
         - not rhel10cis_cockpit_mask
       ansible.builtin.package:
         name: cockpit-ws

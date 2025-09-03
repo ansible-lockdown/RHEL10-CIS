@@ -1,0 +1,14 @@
+# File managed by ansible as part of RHEL10 CIS benchmark
+# Provided by Ansible-lockdown by Tyto Athene
+
+# This template will set all of the auditd configurations via a handler in the role in one task instead of individually
+{% if rhel10cis_rule_6_3_3_24 %}
+{% set syscalls = ["unlink","unlinkat"] %}
+{% set arch_syscalls = syscalls | select("in", supported_syscalls) | list %}
+-a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -F auid>={{ prelim_min_int_uid }} -F auid!=unset -F key=delete
+{% endif %}
+{% if rhel10cis_rule_6_3_3_25 %}
+{% set syscalls = ["rename","renameat","renameat2"] %}
+{% set arch_syscalls = syscalls | select("in", supported_syscalls) | list %}
+-a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -F auid>={{ prelim_min_int_uid }} -F auid!=unset -F key=delete
+{% endif %}

@@ -1,0 +1,7 @@
+# File managed by ansible as part of RHEL10 CIS benchmark
+# Provided by Ansible-lockdown by Tyto Athene
+
+# This template will set all of the auditd configurations via a handler in the role in one task instead of individually
+{% if rhel10cis_rule_6_3_3_9 %}
+-a always,exit -F arch=b64 -S all -F dir=/etc/NetworkManager/ -F perm=wa -F key=system-locale
+{% endif %}

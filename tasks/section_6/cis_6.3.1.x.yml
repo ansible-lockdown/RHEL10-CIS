@@ -1,6 +1,6 @@
 ---
 
-- name: "6.3.1.1 | PATCH | Ensure auditd is installed"
+- name: "6.3.1.1 | PATCH | Ensure auditd packages are installed"
   when: rhel10cis_rule_6_3_1_1
   tags:
     - level2-server
@@ -13,13 +13,13 @@
     - NIST800-53R5_AU-12
     - NIST800-53R5_SI-5
   block:
-    - name: "6.3.1.1 | PATCH | Ensure auditd is installed | Install auditd packages"
+    - name: "6.3.1.1 | PATCH | Ensure auditd packages are installed | Install auditd packages"
       when: '"auditd" not in ansible_facts.packages'
       ansible.builtin.package:
         name: audit
         state: present
 
-    - name: "6.3.1.1 | PATCH | Ensure auditd is installed | Install auditd-lib packages"
+    - name: "6.3.1.1 | PATCH | Ensure auditd packages are installed | Install auditd-lib packages"
       when: '"auditd-lib" not in ansible_facts.packages'
       ansible.builtin.package:
         name: audit-libs
@@ -34,6 +34,7 @@
     - auditd
     - grub
     - rule_6.3.1.2
+    - NIST800-53R5_AU-12
   block:
     - name: "6.3.1.2 | PATCH | Ensure auditing for processes that start prior to auditd is enabled | Grubby existence of current value"
       ansible.builtin.shell: grubby --info=ALL | grep args | sed -n 's/.*audit=\([[:alnum:]]\+\).*/\1/p'
@@ -92,9 +93,7 @@
     - patch
     - auditd
     - rule_6.3.1.4
-    - NIST800-53R5_AU-2
     - NIST800-53R5_AU-12
-    - NIST800-53R5_SI-5
   ansible.builtin.systemd:
     name: auditd
     state: started

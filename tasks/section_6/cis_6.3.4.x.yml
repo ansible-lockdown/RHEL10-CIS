@@ -17,7 +17,7 @@
 - name: |
     "6.3.4.2 | PATCH | Ensure audit log files mode is configured"
     "6.3.4.3 | PATCH | Ensure audit log files owner is configured"
-    "6.3.4.4 | PATCH | Ensure only authorized groups are assigned ownership of audit log files"
+    "6.3.4.4 | PATCH | Ensure audit log files group owner is configured"
   when: rhel10cis_rule_6_3_4_2 or rhel10cis_rule_6_3_4_3 or rhel10cis_rule_6_3_4_4
   tags:
     - level2-server
@@ -28,6 +28,7 @@
     - rule_6.3.4.3
     - rule_6.3.4.4
     - NIST800-53R5_AU-3
+    - NIST800-53R5_CM-7
   ansible.builtin.file:
     path: "{{ prelim_auditd_logfile.stdout }}"
     mode: 'o-x,g-wx,o-rwx'
@@ -42,6 +43,7 @@
     - patch
     - auditd
     - rule_6.3.4.5
+    - NIST800-53R5_AU-12
   ansible.builtin.file:
     path: "{{ item.path }}"
     mode: 'u-x,g-wx,o-rwx'

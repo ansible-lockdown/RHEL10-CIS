@@ -31,7 +31,7 @@
     - name: "1.4.2 | PATCH | Ensure access to bootloader config is configured | bios based system"
       when: rhel10cis_legacy_boot
       ansible.builtin.file:
-        path: "/boot/grub2/{{ item.path }}"
+        path: "/boot/grub2/{{ item }}"
         owner: root
         group: root
         mode: "{{ item.mode | default('u-x,go-rwx') }}"

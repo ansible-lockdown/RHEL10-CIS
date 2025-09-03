@@ -1,5 +1,10 @@
 # Changes to rhel10CIS
 
+## 1.0.0 - Based upon CIS official 1.0.0
+
+Added CCI references
+relabel added to selinux - new variable added
+
 
 ## 0.1.5
 

@@ -1,23 +1,24 @@
 ---
 
-- name: "5.3.3.4.1 | PATCH | Ensure pam_unix does not include nullok"
+- name: "5.3.2.4.1 | PATCH | Ensure pam_unix does not include nullok"
   when:
-    - rhel10cis_rule_5_3_3_4_1
+    - rhel10cis_rule_5_3_2_4_1
     - rhel10cis_disruption_high
   tags:
     - level1-server
     - level1-workstation
     - patch
-    - rule_5.3.3.4.1
+    - rule_5.3.2.4.1
     - pam
+    - NIST800-53R5_CM-6
   block:
-    - name: "5.3.3.4.1 | PATCH | Ensure pam_unix does not include nullok | capture state"
+    - name: "5.3.2.4.1 | PATCH | Ensure pam_unix does not include nullok | capture state"
       ansible.builtin.shell: grep -E "pam_unix.so.*nullok" /etc/pam.d/*-auth | cut -d ':' -f1 | uniq
       changed_when: false
       failed_when: discovered_pam_nullok.rc not in [ 0, 1 ]
       register: discovered_pam_nullok
 
-    - name: "5.3.3.4.1 | PATCH | Ensure pam_unix does not include nullok | Ensure nullok removed"
+    - name: "5.3.2.4.1 | PATCH | Ensure pam_unix does not include nullok | Ensure nullok removed"
       when:
         - discovered_pam_nullok.stdout | length > 0
         - not rhel10cis_allow_authselect_updates
@@ -27,7 +28,7 @@
         replace: ""
       loop: "{{ discovered_pam_nullok.stdout_lines }}"
 
-    - name: "5.3.3.4.1 | PATCH | Ensure password number of changed characters is configured | Remove nullok from pam files AuthSelect"
+    - name: "5.3.2.4.1 | PATCH | Ensure password number of changed characters is configured | Remove nullok from pam files AuthSelect"
       when: rhel10cis_allow_authselect_updates
       ansible.builtin.replace:
         path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/{{ item }}-auth"
@@ -38,24 +39,25 @@
         - system
       notify: Authselect update
 
-- name: "5.3.3.4.2 | PATCH | Ensure pam_unix does not include remember"
+- name: "5.3.2.4.2 | PATCH | Ensure pam_unix does not include remember"
   when:
-    - rhel10cis_rule_5_3_3_4_2
+    - rhel10cis_rule_5_3_2_4_2
     - rhel10cis_disruption_high
   tags:
     - level1-server
     - level1-workstation
     - patch
     - pam
-    - rule_5.3.3.4.2
+    - rule_5.3.2.4.2
+    - NIST800-53R5_NA
   block:
-    - name: "5.3.3.4.2 | AUDIT | Ensure pam_unix does not include remember | capture state"
+    - name: "5.3.2.4.2 | AUDIT | Ensure pam_unix does not include remember | capture state"
       ansible.builtin.shell: grep -E "password.*pam_unix.so.*remember" /etc/pam.d/*-auth | cut -d ':' -f1 | uniq
       changed_when: false
       failed_when: discovered_pam_remember.rc not in [ 0, 1 ]
       register: discovered_pam_remember
 
-    - name: "5.3.3.4.2 | PATCH | Ensure pam_unix does not include remember | Ensure remember removed"
+    - name: "5.3.2.4.2 | PATCH | Ensure pam_unix does not include remember | Ensure remember removed"
       when:
         - not rhel10cis_allow_authselect_updates
         - discovered_pam_remember.stdout | length > 0
@@ -65,7 +67,7 @@
         replace: ""
       loop: "{{ discovered_pam_remember.stdout_lines }}"
 
-    - name: "5.3.3.4.2 | PATCH | Ensure pam_unix does not include remember  | Remove remember from pam files AuthSelect"
+    - name: "5.3.2.4.2 | PATCH | Ensure pam_unix does not include remember  | Remove remember from pam files AuthSelect"
       when: rhel10cis_allow_authselect_updates
       ansible.builtin.replace:
         path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/{{ item }}-auth"
@@ -76,25 +78,25 @@
         - system
       notify: Authselect update
 
-- name: "5.3.3.4.3 | PATCH | Ensure pam_unix includes a strong password hashing algorithm"
+- name: "5.3.2.4.3 | PATCH | Ensure pam_unix includes a strong password hashing algorithm"
   when:
-    - rhel10cis_rule_5_3_3_4_3
+    - rhel10cis_rule_5_3_2_4_3
     - rhel10cis_disruption_high
   tags:
     - level1-server
     - level1-workstation
     - patch
     - pam
-    - rule_5.3.3.4.3
+    - rule_5.3.2.4.3
     - NIST800-53R5_IA-5
   block:
-    - name: "5.3.3.4.3 | AUDIT | Ensure pam_unix includes a strong password hashing algorithm | capture state"
+    - name: "5.3.2.4.3 | AUDIT | Ensure pam_unix includes a strong password hashing algorithm | capture state"
       ansible.builtin.shell: grep -E "password.*pam_unix.so.*(sha512|yescrypt)" /etc/pam.d/*-auth | cut -d ':' -f1 | uniq
       changed_when: false
       failed_when: discovered_pam_pwhash.rc not in [ 0, 1 ]
       register: discovered_pam_pwhash
 
-    - name: "5.3.3.4.3 | PATCH | Ensure pam_unix includes a strong password hashing algorithm | Ensure hash algorithm set"
+    - name: "5.3.2.4.3 | PATCH | Ensure pam_unix includes a strong password hashing algorithm | Ensure hash algorithm set"
       when:
         - not rhel10cis_allow_authselect_updates
         - discovered_pam_remember.stdout | length > 0
@@ -104,7 +106,7 @@
         replace: "{{ rhel10cis_passwd_hash_algo }}"
       loop: "{{ discovered_pam_remember.stdout_lines }}"
 
-    - name: "5.3.3.4.3 | PATCH | Ensure pam_unix includes a strong password hashing algorithm | Add hash algorithm to pam files AuthSelect"
+    - name: "5.3.2.4.3 | PATCH | Ensure pam_unix includes a strong password hashing algorithm | Add hash algorithm to pam files AuthSelect"
       when: rhel10cis_allow_authselect_updates
       ansible.builtin.lineinfile:
         path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/{{ item }}-auth"
@@ -116,26 +118,26 @@
         - system
       notify: Authselect update
 
-- name: "5.3.3.4.4 | PATCH | Ensure pam_unix includes use_authtok"
+- name: "5.3.2.4.4 | PATCH | Ensure pam_unix includes use_authtok"
   when:
-    - rhel10cis_rule_5_3_3_4_4
+    - rhel10cis_rule_5_3_2_4_4
     - rhel10cis_disruption_high
   tags:
     - level1-server
     - level1-workstation
     - patch
     - pam
-    - rule_5.3.3.4.4
+    - rule_5.3.2.4.4
     - NIST800-53R5_IA-5
   block:
-    - name: "5.3.3.4.4 | PATCH | Ensure pam_unix includes use_authtok | capture state"
+    - name: "5.3.2.4.4 | PATCH | Ensure pam_unix includes use_authtok | capture state"
       ansible.builtin.shell: grep -PH -- '^\h*^password\h*[^#\n\r]+\h+pam_unix.so\b' /etc/pam.d/{password,system}-auth | grep -Pv --
         '\buse_authtok\b'
       changed_when: false
       failed_when: discovered_pam_authtok.rc not in [ 0, 1 ]
       register: discovered_pam_authtok
 
-    - name: "5.3.3.4.4 | PATCH | Ensure pam_unix includes use_authtok | pam_files"
+    - name: "5.3.2.4.4 | PATCH | Ensure pam_unix includes use_authtok | pam_files"
       when:
         - not rhel10cis_allow_authselect_updates
         - discovered_pam_authtok is defined
@@ -147,7 +149,7 @@
         backrefs: true
       loop: "{{ discovered_pam_authtok.stdout_lines }}"
 
-    - name: "5.3.3.4.4 | PATCH | Ensure pam_unix includes use_authtok | Add use_authtok pam files AuthSelect"
+    - name: "5.3.2.4.4 | PATCH | Ensure pam_unix includes use_authtok | Add use_authtok pam files AuthSelect"
       when: rhel10cis_allow_authselect_updates
       ansible.builtin.lineinfile:
         path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/{{ item }}-auth"
