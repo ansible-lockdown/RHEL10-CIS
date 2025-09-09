@@ -1,6 +1,6 @@
 ---
 
 - name: "SECTION | 4.1.x | Configure firewalld"
-  when: rhel10cis_firewall == "firewalld"
+  when: rhel10cis_firewall == 'firewalld'
   ansible.builtin.import_tasks:
     file: cis_4.1.x.yml

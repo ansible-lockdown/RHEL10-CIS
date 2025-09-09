@@ -632,12 +632,12 @@ rhel10cis_bootloader_salt: ''
 
 ## Controls 1.5.x
 
-## Control 1.5.6 - ktpr_restrict
+## Control 1.5.6 - kptr_restrict
 ## Masking the kernel symbols in /proc/kallsyms reduces the ability of an attacker using them to learn more about what to attack on your system.
 # kptr_restrict = 1 - kernel pointers printed using the %pK format specifier will be replaced with 0's.
 # kptr_restrict = 2 - kernel pointers printed using %pK will be replaced with 0's regardless of privileges.
 # kernel.kptr_restrict is set to a value of: 1 or 2.
-rhel10cis_ktpr_restrict_value: 1
+rhel10cis_kptr_restrict_value: 1
 
 ## Control 1.5.7 - yama.ptrace_scope
 # The ptrace() system call provides a means by which one process (the "tracer") may
@@ -694,7 +694,7 @@ rhel10cis_warning_banner: Authorized users only. All activity may be monitored a
 ## Control 1.8.x - Settings for GDM
 # If the system is running a desktop this will turn off removal of the GUI pkgs
 # and configure the required settings
-desktop_required: false
+rhel10_desktop_required: false
 
 # This variable governs the number of seconds of inactivity before the screen goes blank.
 # Set max value for idle-delay in seconds (between 1 and 900)
@@ -1284,7 +1284,8 @@ rhel10cis_aide_cron_weekday: '*'
 # This variable governs which logging service should be used, choosing between 'rsyslog'
 # or 'journald'(CIS recommendation) will trigger the execution of the associated subsection, as the-best
 # practices are written wholly independent of each other.
-rhel10cis_syslog: rsyslog
+# Should your organization make use of both rsyslog and journald, take care how the recommendations may or may not apply to you.
+rhel10cis_syslog: journald
 
 ## Control 6.2.1.3 - Ensure journald log rotation is configured per site policy
 # Current variable configures the max amount of disk space the logs will use(thus, journal files
