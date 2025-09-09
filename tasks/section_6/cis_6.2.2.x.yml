@@ -17,7 +17,7 @@
     - name: "6.2.2.2 | PATCH | Ensure journald ForwardToSyslog is disabled | Add file"
       ansible.builtin.template:
         src: etc/systemd/journald.conf.d/forwardtosyslog.conf.j2
-        dest: "/etc/systemd/journald.conf.d/{{ rhel10cis_journald_forwardsyslog }}"
+        dest: "/etc/systemd/journald.conf.d/forwardtosyslog.conf"
         owner: root
         group: root
         mode: 'u-x,g-wx,o-rwx'
@@ -26,7 +26,7 @@
       when:
         - prelim_journald_conf_files.files is defined
         - prelim_journald_conf_files.matched > 0
-        - "rhel10cis_journald_forwardsyslog not in item.path"
+        - "'forwardtosyslog.conf' not in item.path"
       ansible.builtin.replace:
         path: "{{ item.path }}"
         regexp: (?i)^(\s*ForwardToSyslog)
@@ -47,7 +47,7 @@
     - name: "6.2.2.3 | PATCH | Ensure journald Compress is configured | Add file"
       ansible.builtin.template:
         src: etc/systemd/journald.conf.d/storage.conf.j2 # Added to the same file as 6.2.2.4
-        dest: "/etc/systemd/journald.conf.d/{{ rhel10cis_journald_storage }}"
+        dest: "/etc/systemd/journald.conf.d/storage.conf"
         owner: root
         group: root
         mode: 'u-x,g-wx,o-rwx'
@@ -56,7 +56,7 @@
       when:
         - prelim_journald_conf_files.files is defined
         - prelim_journald_conf_files.matched > 0
-        - "rhel10cis_journald_storage not in item.path"
+        - "'storage.conf' not in item.path"
       ansible.builtin.replace:
         path: "{{ item.path }}"
         regexp: (?i)^(\s*compress=)
@@ -78,7 +78,7 @@
     - name: "6.2.2.4 | PATCH | Ensure journald Storage is configured | Add file"
       ansible.builtin.template:
         src: etc/systemd/journald.conf.d/storage.conf.j2
-        dest: "/etc/systemd/journald.conf.d/{{ rhel10cis_journald_storage }}"
+        dest: "/etc/systemd/journald.conf.d/storage.conf"
         owner: root
         group: root
         mode: 'u-x,g-wx,o-rwx'
@@ -87,7 +87,7 @@
       when:
         - prelim_journald_conf_files.files is defined
         - prelim_journald_conf_files.matched > 0
-        - "rhel10cis_journald_storage not in item.path"
+        - "'storage.conf' not in item.path"
       ansible.builtin.replace:
         path: "{{ item.path }}"
         regexp: (?i)^(\s*storage=)

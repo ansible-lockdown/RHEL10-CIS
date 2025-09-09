@@ -3,7 +3,7 @@
 
 # This template will set all of the auditd configurations via a handler in the role in one task instead of individually
 {% if rhel10cis_rule_6_3_3_31 %}
--a always,exit -F arch=b64 -S all -F path=/usr/bin/kmod -F perm=x -F -F auid>={{ prelim_min_int_uid }} -F auid!=unset -k kernel_modules
+-a always,exit -F arch=b64 -S all -F path=/usr/bin/kmod -F perm=x -F auid>={{ prelim_min_int_uid }} -F auid!=unset -k kernel_modules
 {% endif %}
 {% if rhel10cis_rule_6_3_3_32 %}
 {% set syscalls = ["init_module","finit_module"] %}

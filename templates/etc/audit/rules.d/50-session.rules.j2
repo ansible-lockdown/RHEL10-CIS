@@ -3,7 +3,7 @@
 
 # This template will set all of the auditd configurations via a handler in the role in one task instead of individually
 {% if rhel10cis_rule_6_3_3_22 %}
--w /var/run/utmp -p wa -k session
--w /var/log/wtmp -p wa -k session
--w /var/log/btmp -p wa -k session
+-a always,exit -F arch=b64 -S all -F path=/var/run/utmp -F perm=wa -F key=session
+-a always,exit -F arch=b64 -S all -F path=/var/run/wtmp -F perm=wa -F key=session
+-a always,exit -F arch=b64 -S all -F path=/var/run/btmp -F perm=wa -F key=session
 {% endif %}

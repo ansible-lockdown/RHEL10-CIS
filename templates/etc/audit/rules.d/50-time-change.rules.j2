@@ -4,8 +4,9 @@
 {% if rhel10cis_rule_6_3_3_4 %}
 {% set syscalls = ["adjtimex","settimeofday"]  %}
 {% set arch_syscalls = syscalls | select("in", supported_syscalls) | list %}
--a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -k time-change
+-a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -F key=time-change
 {% set syscalls = ["clock_settime"] %}
--a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -F a0=0x0 -k time-change
+{% set arch_syscalls = syscalls | select("in", supported_syscalls) | list %}
+-a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -F a0=0x0 -F key=time-change
 -w /etc/localtime -p wa -k time-change
 {% endif %}
