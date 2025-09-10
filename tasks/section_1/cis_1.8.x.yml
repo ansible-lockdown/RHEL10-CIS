@@ -3,7 +3,7 @@
 - name: "1.8.1 | PATCH | Ensure GDM login banner is configured"
   when:
     - rhel10cis_rule_1_8_1
-    - desktop_required
+    - rhel10_desktop_required
   tags:
     - level1-server
     - level1-workstation
@@ -60,7 +60,7 @@
 - name: "1.8.2 | PATCH | Ensure GDM disable-user-list option is enabled"
   when:
     - rhel10cis_rule_1_8_2
-    - desktop_required
+    - rhel10_desktop_required
   tags:
     - level1-server
     - level1-workstation
@@ -110,7 +110,7 @@
 - name: "1.8.3 | PATCH | Ensure GDM screen lock is configured"
   when:
     - rhel10cis_rule_1_8_3
-    - desktop_required
+    - rhel10_desktop_required
   tags:
     - level1-server
     - level1-workstation
@@ -160,7 +160,7 @@
 - name: "1.8.4 | PATCH | Ensure GDM automount is configured"
   when:
     - rhel10cis_rule_1_8_4
-    - desktop_required
+    - rhel10_desktop_required
   tags:
     - level1-server
     - level2-workstation
@@ -211,7 +211,7 @@
 - name: "1.8.5 | PATCH | Ensure GDM autorun-never is configured"
   when:
     - rhel10cis_rule_1_8_5
-    - desktop_required
+    - rhel10_desktop_required
   tags:
     - level1-server
     - level2-workstation
@@ -261,7 +261,7 @@
 - name: "1.8.6 | PATCH | Ensure Xwayland is configured"
   when:
     - rhel10cis_rule_1_8_6
-    - desktop_required
+    - rhel10_desktop_required
   tags:
     - level2-server
     - level2-workstation

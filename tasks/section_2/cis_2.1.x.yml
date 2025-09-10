@@ -607,7 +607,7 @@
 - name: "2.1.19 | PATCH | Ensure GNOME Display Manager is removed"
   when:
     - rhel10cis_rule_2_1_19
-    - not desktop_required
+    - not rhel10_desktop_required
   tags:
     - level2-server
     - level1-workstation

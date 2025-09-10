@@ -216,7 +216,7 @@
         mode: 'u-x,go-wx'
       notify: Sysctl update required
 
-- name: "1.5.6 | PATCH | Ensure kernel.ktpr_restrict is configured"
+- name: "1.5.6 | PATCH | Ensure kernel.kptr_restrict is configured"
   when: rhel10cis_rule_1_5_6
   tags:
     - level1-server
@@ -227,27 +227,27 @@
     - NIST800-53R5_CM-6
     - CCI-000366
   block:
-    - name: "1.5.6 | AUDIT | Ensure kernel.ktpr_restrict is configured | find existing config"
+    - name: "1.5.6 | AUDIT | Ensure kernel.kptr_restrict is configured | find existing config"
       ansible.builtin.find:
         path: /etc/sysctl.d
-        contains: kernel.ktpr_restrict\s*=\s*(?!{{ rhel10cis_ktpr_restrict_value }})\d*
-      register: discovered_kernel_ktpr_restrict
+        contains: kernel.kptr_restrict\s*=\s*(?!{{ rhel10cis_kptr_restrict_value }})\d*
+      register: discovered_kernel_kptr_restrict
 
-    - name: "1.5.6 | PATCH | Ensure kernel.ktpr_restrict is configured | replace incorrect entries"
+    - name: "1.5.6 | PATCH | Ensure kernel.kptr_restrict is configured | replace incorrect entries"
       ansible.builtin.replace:
         path: /etc/sysctl.conf
-        regexp: kernel.ktpr_restrict\s*=\s*\d*
+        regexp: kernel.kptr_restrict\s*=\s*\d*
         replace: ""
 
-    - name: "1.5.6 | PATCH | Ensure kernel.ktpr_restrict is configured | replace incorrect entries"
+    - name: "1.5.6 | PATCH | Ensure kernel.kptr_restrict is configured | replace incorrect entries"
       when:
-        - discovered_kernel_ktpr_restrict.files is defined
+        - discovered_kernel_kptr_restrict.files is defined
         - item.path != '/etc/sysctl.d/60-kernel_sysctl.conf'
       ansible.builtin.replace:
         path: "{{ item.path }}"
-        regexp: kernel.ktpr_restrict\s*=\s*\d*
+        regexp: kernel.kptr_restrict\s*=\s*\d*
         replace: ""
-      loop: "{{ discovered_kernel_ktpr_restrict.files }}"
+      loop: "{{ discovered_kernel_kptr_restrict.files }}"
 
     - name: "1.5.6 | PATCH | Ensure kernel.dmesg_restrict is configured"
       ansible.builtin.template:
