@@ -104,19 +104,24 @@
             fail_msg: "You have {{ sudo_password_rule }} enabled but the user = {{ ansible_env.SUDO_USER }} is locked - It can break access"
             success_msg: "The local account {{ ansible_env.SUDO_USER }} is not locked or included in the exception list for rule 5.2.4"
 
-- name: "Check authselect profile is selected"
+- name: "Authselect discoveries"
   when: rhel10cis_allow_authselect_updates
   tags: always
   block:
-    - name: "Check authselect profile name has been updated"
+    - name: "Authselect discoveries | Ensure default name updated"
       ansible.builtin.assert:
         that: rhel10cis_authselect_custom_profile_name != 'cis_example_profile'
         fail_msg: "You still have the default name for your authselect profile"
 
-    - name: "Check authselect profile is selected | Check current profile"
-      ansible.builtin.command: authselect list
+    - name: "Authselect discoveries | Check custom profile exist and get settings"
+      ansible.builtin.command: "authselect list-features custom/{{ rhel10cis_authselect_custom_profile_name }}"
       changed_when: false
-      failed_when: prelim_authselect_current_profile.rc not in [ 0, 1 ]
+      failed_when: prelim_authselect_profile_exists.rc not in [ 0, 1, 2 ]
+      register: prelim_authselect_profile_exists
+
+    - name: "Authselect discoveries | Check if custom profile is current"
+      ansible.builtin.command: "authselect current"
+      changed_when: false
       register: prelim_authselect_current_profile
 
 - name: "Ensure root password is set"
