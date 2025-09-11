@@ -4,5 +4,5 @@
 # This template will set all of the auditd configurations via a handler in the role in one task instead of individually
 {% if rhel10cis_rule_6_3_3_23 %}
 -a always,exit -F arch=b64 -S all -F path=/var/log/lastlog -F perm=wa -F key=logins
--a always,exit -F arch=bs4 -S all -F path=/var/run/faillock -F perm=wa -F key=logins
+-a always,exit -F arch=b64 -S all -F path=/var/run/faillock -F perm=wa -F key=logins
 {% endif %}

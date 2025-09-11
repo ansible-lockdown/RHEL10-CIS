@@ -1,4 +1,5 @@
 ---
+
 # All changes selected are managed by the POST audit and handlers to update
 - name: "6.3.3.1 | PATCH | Ensure modification of the /etc/sudoers file is collected"
   when: rhel10cis_rule_6_3_3_1
