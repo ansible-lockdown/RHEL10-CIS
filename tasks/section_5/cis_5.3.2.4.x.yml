@@ -29,7 +29,9 @@
       loop: "{{ discovered_pam_nullok.stdout_lines }}"
 
     - name: "5.3.2.4.1 | PATCH | Ensure password number of changed characters is configured | Remove nullok from pam files AuthSelect"
-      when: rhel10cis_allow_authselect_updates
+      when:
+        - rhel10cis_allow_authselect_updates
+        - "'without-nullok' not in prelim_authselect_current_profile.stdout"
       ansible.builtin.command: authselect enable-feature without-nullok
       changed_when: true
 
