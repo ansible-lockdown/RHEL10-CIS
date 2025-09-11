@@ -264,7 +264,7 @@
     - name: "3.3.1.13 | PATCH | Ensure net.ipv4.conf.default.rp_filter is configured | remove from other files"
       ansible.builtin.replace:
         path: "{{ item }}"
-        regexp: (net.ipv4.conf.default.rp_filter)
+        regexp: ^(net.ipv4.conf.default.rp_filter)
         replace: '#\1'
       loop:
         - '/lib/sysctl.d/50-default.conf'

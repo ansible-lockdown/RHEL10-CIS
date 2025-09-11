@@ -199,7 +199,7 @@
     - NIST800-53R5_MP-2
   ansible.builtin.lineinfile:
     path: /root/.bash_profile
-    regexp: \s*umask
+    regexp: ^\s*umask
     line: "umask {{ rhel10cis_root_umask }}"
     create: true
     mode: 'g-wx,o-rwx'
