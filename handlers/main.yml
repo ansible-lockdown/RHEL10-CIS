@@ -263,12 +263,12 @@
 ## Auditd tasks note order for handlers to run
 
 - name: Auditd immutable check
-  ansible.builtin.command: grep -c "^-e 2" /etc/audit/rules.d/99_finalize.rules
+  ansible.builtin.shell: auditctl -s | grep "enabled 2"
   changed_when: false
   register: discovered_auditd_immutable_check
 
 - name: Audit immutable fact
-  when: discovered_auditd_immutable_check is defined
+  when: discovered_auditd_immutable_check.rc == 0
   ansible.builtin.debug:
     msg: "Reboot required for auditd to apply new rules as immutable set"
   notify: Set reboot required
