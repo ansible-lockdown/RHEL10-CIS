@@ -2,6 +2,14 @@
 
 ## 1.0.0 - Based upon CIS official 1.0.0
 
+## 1.0.1 - tweaks and improvement
+updated to audit config
+- max-concurrent option added
+auditd warning added as task
+
+latest workflows
+
+## 1.0.0 initial - initial 1.0.0 release
 Added CCI references
 relabel added to selinux - new variable added
 
