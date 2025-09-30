@@ -262,12 +262,6 @@
 
 ## Auditd tasks note order for handlers to run
 
-- name: Audit warning
-  ansible.builtin.import_tasks:
-    file: warning_facts.yml
-  vars:
-    warn_control_id: 'Auditd template updated, validate as expected'
-
 - name: Auditd immutable check
   ansible.builtin.shell: auditctl -s | grep "enabled 2"
   failed_when: discovered_auditd_immutable_check.rc not in [ 0, 1 ]
@@ -290,12 +284,6 @@
     name: auditd
     state: started
   listen: Restart auditd
-
-- name: Auditd warning
-  ansible.builtin.import_tasks:
-    file: warning_facts.yml
-  vars:
-    warn_control_id: 'Auditd template updated, validate as expected'
 
 - name: Set reboot required
   ansible.builtin.set_fact:
