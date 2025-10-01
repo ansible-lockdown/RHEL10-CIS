@@ -1,8 +1,8 @@
-# RHEL 9 CIS
+# RHEL 10 CIS
 
-## Configure a RHEL 9 machine to be [CIS](https://www.cisecurity.org/cis-benchmarks/) compliant
+## Configure a RHEL 10 machine to be [CIS](https://www.cisecurity.org/cis-benchmarks/) compliant
 
-### Based on [CIS RedHat Enterprise Linux 9 Benchmark v2.0.0](https://www.cisecurity.org/cis-benchmarks/)
+### Based on [CIS RedHat Enterprise Linux 10 Benchmark v1.0.1](https://www.cisecurity.org/cis-benchmarks/)
 
 ---
 
@@ -166,10 +166,10 @@ default                    : ok=270  changed=23   unreachable=0    failed=0    s
 ## Documentation 📖
 
 - [Read The Docs](https://ansible-lockdown.readthedocs.io/en/latest/)
-- [Getting Started](https://www.lockdownenterprise.com/docs/getting-started-with-lockdown#GH_AL_RH9_cis)
-- [Customizing Roles](https://www.lockdownenterprise.com/docs/customizing-lockdown-enterprise#GH_AL_RH9_cis)
-- [Per-Host Configuration](https://www.lockdownenterprise.com/docs/per-host-lockdown-enterprise-configuration#GH_AL_RH9_cis)
-- [Getting the Most Out of the Role](https://www.lockdownenterprise.com/docs/get-the-most-out-of-lockdown-enterprise#GH_AL_RH9_cis)
+- [Getting Started](https://www.lockdownenterprise.com/docs/getting-started-with-lockdown#GH_AL_RH10_cis)
+- [Customizing Roles](https://www.lockdownenterprise.com/docs/customizing-lockdown-enterprise#GH_AL_RH10_cis)
+- [Per-Host Configuration](https://www.lockdownenterprise.com/docs/per-host-lockdown-enterprise-configuration#GH_AL_RH10_cis)
+- [Getting the Most Out of the Role](https://www.lockdownenterprise.com/docs/get-the-most-out-of-lockdown-enterprise#GH_AL_RH10_cis)
 
 
 ## Role Variables
