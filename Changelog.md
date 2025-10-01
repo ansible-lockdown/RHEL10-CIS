@@ -1,5 +1,14 @@
 # Changes to rhel10CIS
 
+
+## 1.0.1 - Based upon CIS official 1.0.1
+1.1.1.11 - comments in script updated
+1.4.2 - efi boot options no longer required so removed
+1.5.9 & 10 - template updated
+2.1.4 kea services updated
+6.3.3.8 - updated auditd rule for NetworkManager
+6.3.3.33 & 34 - updated rule logic
+
 ## 1.0.0 - Based upon CIS official 1.0.0
 
 ## 1.0.1 - tweaks and improvement
