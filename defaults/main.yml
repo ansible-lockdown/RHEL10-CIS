@@ -49,7 +49,7 @@ rhel10cis_legacy_boot: false
 ## Benchmark name used by auditing control role
 # The audit variable found at the base
 ## metadata for Audit benchmark
-benchmark_version: 'v1.0.0'
+benchmark_version: 'v1.0.1'
 
 benchmark: RHEL10-CIS
 
