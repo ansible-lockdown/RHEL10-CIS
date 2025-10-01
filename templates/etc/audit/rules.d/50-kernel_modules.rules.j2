@@ -11,12 +11,8 @@
 -a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -F auid>={{ prelim_min_int_uid }} -F auid!=unset -k kernel_modules
 {% endif %}
 {% if rhel10cis_rule_6_3_3_33 %}
-{% set syscalls = ["delete_module"] %}
-{% set arch_syscalls = syscalls | select("in", supported_syscalls) | list %}
--a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -F auid>={{ prelim_min_int_uid }} -F auid!=unset -k kernel_modules
+-a always,exit -F arch=b64 -S delete_module -F auid>={{ prelim_min_int_uid }}-F auid!=unset -k kernel_modules
 {% endif %}
 {% if rhel10cis_rule_6_3_3_34 %}
-{% set syscalls = ["create_module","query_module"] %}
-{% set arch_syscalls = syscalls | select("in", supported_syscalls) | list %}
--a always,exit -F arch=b64 -S {{ arch_syscalls|join(',') }} -F auid>={{ prelim_min_int_uid }} -F auid!=unset -k kernel_modules
+-a always,exit -F arch=b64 -S query_module -F auid>={{ prelim_min_int_uid }}-F auid!=unset -k kernel_modules
 {% endif %}

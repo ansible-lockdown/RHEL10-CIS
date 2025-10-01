@@ -4,5 +4,5 @@
 # This template will set all of the auditd configurations via a handler in the role in one task instead of individually
 {% if rhel10cis_rule_6_3_3_8 %}
 -a always,exit -F arch=b64 -S all -F path=/etc/sysconfig/network -F perm=wa -F key=system-locale
--a always,exit -F arch=b64 -S all -F dir=/etc/sysconfig/network-scripts/ -F perm=wa -F key=system-locale
+-a always,exit -F arch=b64 -S all -F dir=/etc/NetworkManager/system-connections/ -F perm=wa -F key=system-locale
 {% endif %}
