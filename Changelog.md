@@ -6,7 +6,7 @@
 1.4.2 - efi boot options no longer required so removed
 1.5.9 & 10 - template updated
 2.1.4 kea services updated
-6.3.3.8 - updated auditd rule for NetworkManager
+6.3.3.8 - updated auditd rule for NetworkManager and title updated
 6.3.3.33 & 34 - updated rule logic
 
 ## 1.0.0 - Based upon CIS official 1.0.0

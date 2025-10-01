@@ -92,7 +92,7 @@
   ansible.builtin.set_fact:
     update_audit_template: true
 
-- name: "6.3.3.8 | PATCH | Ensure events that modify /etc/sysconfig/network and /etc/sysconfig/network-scripts/ are collected"
+- name: "6.3.3.8 | PATCH | Ensure events that modify /etc/sysconfig/network and /etc/NetworkManager/system-connections/ are collected"
   when: rhel10cis_rule_6_3_3_8
   tags:
     - level2-server
@@ -446,7 +446,7 @@
     update_audit_template: true
 
 # All changes selected are managed by the POST audit and handlers to update
-- name: "6.3.3.34 | PATCH | Ensure kernel create_module and query_module loading unloading and modification is collected"
+- name: "6.3.3.34 | PATCH | Ensure kernel query_module loading unloading and modification is collected"
   when: rhel10cis_rule_6_3_3_34
   tags:
     - level2-server
