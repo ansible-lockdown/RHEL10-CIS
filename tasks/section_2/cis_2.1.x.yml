@@ -126,8 +126,9 @@
         state: stopped
         masked: true
       loop:
-        - dhcpd.service
-        - dhcpd6.service
+        - kea-dhcp-ddns.service
+        - kea-dhcp4.service
+        - kea-dhcp6.service
 
 - name: "2.1.5 | PATCH | Ensure dns server services are not in use"
   when: rhel10cis_rule_2_1_5
