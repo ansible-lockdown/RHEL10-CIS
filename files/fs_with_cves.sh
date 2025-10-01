@@ -1,7 +1,7 @@
-#! /usr/bin/env bash
+#!/usr/bin/env bash
 
 # Based on original Script provided by CIS RHEL10CIS
-# CVEs correct at time of creation - August2025
+# CVEs correct at time of creation - October2025-v1.0.1
 
 {
    a_check=() a_output=() a_module=() a_output2=() a_output3=()
