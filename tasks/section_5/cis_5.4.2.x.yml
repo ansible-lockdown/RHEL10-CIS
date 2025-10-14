@@ -61,7 +61,7 @@
     - level1-server
     - level1-workstation
     - patch
-    - rule_5.4.2.2
+    - rule_5.4.2.3
     - user
     - system
     - NIST800-53R5_CM-1
@@ -135,6 +135,22 @@
       ansible.builtin.set_fact:
         root_paths: "{{ discovered_root_paths.stdout }}"
 
+    - name: "5.4.2.5 | AUDIT | Ensure root PATH Integrity | Check for presence of non-dirs"
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop: "{{ discovered_root_paths_split.stdout_lines }}"
+      register: paths_stat
+
+    - name: "5.4.2.5 | AUDIT | Ensure root PATH Integrity | Create dirs for some paths that are not dirs"
+      ansible.builtin.file:
+        path: "{{ item.item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: 'go-w'
+      loop: "{{ paths_stat.results }}"
+      when: not item.stat.exists
+
     - name: "5.4.2.5 | AUDIT | Ensure root PATH Integrity | Check for empty dirs"
       when: discovered_root_paths is defined
       ansible.builtin.shell: 'echo {{ root_paths }} | grep -q "::" && echo "roots path contains a empty directory (::)"'
@@ -195,7 +211,7 @@
 - name: "5.4.2.7 | PATCH | Ensure system accounts do not have a valid login shell"
   when:
     - rhel10cis_rule_5_4_2_7
-    - "item.id not in prelim_interactive_usernames.stdout"
+    - "item.id not in prelim_interactive_users | map(attribute='username')"
     - item.id not in rhel10cis_system_users_shell
     - "'root' not in item.id"
     - rhel10cis_disruption_high
@@ -220,7 +236,7 @@
   when:
     - rhel10cis_rule_5_4_2_8
     - rhel10cis_disruption_high
-    - "item.id not in prelim_interactive_usernames.stdout"
+    - "item.id not in prelim_interactive_users | map(attribute='username')"
     - "'root' not in item.id"
   tags:
     - level1-server

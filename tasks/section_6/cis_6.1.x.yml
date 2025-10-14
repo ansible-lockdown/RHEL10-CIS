@@ -58,6 +58,10 @@
             dest: /var/lib/aide/aide.db.gz
             remote_src: true
             mode: 'u-x,g-wx,o-rwx'
+          register: discovered_aide_db_cp
+          failed_when:
+            - not ansible_check_mode
+            - discovered_aide_db_cp.failed
 
 - name: "6.1.2 | PATCH | Ensure filesystem integrity is regularly checked"
   when:

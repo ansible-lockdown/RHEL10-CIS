@@ -278,12 +278,14 @@
         validate: sshd -t -f %s
       notify: Restart sshd
 
-    - name: "5.1.10 | PATCH | Ensure sshd DisableForwarding is enabled | override"
+    - name: "5.1.10 | PATCH | Ensure sshd DisableForwarding is enabled | override if redhat-50 exists"
+      when: prelim_sshd_50_redhat_file.stat.exists
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config.d/50-redhat.conf
         regexp: (?i)^(#|)\s*X11Forwarding
         line: 'X11Forwarding {{ rhel10cis_sshd_x11forwarding }}'
         validate: sshd -t -f %s
+      register: discovered_redhat_conf_exists
       notify: Restart sshd
 
 - name: "5.1.11 | PATCH | Ensure sshd GSSAPIAuthentication is disabled"
@@ -300,17 +302,18 @@
     - NIST800-53R5_CM-7
     - NIST800-53R5_IA-5
   block:
-    - name: "5.1.11 | PATCH | Ensure sshd GSSAPIAuthentication is disabled | redhat file"
+    - name: "5.1.11 | PATCH | Ensure sshd GSSAPIAuthentication is disabled | ssh config"
       ansible.builtin.lineinfile:
-        path: /etc/ssh/sshd_config.d/50-redhat.conf
+        path: "{{ rhel10cis_sshd_config_file }}"
         regexp: (?i)^(#|)\s*GSSAPIAuthentication
         line: GSSAPIAuthentication no
         validate: sshd -t -f %s
       notify: Restart sshd
 
-    - name: "5.1.11 | PATCH | Ensure sshd GSSAPIAuthentication is disabled | ssh config"
+    - name: "5.1.11 | PATCH | Ensure sshd GSSAPIAuthentication is disabled | override if redhat-50 exists"
+      when: prelim_sshd_50_redhat_file.stat.exists
       ansible.builtin.lineinfile:
-        path: "{{ rhel10cis_sshd_config_file }}"
+        path: /etc/ssh/sshd_config.d/50-redhat.conf
         regexp: (?i)^(#|)\s*GSSAPIAuthentication
         line: GSSAPIAuthentication no
         validate: sshd -t -f %s

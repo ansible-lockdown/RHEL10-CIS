@@ -19,14 +19,13 @@
 
     - name: "1.2.1.1 | AUDIT | Ensure GPG keys are configured | Query found keys"
       when: discovered_os_installed_pub_keys.rc == 0
-      ansible.builtin.shell: 'rpm -q --queryformat "%{PACKAGER} %{VERSION}\\n" {{ os_gpg_key_pubkey_name }} | grep {{ os_gpg_key_pubkey_content }}' # noqa command-instead-of-module
+      ansible.builtin.shell: 'rpm -q --queryformat "%{PACKAGER} %{VERSION}\\n" {{ os_gpg_key_pubkey_name }} | grep "{{ os_gpg_key_pubkey_content }}"' # noqa command-instead-of-module
       changed_when: false
       failed_when: false
       register: discovered_os_gpg_key_check
 
     - name: "1.2.1.1 | AUDIT | Ensure GPG keys are configured | expected keys fail"
-      when:
-        - discovered_os_installed_pub_keys.rc == 1 or discovered_os_gpg_key_check.rc == 1
+      when: discovered_os_installed_pub_keys.rc == 1 or discovered_os_gpg_key_check.rc == 1
       ansible.builtin.fail:
         msg: Installed GPG Keys do not meet expected values or expected keys are not installed
 

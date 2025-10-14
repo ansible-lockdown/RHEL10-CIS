@@ -66,8 +66,7 @@
       loop: "{{ discovered_pam_remember.stdout_lines }}"
 
     - name: "5.3.3.4.2 | PATCH | Ensure pam_unix does not include remember  | Remove remember from pam files AuthSelect"
-      when:
-        - rhel10cis_allow_authselect_updates
+      when: rhel10cis_allow_authselect_updates
       ansible.builtin.replace:
         path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/{{ item }}-auth"
         regexp: ^(\s*password\s+(requisite|required|sufficient)\s+pam_unix\.so)(.*)\sremember\s*=\s*=\d*(.*$)

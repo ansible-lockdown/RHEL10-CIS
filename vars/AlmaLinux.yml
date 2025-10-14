@@ -1,7 +1,7 @@
 ---
 # OS Specific Settings
 
-os_gpg_key_pubkey_name: gpg-pubkey-b86b3716-61e69f29
-os_gpg_key_pubkey_content: "AlmaLinux OS 9 <packager@almalinux.org> b86b3716"
+os_gpg_key_pubkey_name: gpg-pubkey-c2a1e572-668fe8ef
+os_gpg_key_pubkey_content: "AlmaLinux OS 10 <packager@almalinux.org> c2a1e572"
 # disable repo_gpgcheck due to OS default repos
 rhel10cis_rule_enable_repogpg: false

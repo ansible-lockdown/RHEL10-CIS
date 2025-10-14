@@ -150,7 +150,7 @@
   ansible.posix.mount:
     path: "{{ mount_point }}"
     state: remounted
-  notify: Change_requires_reboot
+  notify: Set reboot required
   listen: "Remount /boot/efi"
 
 - name: Reload sysctl
@@ -178,7 +178,7 @@
 
 - name: Update Crypto Policy
   ansible.builtin.set_fact:
-    rhel10cis_full_crypto_policy: "{{ rhel10cis_crypto_policy }}{% if rhel10cis_crypto_policy_module | length > 0 %}{{ rhel10cis_crypto_policy_module }}{% endif %}"
+    rhel10cis_full_crypto_policy: "{{ rhel10cis_crypto_policy }}{{ rhel10cis_crypto_policy_module }}{% if rhel10cis_additional_crypto_policy_module | length > 0 %}:{{ rhel10cis_additional_crypto_policy_module }}{% endif %}"
   notify: Set Crypto Policy
 
 - name: Set Crypto Policy

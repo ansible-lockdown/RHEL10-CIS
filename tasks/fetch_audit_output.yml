@@ -1,6 +1,6 @@
 ---
 
-# Stage to copy audit output to a centralized location
+# Stage to copy audit output to a centralised location
 
 - name: "POST | FETCH | Fetch files and copy to controller"
   when: audit_output_collection_method == "fetch"
@@ -8,6 +8,7 @@
     src: "{{ item }}"
     dest: "{{ audit_output_destination }}"
     flat: true
+  changed_when: true
   failed_when: false
   register: discovered_audit_fetch_state
   loop:
