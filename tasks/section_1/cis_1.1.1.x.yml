@@ -275,7 +275,7 @@
         mode: 'u+x,go-wx'
 
     - name: "1.1.1.9 | AUDIT | Ensure unused filesystems kernel modules are not available | Run discovery script"
-      ansible.builtin.command: /var/fs_with_cves.sh
+      ansible.builtin.command: /bin/sh /var/fs_with_cves.sh
       changed_when: false
       failed_when: discovered_fs_modules_loaded.rc not in [ 0, 99 ]
       register: discovered_fs_modules_loaded
