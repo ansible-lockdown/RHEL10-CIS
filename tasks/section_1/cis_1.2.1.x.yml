@@ -115,3 +115,18 @@
     - name: "1.2.1.4 | AUDIT | Ensure package manager repositories are configured | Warn Count"
       ansible.builtin.import_tasks:
         file: warning_facts.yml
+
+- name: "1.2.1.5 | PATCH | Ensure weak dependencies are configured"
+  when: rhel10cis_rule_1_2_1_5
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_1.2.1.5
+    - NIST800-53R5_SI-2
+  block:
+    - name: "1.2.1.5 | PATCH | Ensure weak dependencies are configured | Update dnf.conf"
+      ansible.builtin.lineinfile:
+        path: /etc/dnf/dnf.conf
+        regexp: "^install_weak_deps"
+        line: install_weak_deps=0

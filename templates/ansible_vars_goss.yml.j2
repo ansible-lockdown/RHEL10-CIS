@@ -57,6 +57,8 @@ rhel10cis_rule_1_1_1_6: {{ rhel10cis_rule_1_1_1_6 }}
 rhel10cis_rule_1_1_1_7: {{ rhel10cis_rule_1_1_1_7 }}
 rhel10cis_rule_1_1_1_8: {{ rhel10cis_rule_1_1_1_8 }}
 rhel10cis_rule_1_1_1_9: {{ rhel10cis_rule_1_1_1_9 }}
+rhel10cis_rule_1_1_1_10: {{ rhel10cis_rule_1_1_1_10 }}
+rhel10cis_rule_1_1_1_11: {{ rhel10cis_rule_1_1_1_11 }}
 # Filesystems
 # /tmp
 rhel10cis_rule_1_1_2_1_1: {{ rhel10cis_rule_1_1_2_1_1 }}
@@ -98,6 +100,7 @@ rhel10cis_rule_1_2_1_1: {{ rhel10cis_rule_1_2_1_1 }}
 rhel10cis_rule_1_2_1_2: {{ rhel10cis_rule_1_2_1_2 }}
 rhel10cis_rule_1_2_1_3: {{ rhel10cis_rule_1_2_1_3 }}
 rhel10cis_rule_1_2_1_4: {{ rhel10cis_rule_1_2_1_4 }}
+rhel10cis_rule_1_2_1_5: {{ rhel10cis_rule_1_2_1_5 }}
 # Package updates
 rhel10cis_rule_1_2_2_1: {{ rhel10cis_rule_1_2_2_1 }}
 
@@ -126,9 +129,6 @@ rhel10cis_rule_1_6_1: {{ rhel10cis_rule_1_6_1 }}
 rhel10cis_rule_1_6_2: {{ rhel10cis_rule_1_6_2 }}
 rhel10cis_rule_1_6_3: {{ rhel10cis_rule_1_6_3 }}
 rhel10cis_rule_1_6_4: {{ rhel10cis_rule_1_6_4 }}
-rhel10cis_rule_1_6_5: {{ rhel10cis_rule_1_6_5 }}
-rhel10cis_rule_1_6_6: {{ rhel10cis_rule_1_6_6 }}
-rhel10cis_rule_1_6_7: {{ rhel10cis_rule_1_6_7 }}
 
 # Command line warning banners
 rhel10cis_rule_1_7_1: {{ rhel10cis_rule_1_7_1 }}
@@ -180,7 +180,6 @@ rhel10cis_rule_2_2_1: {{ rhel10cis_rule_2_2_1 }}
 rhel10cis_rule_2_2_2: {{ rhel10cis_rule_2_2_2 }}
 rhel10cis_rule_2_2_3: {{ rhel10cis_rule_2_2_3 }}
 rhel10cis_rule_2_2_4: {{ rhel10cis_rule_2_2_4 }}
-rhel10cis_rule_2_2_5: {{ rhel10cis_rule_2_2_5 }}
 
 ## Configure Time Synchronization
 rhel10cis_rule_2_3_1: {{ rhel10cis_rule_2_3_1 }}
@@ -197,6 +196,7 @@ rhel10cis_rule_2_4_1_5: {{ rhel10cis_rule_2_4_1_5 }}
 rhel10cis_rule_2_4_1_6: {{ rhel10cis_rule_2_4_1_6 }}
 rhel10cis_rule_2_4_1_7: {{ rhel10cis_rule_2_4_1_7 }}
 rhel10cis_rule_2_4_1_8: {{ rhel10cis_rule_2_4_1_8 }}
+rhel10cis_rule_2_4_1_9: {{ rhel10cis_rule_2_4_1_9 }}
 ### at
 rhel10cis_rule_2_4_2_1: {{ rhel10cis_rule_2_4_2_1 }}
 
@@ -210,18 +210,36 @@ rhel10cis_rule_3_2_1: {{ rhel10cis_rule_3_2_1 }}
 rhel10cis_rule_3_2_2: {{ rhel10cis_rule_3_2_2 }}
 rhel10cis_rule_3_2_3: {{ rhel10cis_rule_3_2_3 }}
 rhel10cis_rule_3_2_4: {{ rhel10cis_rule_3_2_4 }}
-# Network Kernel Parameters
-rhel10cis_rule_3_3_1: {{ rhel10cis_rule_3_3_1 }}
-rhel10cis_rule_3_3_2: {{ rhel10cis_rule_3_3_2 }}
-rhel10cis_rule_3_3_3: {{ rhel10cis_rule_3_3_3 }}
-rhel10cis_rule_3_3_4: {{ rhel10cis_rule_3_3_4 }}
-rhel10cis_rule_3_3_5: {{ rhel10cis_rule_3_3_5 }}
-rhel10cis_rule_3_3_6: {{ rhel10cis_rule_3_3_6 }}
-rhel10cis_rule_3_3_7: {{ rhel10cis_rule_3_3_7 }}
-rhel10cis_rule_3_3_8: {{ rhel10cis_rule_3_3_8 }}
-rhel10cis_rule_3_3_9: {{ rhel10cis_rule_3_3_9 }}
-rhel10cis_rule_3_3_10: {{ rhel10cis_rule_3_3_10 }}
-rhel10cis_rule_3_3_11: {{ rhel10cis_rule_3_3_11 }}
+rhel10cis_rule_3_2_5: {{ rhel10cis_rule_3_2_5 }}
+rhel10cis_rule_3_2_6: {{ rhel10cis_rule_3_2_6 }}
+## Network Kernel Parameters IPv4
+rhel10cis_rule_3_3_1_1: {{ rhel10cis_rule_3_3_1_1 }}
+rhel10cis_rule_3_3_1_2: {{ rhel10cis_rule_3_3_1_2 }}
+rhel10cis_rule_3_3_1_3: {{ rhel10cis_rule_3_3_1_3 }}
+rhel10cis_rule_3_3_1_4: {{ rhel10cis_rule_3_3_1_4 }}
+rhel10cis_rule_3_3_1_5: {{ rhel10cis_rule_3_3_1_5 }}
+rhel10cis_rule_3_3_1_6: {{ rhel10cis_rule_3_3_1_6 }}
+rhel10cis_rule_3_3_1_7: {{ rhel10cis_rule_3_3_1_7 }}
+rhel10cis_rule_3_3_1_8: {{ rhel10cis_rule_3_3_1_8 }}
+rhel10cis_rule_3_3_1_9: {{ rhel10cis_rule_3_3_1_9 }}
+rhel10cis_rule_3_3_1_10: {{ rhel10cis_rule_3_3_1_10 }}
+rhel10cis_rule_3_3_1_11: {{ rhel10cis_rule_3_3_1_11 }}
+rhel10cis_rule_3_3_1_12: {{ rhel10cis_rule_3_3_1_12 }}
+rhel10cis_rule_3_3_1_13: {{ rhel10cis_rule_3_3_1_13 }}
+rhel10cis_rule_3_3_1_14: {{ rhel10cis_rule_3_3_1_14 }}
+rhel10cis_rule_3_3_1_15: {{ rhel10cis_rule_3_3_1_15 }}
+rhel10cis_rule_3_3_1_16: {{ rhel10cis_rule_3_3_1_16 }}
+rhel10cis_rule_3_3_1_17: {{ rhel10cis_rule_3_3_1_17 }}
+rhel10cis_rule_3_3_1_18: {{ rhel10cis_rule_3_3_1_18 }}
+## Network Kernel Parameters IPv6
+rhel10cis_rule_3_3_2_1: {{ rhel10cis_rule_3_3_2_1 }}
+rhel10cis_rule_3_3_2_2: {{ rhel10cis_rule_3_3_2_2 }}
+rhel10cis_rule_3_3_2_3: {{ rhel10cis_rule_3_3_2_3 }}
+rhel10cis_rule_3_3_2_4: {{ rhel10cis_rule_3_3_2_4 }}
+rhel10cis_rule_3_3_2_5: {{ rhel10cis_rule_3_3_2_5 }}
+rhel10cis_rule_3_3_2_6: {{ rhel10cis_rule_3_3_2_6 }}
+rhel10cis_rule_3_3_2_7: {{ rhel10cis_rule_3_3_2_7 }}
+rhel10cis_rule_3_3_2_8: {{ rhel10cis_rule_3_3_2_8 }}
 
 # Section 4 Firewalls
 ## Firewall utility
@@ -463,28 +481,28 @@ rhel10cis_autofs_services: {{ rhel10cis_autofs_services }}
 rhel10cis_autofs_mask: {{ rhel10cis_autofs_mask }}
 rhel10cis_avahi_server: {{ rhel10cis_avahi_server }}
 rhel10cis_avahi_mask: {{ rhel10cis_avahi_mask }}
+rhel10cis_cockpit_webservice: {{ rhel10cis_cockpit_webservice }}
+rhel10cis_cockpit_mask: {{ rhel10cis_cockpit_mask }}
 rhel10cis_dhcp_server: {{ rhel10cis_dhcp_server }}
 rhel10cis_dhcp_mask: {{ rhel10cis_dhcp_mask }}
 rhel10cis_dns_server: {{ rhel10cis_dns_server }}
 rhel10cis_dns_mask: {{ rhel10cis_dns_mask }}
 rhel10cis_dnsmasq_server: {{ rhel10cis_dnsmasq_server }}
 rhel10cis_dnsmasq_mask: {{ rhel10cis_dnsmasq_mask }}
-rhel10cis_samba_server: {{ rhel10cis_samba_server }}
-rhel10cis_samba_mask: {{ rhel10cis_samba_mask }}
 rhel10cis_ftp_server: {{ rhel10cis_ftp_server }}
 rhel10cis_ftp_mask: {{ rhel10cis_ftp_mask }}
 rhel10cis_message_server: {{ rhel10cis_message_server }}  # This is for messaging dovecot and cyrus-imap
 rhel10cis_message_mask: {{ rhel10cis_message_mask }}
 rhel10cis_nfs_server: {{ rhel10cis_nfs_server }}
 rhel10cis_nfs_mask: {{ rhel10cis_nfs_mask }}
-rhel10cis_nis_server: {{ rhel10cis_nis_server }}  # set to mask if nis client required
-rhel10cis_nis_mask: {{ rhel10cis_nis_mask }}
 rhel10cis_print_server: {{ rhel10cis_print_server }}  # replaces cups
 rhel10cis_print_mask: {{ rhel10cis_print_mask }}
 rhel10cis_rpc_server: {{ rhel10cis_rpc_server }}
 rhel10cis_rpc_mask: {{ rhel10cis_rpc_mask }}
 rhel10cis_rsync_server: {{ rhel10cis_rsync_server }}
 rhel10cis_rsync_mask: {{ rhel10cis_rsync_mask }}
+rhel10cis_samba_server: {{ rhel10cis_samba_server }}
+rhel10cis_samba_mask: {{ rhel10cis_samba_mask }}
 rhel10cis_snmp_server: {{ rhel10cis_snmp_server }}
 rhel10cis_snmp_mask: {{ rhel10cis_snmp_mask }}
 rhel10cis_telnet_server: {{ rhel10cis_telnet_server }}
@@ -497,8 +515,7 @@ rhel10cis_httpd_server: {{ rhel10cis_httpd_server }}
 rhel10cis_httpd_mask: {{ rhel10cis_httpd_mask }}
 rhel10cis_nginx_server: {{ rhel10cis_nginx_server }}
 rhel10cis_nginx_mask: {{ rhel10cis_nginx_mask }}
-rhel10cis_xinetd_server: {{ rhel10cis_xinetd_server }}
-rhel10cis_xinetd_mask: {{ rhel10cis_xinetd_mask }}
+rhel10cis_gnome_display_manager: {{ rhel10cis_gnome_display_manager }} # will remove mask not an option
 rhel10cis_xwindow_server: {{ rhel10cis_xwindow_server }}  # will remove mask not an option
 rhel10cis_is_mail_server: {{ rhel10cis_is_mail_server }}
 

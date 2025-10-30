@@ -165,6 +165,8 @@ rhel10cis_rule_1_1_1_6: true
 rhel10cis_rule_1_1_1_7: true
 rhel10cis_rule_1_1_1_8: true
 rhel10cis_rule_1_1_1_9: true
+rhel10cis_rule_1_1_1_10: true
+rhel10cis_rule_1_1_1_11: true
 # Filesystems
 # /tmp
 rhel10cis_rule_1_1_2_1_1: true
@@ -205,6 +207,7 @@ rhel10cis_rule_1_2_1_1: true
 rhel10cis_rule_1_2_1_2: true
 rhel10cis_rule_1_2_1_3: true
 rhel10cis_rule_1_2_1_4: true
+rhel10cis_rule_1_2_1_5: true
 # Package updates
 rhel10cis_rule_1_2_2_1: true
 # Selinux
@@ -229,9 +232,6 @@ rhel10cis_rule_1_6_1: true
 rhel10cis_rule_1_6_2: true
 rhel10cis_rule_1_6_3: true
 rhel10cis_rule_1_6_4: true
-rhel10cis_rule_1_6_5: true
-rhel10cis_rule_1_6_6: true
-rhel10cis_rule_1_6_7: true
 # Command line warning banners
 rhel10cis_rule_1_7_1: true
 rhel10cis_rule_1_7_2: true
@@ -281,7 +281,6 @@ rhel10cis_rule_2_2_1: true
 rhel10cis_rule_2_2_2: true
 rhel10cis_rule_2_2_3: true
 rhel10cis_rule_2_2_4: true
-rhel10cis_rule_2_2_5: true
 # Configure Time Synchronization
 rhel10cis_rule_2_3_1: true
 rhel10cis_rule_2_3_2: true
@@ -296,6 +295,7 @@ rhel10cis_rule_2_4_1_5: true
 rhel10cis_rule_2_4_1_6: true
 rhel10cis_rule_2_4_1_7: true
 rhel10cis_rule_2_4_1_8: true
+rhel10cis_rule_2_4_1_9: true
 # at
 rhel10cis_rule_2_4_2_1: true
 
@@ -310,18 +310,36 @@ rhel10cis_rule_3_2_1: true
 rhel10cis_rule_3_2_2: true
 rhel10cis_rule_3_2_3: true
 rhel10cis_rule_3_2_4: true
-# Network Kernel Parameters
-rhel10cis_rule_3_3_1: true
-rhel10cis_rule_3_3_2: true
-rhel10cis_rule_3_3_3: true
-rhel10cis_rule_3_3_4: true
-rhel10cis_rule_3_3_5: true
-rhel10cis_rule_3_3_6: true
-rhel10cis_rule_3_3_7: true
-rhel10cis_rule_3_3_8: true
-rhel10cis_rule_3_3_9: true
-rhel10cis_rule_3_3_10: true
-rhel10cis_rule_3_3_11: true
+rhel10cis_rule_3_2_5: true
+rhel10cis_rule_3_2_6: true
+# Network Kernel Parameters IPv4
+rhel10cis_rule_3_3_1_1: true
+rhel10cis_rule_3_3_1_2: true
+rhel10cis_rule_3_3_1_3: true
+rhel10cis_rule_3_3_1_4: true
+rhel10cis_rule_3_3_1_5: true
+rhel10cis_rule_3_3_1_6: true
+rhel10cis_rule_3_3_1_7: true
+rhel10cis_rule_3_3_1_8: true
+rhel10cis_rule_3_3_1_9: true
+rhel10cis_rule_3_3_1_10: true
+rhel10cis_rule_3_3_1_11: true
+rhel10cis_rule_3_3_1_12: true
+rhel10cis_rule_3_3_1_13: true
+rhel10cis_rule_3_3_1_14: true
+rhel10cis_rule_3_3_1_15: true
+rhel10cis_rule_3_3_1_16: true
+rhel10cis_rule_3_3_1_17: true
+rhel10cis_rule_3_3_1_18: true
+# Network Kernel Parameters ipv6
+rhel10cis_rule_3_3_2_1: true
+rhel10cis_rule_3_3_2_2: true
+rhel10cis_rule_3_3_2_3: true
+rhel10cis_rule_3_3_2_4: true
+rhel10cis_rule_3_3_2_5: true
+rhel10cis_rule_3_3_2_6: true
+rhel10cis_rule_3_3_2_7: true
+rhel10cis_rule_3_3_2_8: true
 
 ## Section 4 Fixes
 # Section 4 rules are Logging and Auditing (Configure System Accounting (auditd),
@@ -695,6 +713,10 @@ rhel10cis_autofs_mask: false
 rhel10cis_avahi_server: false
 # Set this variable to `true` to mask service `avahi`.
 rhel10cis_avahi_mask: false
+# Set this variable to `true` to keep service `cockpit-ws`; otherwise, the service is uninstalled.
+rhel10cis_cockpit_webservice: false
+# Set this variable to `true` to mask service `cockpit`.
+rhel10cis_cockpit_mask: false
 # Set this variable to `true` to keep service `dhcp`; otherwise, the service is uninstalled.
 rhel10cis_dhcp_server: false
 # Set this variable to `true` to mask service `dhcp`.
@@ -707,10 +729,6 @@ rhel10cis_dns_mask: false
 rhel10cis_dnsmasq_server: false
 # Set this variable to `true` to mask service `dnsmasq`.
 rhel10cis_dnsmasq_mask: false
-# Set this variable to `true` to keep service `samba`; otherwise, the service is uninstalled.
-rhel10cis_samba_server: false
-# Set this variable to `true` to mask service `samba`.
-rhel10cis_samba_mask: false
 # Set this variable to `true` to keep service `ftp`; otherwise, the service is uninstalled.
 rhel10cis_ftp_server: false
 # Set this variable to `true` to mask service `ftp`.
@@ -723,10 +741,6 @@ rhel10cis_message_mask: false
 rhel10cis_nfs_server: true
 # Set this variable to `true` to mask service `nfs`.
 rhel10cis_nfs_mask: true
-# Set this variable to `true` to keep service `nis`; otherwise, the service is uninstalled.
-rhel10cis_nis_server: true  # set to mask if nis client required
-# Set this variable to `true` to mask service `nis`.
-rhel10cis_nis_mask: false
 # Set this variable to `true` to keep service `print`; otherwise, the service is uninstalled.
 rhel10cis_print_server: false  # replaces cups
 # Set this variable to `true` to mask service `print`.
@@ -739,6 +753,10 @@ rhel10cis_rpc_mask: true
 rhel10cis_rsync_server: false
 # Set this variable to `true` to mask service `rsync`.
 rhel10cis_rsync_mask: false
+# Set this variable to `true` to keep service `samba`; otherwise, the service is uninstalled.
+rhel10cis_samba_server: false
+# Set this variable to `true` to mask service `samba`.
+rhel10cis_samba_mask: false
 # Set this variable to `true` to keep service `snmp`; otherwise, the service is uninstalled.
 rhel10cis_snmp_server: false
 # Set this variable to `true` to mask service `snmp`.
@@ -763,10 +781,8 @@ rhel10cis_httpd_mask: false
 rhel10cis_nginx_server: false
 # Set this variable to `true` to mask service `nginx`.
 rhel10cis_nginx_mask: false
-# Set this variable to `true` to keep service `xinetd`; otherwise, the service is uninstalled.
-rhel10cis_xinetd_server: false
-# Set this variable to `true` to mask service `xinetd`.
-rhel10cis_xinetd_mask: false
+# Set this variable to `true` to keep service `gnome`; otherwise, the service is uninstalled.
+rhel10cis_gnome_display_manager: false # will remove mask not an option
 # Set this variable to `true` to keep service `xwindow`; otherwise, the service is uninstalled.
 rhel10cis_xwindow_server: false  # will remove mask not an option
 
@@ -875,7 +891,7 @@ rhel10cis_sshd_config_file: /etc/ssh/sshd_config
 # access for users whose user name matches one of the patterns. This is done
 # by setting the value of `AllowUsers` option in `/etc/ssh/sshd_config` file.
 # If an USER@HOST format will be used, the specified user will be allowed only on that particular host.
-rhel10cis_sshd_allowusers: "{% if ansible_facts.user_id != 'root' %}{{ ansible_facts.user_id }}{% elif ansible_env.SUDO_USER is defined %}{{ ansible_env.SUDO_USER }}{% endif %}"
+rhel10cis_sshd_allowusers: "{{ (ansible_user_id != 'root') | ternary(ansible_facts.user_id, ansible_env.SUDO_USER | default('')) }}"
 ## Control 5.1.7 - Ensure sshd access is configured
 # (String) This variable, if specified, configures a list of GROUP name patterns, separated by spaces, to allow SSH access
 # for users whose primary group or supplementary group list matches one of the patterns. This is done

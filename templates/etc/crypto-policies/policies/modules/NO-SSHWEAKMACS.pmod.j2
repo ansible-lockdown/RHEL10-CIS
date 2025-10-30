@@ -1,4 +1,4 @@
 # This is a subpolicy to disable weak macs
-# Carried out as part of CIS Benchmark control 5.1.6
+# Carried out as part of CIS Benchmark rule 5.1.15
 
-mac@SSH = -HMAC-MD5* -UMAC-64* -UMAC-128*
+mac@SSH = -HMAC-MD5* -UMAC-64* -UMAC-128* -HMAC-SHA1*

@@ -95,7 +95,7 @@
         validate: "/usr/sbin/visudo -cf %s"
       loop: "{{ discovered_priv_reauth.stdout_lines }}"
 
-- name: "5.2.6 | PATCH | Ensure sudo authentication timeout is configured correctly"
+- name: "5.2.6 | PATCH | Ensure sudo timestamp_timeout is configured"
   when: rhel10cis_rule_5_2_6
   tags:
     - level1-server
@@ -104,13 +104,13 @@
     - sudo
     - rule_5.2.6
   block:
-    - name: "5.2.6 | AUDIT | Ensure sudo authentication timeout is configured correctly | Get files with timeout set"
+    - name: "5.2.6 | AUDIT | Ensure sudo timestamp_timeout is configured | Get files with timeout set"
       ansible.builtin.shell: grep -is 'timestamp_timeout' /etc/sudoers /etc/sudoers.d/* | cut -d":" -f1 | uniq | sort
       changed_when: false
       failed_when: false
       register: discovered_sudo_timeout_files
 
-    - name: "5.2.6 | PATCH | Ensure sudo authentication timeout is configured correctly | Set value if no results"
+    - name: "5.2.6 | PATCH | Ensure sudo timestamp_timeout is configured | Set value if no results"
       when: discovered_sudo_timeout_files.stdout | length == 0
       ansible.builtin.lineinfile:
         path: /etc/sudoers
@@ -118,7 +118,7 @@
         line: "Defaults timestamp_timeout={{ rhel10cis_sudo_timestamp_timeout }}"
         validate: "/usr/sbin/visudo -cf %s"
 
-    - name: "5.2.6 | PATCH | Ensure sudo authentication timeout is configured correctly | Set value if has results"
+    - name: "5.2.6 | PATCH | Ensure sudo timestamp_timeout is configured | Set value if has results"
       when: discovered_sudo_timeout_files.stdout | length > 0
       ansible.builtin.replace:
         path: "{{ item }}"
