@@ -158,8 +158,9 @@
       when:
         - discover_wireless_adapters.rc == 0
         - "'NetworkManager' not in ansible_facts.packages"
+        - rhel10cis_install_network_manager
       ansible.builtin.package:
-        name: NetworkManager
+        name: "{{ rhel10cis_network_manager_package_name }}"
         state: present
 
 - name: "PRELIM | PATCH | Install Cronie"
