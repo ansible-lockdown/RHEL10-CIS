@@ -46,7 +46,7 @@
         dest: /etc/dconf/db/local.d/locks/60-banner-message
         owner: root
         group: root
-        mode: "go-wx"
+        mode: 'go-wx'
 
     - name: "1.8.2 | PATCH | Ensure GDM login banner is configured | gdm profile"
       ansible.builtin.template:
@@ -96,7 +96,7 @@
         dest: /etc/dconf/db/local.d/locks/60-login-screen
         owner: root
         group: root
-        mode: "go-wx"
+        mode: 'go-wx'
 
     - name: "1.8.2 | PATCH | Ensure GDM login banner is configured | gdm profile"
       ansible.builtin.template:
@@ -146,7 +146,7 @@
         dest: /etc/dconf/db/local.d/locks/60-screensaver
         owner: root
         group: root
-        mode: "go-wx"
+        mode: 'go-wx'
 
     - name: "1.8.3 | PATCH | Ensure GDM screen locks when the user is idle | gdm profile"
       ansible.builtin.template:
@@ -197,7 +197,7 @@
         dest: /etc/dconf/db/local.d/locks/60-automount
         owner: root
         group: root
-        mode: "go-wx"
+        mode: 'go-wx'
 
     - name: "1.8.4 | PATCH | Ensure GDM automount is configured | gdm profile"
       ansible.builtin.template:
@@ -247,7 +247,7 @@
         dest: /etc/dconf/db/local.d/locks/60-media-autorun
         owner: root
         group: root
-        mode: "go-wx"
+        mode: 'go-wx'
 
     - name: "1.8.5 | PATCH | Ensure GDM autorun-never is configured | gdm profile"
       ansible.builtin.template:

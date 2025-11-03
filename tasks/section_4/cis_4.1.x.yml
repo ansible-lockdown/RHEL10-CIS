@@ -65,7 +65,7 @@
     - name: "4.1.4 | AUDIT | Ensure firewalld active zone target is configured | get active zone settings"
       ansible.builtin.shell: firewall-cmd --list-all-zones | grep -A1 active
       changed_when: false
-      register: discover_active_firewall_zone_settings
+      register: discovered_active_firewall_zone_settings
 
     - name: "4.1.4 | PATCH | Ensure firewalld active zone target is configured | Ensure zone settings are permanent"
       when: rhel10cis_disruption_high
@@ -78,7 +78,7 @@
     - name: "4.1.4 | PATCH | Ensure firewalld active zone target is configured | set zone if required"
       when:
         - rhel10cis_disruption_high
-        - "'accept' in discover_active_firewall_zone_settings.stdout"
+        - "'accept' in discovered_active_firewall_zone_settings.stdout"
       ansible.posix.firewalld:
         zone: "{{ rhel10cis_active_firewall_zone }}"
         permanent: true
@@ -89,14 +89,14 @@
     - name: "4.1.4 | AUDIT | Ensure firewalld active zone target is configured | Absent"
       when:
         - not rhel10cis_disruption_high
-        - "'accept' in discover_active_firewall_zone_settings.stdout"
+        - "'accept' in discovered_active_firewall_zone_settings.stdout"
       ansible.builtin.debug:
         msg: "Warning!! The active firewall zone need investigation to match requirements"
 
     - name: "4.1.4 | AUDIT | Ensure firewalld active zone target is configured | Present"
       when:
         - not rhel10cis_disruption_high
-        - "'accept' in discover_active_firewall_zone_settings.stdout"
+        - "'accept' in discovered_active_firewall_zone_settings.stdout"
       ansible.builtin.import_tasks:
         file: warning_facts.yml
 
