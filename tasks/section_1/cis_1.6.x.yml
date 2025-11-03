@@ -48,7 +48,7 @@
 - name: "1.6.3 | PATCH | Ensure system wide crypto policy macs are configured"
   when:
     - rhel10cis_rule_1_6_3
-    - "'NO-WEAKMAC' not in rhel10cis_crypto_policy_module"
+    - "'NO-SSHWEAKMAC' not in rhel10cis_crypto_policy_module"
   tags:
     - level1-server
     - level1-workstation
@@ -60,8 +60,8 @@
   block:
     - name: "1.6.3 | PATCH | Ensure system wide crypto policy macs are configured | Add submodule exclusion"
       ansible.builtin.template:
-        src: etc/crypto-policies/policies/modules/NO-WEAKMAC.pmod.j2
-        dest: /etc/crypto-policies/policies/modules/NO-WEAKMAC.pmod
+        src: etc/crypto-policies/policies/modules/NO-SSHWEAKMAC.pmod.j2
+        dest: /etc/crypto-policies/policies/modules/NO-SSHWEAKMAC.pmod
         owner: root
         group: root
         mode: 'u-x,g-wx,o-rwx'
@@ -69,7 +69,7 @@
 
     - name: "1.6.3 | PATCH | Ensure system wide crypto policy macs are configured | submodule to crypto policy modules"
       ansible.builtin.set_fact:
-        rhel10cis_crypto_policy_module: "{{ rhel10cis_crypto_policy_module + ':' + 'NO-WEAKMAC' }}"
+        rhel10cis_crypto_policy_module: "{{ rhel10cis_crypto_policy_module + ':' + 'NO-SSHWEAKMAC' }}"
       changed_when: discovered_no_weakmac_template is changed # noqa: no-handler
       notify:
         - Update Crypto Policy
