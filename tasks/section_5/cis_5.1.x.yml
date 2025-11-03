@@ -33,7 +33,6 @@
         owner: root
         group: root
         mode: 'go-rwx'
-      loop: "{{ discovered_sshd_conf.files }}"
 
 - name: "5.1.2 | PATCH | Ensure permissions on SSH private host key files are configured"
   when: rhel10cis_rule_5_1_2
@@ -405,7 +404,7 @@
     - NIST800-53R5_MA-4
     - NIST800-53R5_SC-8
   block:
-    - name: "5.1.15 | PATCH | Ensure sshd KexAlgorithms is configured | Add submodule exclusion"
+    - name: "5.1.15 | PATCH | Ensure sshd MACs are configured | Add submodule exclusion"
       ansible.builtin.template:
         src: etc/crypto-policies/policies/modules/NO-SSHWEAKMACS.pmod.j2
         dest: /etc/crypto-policies/policies/modules/NO-SSHWEAKMACS.pmod
@@ -416,7 +415,7 @@
         - Update Crypto Policy
         - Set Crypto Policy
 
-    - name: "5.1.15 | PATCH | Ensure sshd KexAlgorithms is configured | submodule to crypto policy modules"
+    - name: "5.1.15 | PATCH | Ensure sshd MACs are configured | submodule to crypto policy modules"
       ansible.builtin.set_fact:
         rhel10cis_crypto_policy_module: "{{ rhel10cis_crypto_policy_module + ':' + 'NO-SSHWEAKMACS' }}"
 
