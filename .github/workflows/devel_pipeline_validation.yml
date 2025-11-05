@@ -148,7 +148,7 @@
             ANSIBLE_HOST_KEY_CHECKING: "false"
             ANSIBLE_DEPRECATION_WARNINGS: "false"
           run: |
-            /opt/ansible_${{ env.ANSIBLE_VERSION }}_venv/bin/ansible-playbook -i hosts.yml --private-key ~/.ssh/le_runner ../../../site.yml
+            /opt/ansible_${{ env.ANSIBLE_VERSION }}_venv/bin/ansible-playbook -i hosts.yml --private-key ~/.ssh/le_runner ../../../site.yml -vvv
 
       # Remove test system - User secrets to keep if necessary
 
