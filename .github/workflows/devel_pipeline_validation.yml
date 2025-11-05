@@ -150,6 +150,12 @@
           run: |
             /opt/ansible_${{ env.ANSIBLE_VERSION }}_venv/bin/ansible-playbook -i hosts.yml --private-key ~/.ssh/le_runner ../../../site.yml -vvv
 
+        - name: Display JSON
+          run: |
+            ls -ltr /opt
+            cat /opt/*.json
+
+
       # Remove test system - User secrets to keep if necessary
 
         - name: Tofu Destroy
