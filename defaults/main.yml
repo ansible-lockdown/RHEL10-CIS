@@ -1267,6 +1267,14 @@ rhel10cis_journald_runtimekeepfree: 100G
 # Values are Xm, Xh, Xday, Xweek, Xmonth, Xyear, for example 2week is two weeks
 # ATTENTION: Uncomment the keyword below when values are set!
 rhel10cis_journald_maxfilesec: 1month
+## Control 6.2.2.2 - Ensure journald ForwardToSyslog is disabled
+# File used to configure ForwardToSyslog settings for systemd-journald.
+# The file will be created under /etc/systemd/journald.conf.d/.
+rhel10cis_journald_forwardsyslog: "forwardtosyslog.conf"
+## Control 6.2.2.3 - Ensure journald Compress is configured
+# File used to configure the Storage= setting for systemd-journald.
+# The configuration file will be written to /etc/systemd/journald.conf.d/.
+rhel10cis_journald_storage: "storage.conf"
 
 ## Control 6.2.2.1.2 - Ensure systemd-journal-upload authentication is configured
 # 'rhel10cis_journal_upload_url' is the ip address to upload the journal entries to
@@ -1291,6 +1299,10 @@ rhel10cis_journal_servercertificatefile: "/etc/ssl/certs/journal-upload.pem"
 # to validate the authenticity of the remote server's certificate. The path below has the default
 ## path/file, but it is also allowed for a user to create its custom path/filename.
 rhel10cis_journal_trustedcertificatefile: "/etc/ssl/ca/trusted.pem"
+## Control 6.2.2.1.2 - Ensure systemd-journal-upload authentication is configured
+# File used to configure remote journal upload settings.
+# This file will be placed in /etc/systemd/journald.conf.d/.
+rhel10cis_journal_remote_upload_config_file: "remote_upload.conf"
 # ATTENTION: Uncomment the keyword below when values are set!
 
 ## Control 6.2.3.5 | PATCH | Ensure logging is configured
