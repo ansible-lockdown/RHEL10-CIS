@@ -1,28 +1,26 @@
 # Changes to rhel10CIS
 
-
 ## 1.0.1 - Based upon CIS official 1.0.1
-1.1.1.11 - comments in script updated
-1.4.2 - efi boot options no longer required so removed
-1.5.9 & 10 - template updated
-2.1.4 kea services updated
-5.1.2 - logic update
-6.3.3.8 - updated auditd rule for NetworkManager and title updated
-6.3.3.33 & 34 - updated rule logic
+
+- 3.1.1
+  - Added better sysctl logic to disable IPv6
+  - Added option to disable IPv6 via sysctl (original method) or via the kernel
+- 1.1.1.11 - comments in script updated
+- 1.4.2 - efi boot options no longer required so removed
+- 1.5.9 & 10 - template updated
+- 2.1.4 kea services updated
+- 5.1.2 - logic update
+- 6.3.3.8 - updated auditd rule for NetworkManager and title updated
+- 6.3.3.33 & 34 - updated rule logic
 
 ## 1.0.0 - Based upon CIS official 1.0.0
 
-## 1.0.1 - tweaks and improvement
-updated to audit config
+- updated to audit config
 - max-concurrent option added
-auditd warning added as task
-
-latest workflows
-
-## 1.0.0 initial - initial 1.0.0 release
-Added CCI references
-relabel added to selinux - new variable added
-
+- auditd warning added as task
+- latest workflows
+- Added CCI references
+- relabel added to selinux - new variable added
 
 ## 0.1.5
 
@@ -35,6 +33,7 @@ relabel added to selinux - new variable added
 - pre-commit update
 
 ## 0.1.4
+
 pre-commit updates
 6.2.3.3 updated path for journald.conf
 
@@ -46,8 +45,8 @@ thanks to @chrispipo
 #thanks to @polski-g
 - gdm logic for graphical desktop
 
-
 ## 0.1.3
+
 Aligned with public RHEL9 fixes
 - 5.4.2.5 - Enhancement for none existing directories thanks to @DianaMariaDDM
 - 6.3.4.5 - fixed audit file permissions inline thanks to @DianaMariaDDM
@@ -55,11 +54,13 @@ Aligned with public RHEL9 fixes
 - Added fix for yescrypt and root password check thanks to miso321
 
 ## 0.1.2
+
 Update to audit_only to allow fetching results
 resolved false warning for fetch auditq
 Improved documentation and variable compilation for crypto policies
 
 ## 0.1.1 RHEL10 - updates
+
 Thanks to @polski-g several issues and improvements added
 Improved testing for 50-redhat.conf for ssh
 5.1.x regexp improvements
