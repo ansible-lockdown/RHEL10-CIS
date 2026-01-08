@@ -1,4 +1,5 @@
 ---
+
 - name: "1.6.1 | AUDIT | Ensure system-wide crypto policy is not legacy"
   when: rhel10cis_rule_1_6_1
   tags:
