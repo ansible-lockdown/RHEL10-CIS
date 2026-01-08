@@ -29,7 +29,7 @@
         - "'forwardtosyslog.conf' not in item.path"
       ansible.builtin.replace:
         path: "{{ item.path }}"
-        regexp: (?i)^(\s*ForwardToSyslog)
+        regexp: ^(\s*ForwardToSyslog\s*=.*)
         replace: "#\\1"
       loop: "{{ prelim_journald_conf_files.files }}"
 
@@ -59,7 +59,7 @@
         - "'storage.conf' not in item.path"
       ansible.builtin.replace:
         path: "{{ item.path }}"
-        regexp: (?i)^(\s*compress=)
+        regexp: ^(\s*Compress\s*=.*)
         replace: "#\\1"
       loop: "{{ prelim_journald_conf_files.files }}"
 
@@ -90,6 +90,6 @@
         - "'storage.conf' not in item.path"
       ansible.builtin.replace:
         path: "{{ item.path }}"
-        regexp: (?i)^(\s*storage=)
+        regexp: ^(\s*Storage\s*=.*)
         replace: "#\\1"
       loop: "{{ prelim_journald_conf_files.files }}"
