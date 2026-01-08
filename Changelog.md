@@ -2,6 +2,7 @@
 
 ## 1.0.1 - Based upon CIS official 1.0.1
 
+- Fixes from Public RHEL9CIS PR 425
 - 3.1.1
   - Added better sysctl logic to disable IPv6
   - Added option to disable IPv6 via sysctl (original method) or via the kernel

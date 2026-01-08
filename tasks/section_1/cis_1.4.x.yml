@@ -1,4 +1,5 @@
 ---
+
 - name: "1.4.1 | PATCH | Ensure bootloader password is set"
   when:
     - rhel10cis_set_boot_pass
