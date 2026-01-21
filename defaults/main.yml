@@ -57,7 +57,7 @@ benchmark: RHEL10-CIS
 # System will reboot if false, can give better audit results
 skip_reboot: true
 
-# default value will change to true but wont reboot if not enabled but will error
+# default value will change to true but won't reboot if not enabled but will error
 change_requires_reboot: false
 
 ###
