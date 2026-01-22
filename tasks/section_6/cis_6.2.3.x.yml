@@ -199,7 +199,7 @@
   register: discovered_rsyslog_remote_host
   notify: Restart rsyslog
 
-- name: "6.2.3.7 | PATCH | Ensure rsyslog is not configured to recieve logs from a remote client"
+- name: "6.2.3.7 | PATCH | Ensure rsyslog is not configured to receive logs from a remote client"
   when:
     - rhel10cis_rule_6_2_3_7
     - rhel10cis_rsyslog_ansiblemanaged
