@@ -1140,6 +1140,7 @@ rhel10cis_passwd_hash_algo: sha512  # pragma: allowlist secret
 rhel10cis_pass_max_days: 365
 # The following variable allows the forcing of setting user_max_days for logins.
 # This can break current connecting user access
+# Does not change the connecting user as this will break access to the system.
 rhel10cis_force_user_maxdays: false
 ## Control 5.4.1.2 - Ensure minimum days between password changes is 7 or more
 # This variable specifies the minimum number of days allowed between changing
