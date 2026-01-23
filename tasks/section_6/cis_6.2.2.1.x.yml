@@ -60,10 +60,10 @@
     - name: "6.2.2.1.2 | PATCH | Ensure systemd-journal-upload authentication is configured | check if config file exists"
       ansible.builtin.stat:
         path: "/etc/systemd/journal-upload.conf"
-      register: discovered_journal_upload_conf_file_exists
+      register: discovered_journal_upload_conf_file
 
-    - name: "6.2.2.1.2 | PATCH | Ensure systemd-journal-upload authentication is configured | Add config"
-      when: not discovered_journal_upload_conf_file_exists.stat.exists
+    - name: "6.2.2.1.2 | PATCH | Ensure systemd-journal-upload authentication is configured | Add config file if missing"
+      when: not discovered_journal_upload_conf_file.stat.exists
       ansible.builtin.template:
         src: "etc/systemd/journal-upload.conf.j2"
         dest: "/etc/systemd/journal-upload.conf"
@@ -72,14 +72,18 @@
         mode: 'u-x,g-wx,o-rwx'
       notify: Restart journald
 
-    - name: "6.2.2.1.2 | PATCH | Ensure systemd-journal-upload authentication is configured | upload file to conf.d location"
-      when: not discovered_journal_upload_conf_file_exists.stat.exists
-      ansible.builtin.template:
-        src: "etc/systemd/journal-upload.conf.d/{{ rhel10cis_journal_remote_upload_config_file }}.j2"
-        dest: "/etc/systemd/journal-upload.conf.d/{{ rhel10cis_journal_remote_upload_config_file }}"
-        owner: root
-        group: root
-        mode: 'u-x,g-wx,o-rwx'
+    - name: "6.2.2.1.2 | PATCH | Ensure systemd-journal-upload authentication is configured | update config file if exists"
+      when: discovered_journal_upload_conf_file.stat.exists
+      ansible.builtin.lineinfile:
+        path: "/etc/systemd/journal-upload.conf"
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+        insertafter: '[Upload]'
+      loop:
+        - { regexp: '^ServerCertificateFile=', line: 'ServerCertificateFile={{ rhel10cis_journal_servercertificatefile }}'}
+        - { regexp: '^TrustedCertificateFile=', line: 'TrustedCertificateFile={{ rhel10cis_journal_trustedcertificatefile }}'}
+        - { regexp: '^ServerKeyFile=', line: 'ServerKeyFile={{ rhel10cis_journal_upload_serverkeyfile }}'}
+        - { regexp: '^URL=', line: 'URL={{ rhel10cis_journal_upload_url }}'}
       notify: Restart journald
 
 - name: "6.2.2.1.3 | PATCH | Ensure systemd-journal-upload is enabled and active"
