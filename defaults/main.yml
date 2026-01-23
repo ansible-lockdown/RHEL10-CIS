@@ -705,14 +705,14 @@ rhel10cis_screensaver_lock_delay: 5
 # The default setting for the `options` is `minpoll` but `iburst` can be used, please refer to the documentation
 # of the time synchronization mechanism you are using.
 rhel10cis_time_synchronization_servers:
-  - 0.pool.ntp.org
-  - 1.pool.ntp.org
-  - 2.pool.ntp.org
-  - 3.pool.ntp.org
-## Control 2.1.2 - Time Synchronization servers
-# This variable should contain the default options to be used for every NTP server hostname defined
-# within the 'rhel10cis_time_synchronization_servers' var.
-rhel10cis_chrony_server_options: "minpoll 8"
+  - name: 0.pool.ntp.org
+    options: minpoll 8
+  - name: 1.pool.ntp.org
+    options: minpoll 8
+  - name: 2.pool.ntp.org
+    options: minpoll 8
+  - name: 3.pool.ntp.org
+    options: minpoll 8
 # This variable, if set to 'true'(default), will inform the kernel the system clock is kept synchronized
 # and the kernel will update the real-time clock every 11 minutes. Otherwise, if 'rtcsync' option is
 # disabled, chronyd will not be in sync(kernel discipline is disabled, 11 minutes mode will be off).

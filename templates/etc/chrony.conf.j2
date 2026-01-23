@@ -1,9 +1,11 @@
-{{ ansible_managed | comment }}
+# CIS requirement for RHEL10
+# Set via Ansible-Lockdown - https://github.com/ansible-lockdown
+# Maintained and sponsored by {{ company_title }}
 
 # Use public servers from the pool.ntp.org project.
 # Please consider joining the pool (http://www.pool.ntp.org/join.html).
 {% for server in rhel10cis_time_synchronization_servers -%}
-server {{ server }} {{ rhel10cis_chrony_server_options }}
+server {{ server.name }} {{ server.options }}
 {% endfor %}
 
 # Record the rate at which the system clock gains/losses time.

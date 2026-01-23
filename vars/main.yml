@@ -69,3 +69,5 @@ auditd_binaries:
   - /usr/sbin/ausearch
   - /usr/sbin/auditd
   - /usr/sbin/augenrules
+
+company_title: 'Tyto Athene - https://gotyto.com'
