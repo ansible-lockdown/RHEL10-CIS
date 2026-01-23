@@ -57,7 +57,23 @@
         replace: "#\\1"
       loop: "{{ discovered_journald_remote_upload_conf.files }}"
 
+    - name: "6.2.2.1.2 | PATCH | Ensure systemd-journal-upload authentication is configured | check if config file exists"
+      ansible.builtin.stat:
+        path: "/etc/systemd/journal-upload.conf"
+      register: discovered_journal_upload_conf_file_exists
+
     - name: "6.2.2.1.2 | PATCH | Ensure systemd-journal-upload authentication is configured | Add config"
+      when: not discovered_journal_upload_conf_file_exists.stat.exists
+      ansible.builtin.template:
+        src: "etc/systemd/journal-upload.conf.j2"
+        dest: "/etc/systemd/journal-upload.conf"
+        owner: root
+        group: root
+        mode: 'u-x,g-wx,o-rwx'
+      notify: Restart journald
+
+    - name: "6.2.2.1.2 | PATCH | Ensure systemd-journal-upload authentication is configured | upload file to conf.d location"
+      when: not discovered_journal_upload_conf_file_exists.stat.exists
       ansible.builtin.template:
         src: "etc/systemd/journal-upload.conf.d/{{ rhel10cis_journal_remote_upload_config_file }}.j2"
         dest: "/etc/systemd/journal-upload.conf.d/{{ rhel10cis_journal_remote_upload_config_file }}"

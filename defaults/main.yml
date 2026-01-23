@@ -1306,7 +1306,9 @@ rhel10cis_journald_maxfilesec: 1month
 
 ## Control 6.2.2.1.2 - Ensure systemd-journal-upload authentication is configured
 # This uses a template file that is populated by using the following variables.
-rhel10cis_journal_remote_upload_config_file: remote_upload.conf
+# This is only used if the /etc/systemd/journal-upload.conf file does not exist.
+# If the file exists, the template will not be used.
+rhel10cis_journal_remote_upload_config_file: remote_upload.conf.j2
 # 'rhel10cis_journal_upload_url' is the ip address to upload the journal entries to
 #  URL value may specify either just the hostname or both the protocol and hostname. 'https' is the default. The port
 #  number may be specified after a colon (":"), otherwise 19532 will be used by default.
