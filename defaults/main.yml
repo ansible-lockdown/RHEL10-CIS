@@ -618,7 +618,8 @@ rhel10cis_selinux_relabel_enabled: false
 rhel10cis_set_boot_pass: true
 
 # This variable will store the GRUB bootloader password to be stored in '/boot/grub2/user.cfg' file. The default value must be changed.
-rhel10cis_bootloader_password: password  # pragma: allowlist secret
+# This value is the hashed password, not the plain text password.
+rhel10cis_bootloader_password_hash: 'grub.pbkdf2.sha512.changethispassword'  # pragma: allowlist secret
 
 ## Controls 1.5.x
 
