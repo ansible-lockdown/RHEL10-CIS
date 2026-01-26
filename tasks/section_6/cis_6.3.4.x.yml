@@ -99,7 +99,11 @@
   ansible.builtin.file:
     path: "{{ item }}"
     mode: 'go-w'
+  register: discovered_auditd_binaries
+  failed_when: discovered_auditd_binaries.state not in '[ file, absent ]'
   loop: "{{ auditd_binaries }}"
+  loop_control:
+    label: "{{ item }}"
 
 - name: "6.3.4.9 | PATCH | Ensure audit tools owner is configured"
   when: rhel10cis_rule_6_3_4_9
@@ -113,7 +117,11 @@
     path: "{{ item }}"
     owner: root
     group: root
+  register: discovered_auditd_binaries
+  failed_when: discovered_auditd_binaries.state not in '[ file, absent ]'
   loop: "{{ auditd_binaries }}"
+  loop_control:
+    label: "{{ item }}"
 
 - name: "6.3.4.10 | PATCH | Ensure audit tools group owner is configured"
   when: rhel10cis_rule_6_3_4_10
@@ -127,4 +135,8 @@
   ansible.builtin.file:
     path: "{{ item }}"
     group: root
+  register: discovered_auditd_binaries
+  failed_when: discovered_auditd_binaries.state not in '[ file, absent ]'
   loop: "{{ auditd_binaries }}"
+  loop_control:
+    label: "{{ item }}"
