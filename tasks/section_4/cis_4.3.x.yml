@@ -47,7 +47,7 @@
           - "{{ discovered_nftables_input_chains.stdout_lines }}"
           - "Below are the current FORWARD chains"
           - "{{ discovered_nftables_forward_chains.stdout_lines }}"
-          - "Below are teh current OUTPUT chains"
+          - "Below are the current OUTPUT chains"
           - "{{ discovered_nftables_output_chains.stdout_lines }}"
 
     - name: "4.3.1 | PATCH | Ensure nftables base chains exist | Create chains if needed"
