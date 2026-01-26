@@ -2,6 +2,18 @@
 
 ## 1.0.1 - Based upon CIS official 1.0.1
 
+- Thanks to Frequentis for feedback
+- Updated bootloader_password to bootloader_hash variable and context added
+- disruption is high set back to default false
+- fs.suid_dumpable template moved to correct control 1.5.4 from 1.5.3
+- 6.2.2.1.2 updated logic as systemd/journald-upload.conf doesn't exist on clean install
+- 5.4.1.1 description updated and disruption high added to control
+- 2.3.2 - updated rhel10cis_time_synchronization_servers variables and updated template
+- README updated to explain workstation controls and variable overrides
+- 6.3.4.8 added logic as augenrules not always present on some OS
+- fixed typos in levels aligned with benchmark
+- 1.3.1.8 tidied up
+
 - Fixes from Public RHEL9CIS PR 425
 - 3.1.1
   - Added better sysctl logic to disable IPv6
