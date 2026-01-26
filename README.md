@@ -172,7 +172,16 @@ default                    : ok=270  changed=23   unreachable=0    failed=0    s
 
 ## Role Variables
 
-This role is designed that the end user should not have to edit the tasks themselves. All customizing should be done via the defaults/main.yml file or with extra vars within the project, job, workflow, etc.
+This role is designed that the end user should not have to edit the tasks themselves. All customizing should be done via the overriding options found in defaults/main.yml file by utilsing variable precedence in appropriate locations that is appropriate for yor environment e.g. group_vars, inventory vars, extra_vars
+
+## Workstation
+The following controls are not shown as applicable for workstation.
+While that can be implemented please set to false if required.
+•	1.3.1.8
+•	2.1.10
+•	2.1.19
+•	2.1.20
+•	3.1.2
 
 ## Tags 🏷️
 
