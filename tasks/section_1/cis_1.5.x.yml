@@ -88,8 +88,8 @@
 - name: "1.5.3 | PATCH | Ensure fs.protected_symlinks is configured"
   when: rhel10cis_rule_1_5_3
   tags:
-    - level1-server
-    - level1-workstation
+    - level2-server
+    - level2-workstation
     - patch
     - sysctl
     - rule_1.5.3

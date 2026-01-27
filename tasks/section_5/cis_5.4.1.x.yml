@@ -31,6 +31,7 @@
         - discovered_max_days.stdout_lines | length > 0
         - item in prelim_interactive_users | map(attribute='username') | list
         - rhel10cis_force_user_maxdays
+        - rhel10cis_disruption_high
       ansible.builtin.user:
         name: "{{ item }}"
         password_expire_max: "{{ rhel10cis_pass_max_days }}"
@@ -39,8 +40,8 @@
 - name: "5.4.1.2 | PATCH | Ensure minimum password days is configured"
   when: rhel10cis_rule_5_4_1_2
   tags:
-    - level1-server
-    - level1-workstation
+    - level2-server
+    - level2-workstation
     - patch
     - password
     - rule_5.4.1.2

@@ -42,7 +42,7 @@
     fail_msg: "Crypto policy is not a permitted version"
     success_msg: "Crypto policy is a permitted version"
 
-- name: "Check rhel10cis_bootloader_password variable has been changed"
+- name: "Check rhel10cis_bootloader_password_hash variable has been changed"
   when:
     - rhel10cis_set_boot_pass
     - rhel10cis_rule_1_4_1

@@ -29,7 +29,7 @@
     - rhel10cis_ipv6_required
     - rhel10cis_rule_3_3_2_2
   tags:
-    - level2-server
+    - level1-server
     - level1-workstation
     - sysctl
     - patch
