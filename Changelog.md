@@ -2,7 +2,7 @@
 
 ## 1.0.1 - Based upon CIS official 1.0.1
 
-- Thanks to Frequentis for feedback
+- Thanks to Eugene@Frequentis for feedback
 - Updated bootloader_password to bootloader_hash variable and context added
 - disruption is high set back to default false
 - fs.suid_dumpable template moved to correct control 1.5.4 from 1.5.3
