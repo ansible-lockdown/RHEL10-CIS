@@ -3,17 +3,20 @@
     name: update galaxy
 
     on:
-        push:
-            branches:
-                - main
-    jobs:
-        update_role:
-            runs-on: ubuntu-latest
-            steps:
-                - name: Checkout repo
-                  uses: actions/checkout@v4
+      push:
+        branches:
+          - main
+          - latest
+      workflow_dispatch:
 
-                - name: Action Ansible Galaxy Release ${{ github.ref_name }}
-                  uses: ansible-actions/ansible-galaxy-action@main
-                  with:
-                    galaxy_api_key: ${{ secrets.GALAXY_API_KEY }}
+    jobs:
+      update_role:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout repo
+            uses: actions/checkout@v4
+
+          - name: Action Ansible Galaxy Release ${{ github.ref_name }}
+            uses: ansible-actions/ansible-galaxy-action@main
+            with:
+              galaxy_api_key: ${{ secrets.GALAXY_API_KEY }}
