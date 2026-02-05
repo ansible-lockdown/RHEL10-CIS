@@ -128,6 +128,10 @@ RHEL family 10 - Other versions are not supported.
 - python-def
 - libselinux-python
 
+If you are using the option to create your own bootloader hash the ansible controller
+
+-  passlib
+
 ---
 
 ## Auditing 🔍

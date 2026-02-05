@@ -13,7 +13,7 @@
 - 6.3.4.8 added logic as augenrules not always present on some OS
 - fixed typos in levels aligned with benchmark
 - 1.3.1.8 tidied up
-- thanks to thulium-drake boot password hash
+- thanks to thulium-drake boot password hash Added passlib dependency in readme requirements
 - tidy up tags on tasks/main.yml
 
 - Fixes from Public RHEL9CIS PR 425
