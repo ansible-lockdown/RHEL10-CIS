@@ -3,7 +3,9 @@
 # List users in order to look files inside each home directory
 
 - name: PRELIM | Include audit specific variables
-  when: run_audit or audit_only or setup_audit
+  when:
+    - run_audit or audit_only
+    - setup_audit
   tags:
     - setup_audit
     - run_audit

@@ -7,6 +7,9 @@ rhel10cis_allowed_crypto_policies:
   - 'FUTURE'
   - 'FIPS'
 
+# variable built from rhel10cis_bootloader_password and rhel10cis_bootloader_salt or rhel10cis_bootloader_password_hash
+rhel10_compiled_bootloader_password: "{% if rhel10cis_bootloader_salt != '' %}{{ (rhel10cis_bootloader_password | grub_hash(salt=rhel10cis_bootloader_salt)) }}{% else %}{{ rhel10cis_bootloader_password_hash }}{% endif %}" # noqa template-instead-of-copy
+
 # Following is left blank for ability to build string
 rhel10cis_crypto_policy_module: ''
 
@@ -70,4 +73,4 @@ auditd_binaries:
   - /usr/sbin/auditd
   - /usr/sbin/augenrules
 
-company_title: 'Tyto Athene - https://gotyto.com'
+company_title: 'Mindpoint Group - A Tyto Athene Company'

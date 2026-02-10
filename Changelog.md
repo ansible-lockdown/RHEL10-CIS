@@ -2,7 +2,7 @@
 
 ## 1.0.1 - Based upon CIS official 1.0.1
 
-- Thanks to Frequentis for feedback
+- Thanks to Eugene@Frequentis for feedback
 - Updated bootloader_password to bootloader_hash variable and context added
 - disruption is high set back to default false
 - fs.suid_dumpable template moved to correct control 1.5.4 from 1.5.3
@@ -13,6 +13,8 @@
 - 6.3.4.8 added logic as augenrules not always present on some OS
 - fixed typos in levels aligned with benchmark
 - 1.3.1.8 tidied up
+- thanks to thulium-drake boot password hash Added passlib dependency in readme requirements
+- tidy up tags on tasks/main.yml
 
 - Fixes from Public RHEL9CIS PR 425
 - 3.1.1
