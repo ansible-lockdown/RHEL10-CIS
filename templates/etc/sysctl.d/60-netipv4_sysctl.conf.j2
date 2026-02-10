@@ -1,9 +1,9 @@
-# CIS Configurations
+{{ file_managed_by_ansible }}
 
 # IPv4 Network sysctl
 {% if rhel10cis_rule_3_3_1_1 %}
 # CIS 3.3.1.1
-net.ipv4.ip_forward = {{ rhel10cis_rule_3_3_1_1_value }}
+net.ipv4.ip_forward = 0
 {% endif %}
 {% if rhel10cis_rule_3_3_1_2 %}
 # CIS 3.3.1.2
