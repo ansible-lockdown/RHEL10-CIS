@@ -1,11 +1,9 @@
-# File managed by ansible as part of RHEL10 CIS benchmark
-# As part of Ansible-lockdown
-# Provided by {{ company_title }}
+# CIS Configurations
 
 # IPv4 Network sysctl
 {% if rhel10cis_rule_3_3_1_1 %}
 # CIS 3.3.1.1
-net.ipv4.ip_forward = 0
+net.ipv4.ip_forward = {{ rhel10cis_rule_3_3_1_1_value }}
 {% endif %}
 {% if rhel10cis_rule_3_3_1_2 %}
 # CIS 3.3.1.2

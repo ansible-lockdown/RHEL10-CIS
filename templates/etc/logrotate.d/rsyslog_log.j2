@@ -1,3 +1,5 @@
+{{ file_managed_by_ansible }}
+
 /var/log/rsyslog/*.log {
     {{ rhel10cis_rsyslog_logrotate_rotated_when }}
     rotate {{ rhel10cis_rsyslog_logrotate_rotatation_keep }}
