@@ -130,6 +130,9 @@ RHEL Family OS 10
 - python-def
 - libselinux-python
 
+If you are using the option to create your own bootloader hash the ansible controller
+-  passlib
+
 ---
 
 ## Auditing 🔍
