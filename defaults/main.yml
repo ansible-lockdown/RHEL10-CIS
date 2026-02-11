@@ -579,12 +579,30 @@ rhel10cis_selinux_enforce: enforcing
 ## Control 1.4.1
 # This variable governs whether a bootloader password should be set in '/boot/grub2/user.cfg' file.
 rhel10cis_set_boot_pass: true
+################### bootloader password #####################################
+#
+# Two options for setting the bootloader password
+#
+# Option 1: Set the bootloader password and salt – requires the passlib Python module
+# to be available on the Ansible controller.
+# Set this value to something secure to have predictable hashes,
+# which will prevent unnecessary changes.
 
-# This variable will store the GRUB bootloader password to be stored in '/boot/grub2/user.cfg' file. The default value must be changed.
-rhel10cis_bootloader_password: password  # pragma: allowlist secret
-
-# Set this value to anything secure to have predictable hashes, which will prevent unnecessary changes
 rhel10cis_bootloader_salt: ''
+
+# This variable stores the GRUB bootloader password to be written
+# to the '/boot/grub2/user.cfg' file. The default value must be changed.
+
+rhel10cis_bootloader_password: 'password'  # pragma: allowlist secret
+
+# Option 2: Set the bootloader password hash – if the salt value is empty,
+# the password will be set using the variable below.
+# If you are not using the bootloader hash filter, you can set it here
+# in encrypted format, e.g. grub.pbkdf2.sha512.hashstring
+
+rhel10cis_bootloader_password_hash: 'grub.pbkdf2.sha512.changethispassword'  # pragma: allowlist secret
+
+####################################################
 
 ## Controls 1.6.x
 # This variable contains the value to be set as the system-wide crypto policy. Current rule enforces NOT USING

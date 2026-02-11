@@ -1,4 +1,5 @@
 ---
+
 - name: "1.4.1 | PATCH | Ensure bootloader password is set"
   when:
     - rhel10cis_set_boot_pass
@@ -12,7 +13,7 @@
     - NIST800-53R5_AC-3
   ansible.builtin.copy:
     dest: /boot/grub2/user.cfg
-    content: "GRUB2_PASSWORD={{ rhel10cis_bootloader_password_hash }}" # noqa template-instead-of-copy
+    content: "GRUB2_PASSWORD={{ rhel10_compiled_bootloader_password }}" # noqa template-instead-of-copy
     owner: root
     group: root
     mode: 'u-x,go-rwx'

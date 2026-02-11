@@ -180,6 +180,8 @@
         path: "{{ rhel10cis_sshd_config_file }}"
         regexp: "^AllowUsers"
         line: "AllowUsers {{ rhel10cis_sshd_allowusers }}"
+        insertbefore: "^Match"
+        firstmatch: true
         validate: sshd -t -f %s
       notify: Restart sshd
 
@@ -189,6 +191,8 @@
         path: "{{ rhel10cis_sshd_config_file }}"
         regexp: "^AllowGroups"
         line: "AllowGroups {{ rhel10cis_sshd_allowgroups }}"
+        insertbefore: "^Match"
+        firstmatch: true
         validate: sshd -t -f %s
       notify: Restart sshd
 
@@ -209,6 +213,8 @@
         path: "{{ rhel10cis_sshd_config_file }}"
         regexp: "^DenyGroups"
         line: "DenyGroups {{ rhel10cis_sshd_denygroups }}"
+        insertbefore: "^Match"
+        firstmatch: true
         validate: sshd -t -f %s
       notify: Restart sshd
 
