@@ -581,7 +581,7 @@ rhel10cis_selinux_enforce: enforcing
 rhel10cis_set_boot_pass: true
 ################### bootloader password #####################################
 #
-# Two options for for setting the bootloader password
+# Two options for setting the bootloader password
 #
 # Option 1: Set the bootloader password and salt – requires the passlib Python module
 # to be available on the Ansible controller.
