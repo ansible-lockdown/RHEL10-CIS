@@ -16,7 +16,7 @@
     content: "GRUB2_PASSWORD={{ rhel10_compiled_bootloader_password }}" # noqa template-instead-of-copy
     owner: root
     group: root
-    mode: 'go-rwx'
+    mode: 'u-x,go-rwx'
   notify: Grub2cfg
 
 - name: "1.4.2 | PATCH | Ensure permissions on bootloader config are configured"
