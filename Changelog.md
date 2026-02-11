@@ -1,5 +1,16 @@
 # Changes to RHEL10CIS
 
+
+## 0.1.6 - FInal beta release updates
+
+- License Year
+- bootloader password filter added and documentation
+
+Thanks to @bykvaadm
+- password hash highlighting
+- 5.1.x ssh insertbefore Match updates
+- postfix notify naming
+
 ## 0.1.5
 
 - 3.1.1
