@@ -87,7 +87,9 @@ This role **will make changes to the system** which may have unintended conseque
 CIS release always contains changes, it is highly recommended to review the new references and available variables. This have changed significantly since ansible-lockdown initial release.
 This is now compatible with python3 if it is found to be the default interpreter. This does come with pre-requisites which it configures the system accordingly.
 
-Further details can be seen in the [Changelog](./ChangeLog.md)
+**General:**
+
+- Basic knowledge of Ansible, below are some links to the Ansible documentation to help get started if you are unfamiliar with Ansible
 
 ---
 
@@ -129,7 +131,6 @@ RHEL family 10 - Other versions are not supported.
 - libselinux-python
 
 If you are using the option to create your own bootloader hash the ansible controller
-
 -  passlib
 
 ---
