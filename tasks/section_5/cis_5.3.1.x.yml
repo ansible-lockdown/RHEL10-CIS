@@ -118,7 +118,7 @@
     - name: "5.3.1.5 | PATCH | Ensure pam_unix module is enabled | system-auth"
       when: "'system-auth:password' not in discovered_authselect_pam_unix.stdout"
       ansible.builtin.lineinfile:
-        path: "/etc/authselect/custom/{{ rhel10cis_authselect['custom_profile_name'] }}/system-auth"
+        path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/system-auth"
         regexp: "{{ item.regexp }}"
         line: "{{ item.line }}"
         backrefs: true
@@ -132,7 +132,7 @@
     - name: "5.3.1.5 | PATCH | Ensure pam_unix module is enabled | password-auth"
       when: "'password-auth:password' not in discovered_authselect_pam_unix.stdout"
       ansible.builtin.lineinfile:
-        path: "/etc/authselect/custom/{{ rhel10cis_authselect.custom_profile_name }}/password-auth"
+        path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/password-auth"
         line: "{{ item.line }}"
         regexp: "{{ item.regexp }}"
         backrefs: true
