@@ -396,12 +396,6 @@ rhel10cis_rule_5_3_1_2: true
 rhel10cis_rule_5_3_1_3: true
 rhel10cis_rule_5_3_1_4: true
 rhel10cis_rule_5_3_1_5: true
-# 5.3.2 Configure authselect
-rhel10cis_rule_5_3_2_1: true
-rhel10cis_rule_5_3_2_2: true
-rhel10cis_rule_5_3_2_3: true
-rhel10cis_rule_5_3_2_4: true
-rhel10cis_rule_5_3_2_5: true
 # 5.3.2.1 Configure pam_faillock module
 rhel10cis_rule_5_3_2_1_1: true
 rhel10cis_rule_5_3_2_1_2: true
@@ -619,7 +613,7 @@ rhel10cis_set_boot_pass: false
 
 ################### bootloader password #####################################
 #
-# Two options for for setting the bootloader password
+# Two options for setting the bootloader password
 #
 # Option 1: Set the bootloader password and salt – requires the passlib Python module
 # to be available on the Ansible controller.
@@ -676,7 +670,7 @@ rhel10cis_yama_ptrace_scope_value: 1
 ## Controls 1.6.x
 # This variable contains the value to be set as the system-wide crypto policy. Current rule enforces NOT USING
 # 'LEGACY' value(as it is less secure, it just ensures compatibility with legacy systems), therefore
-# possible values for this variable are, as explained by RedHat docs:
+# possible value for this variable is, as explained by RedHat docs:
 #  -'DEFAULT': reasonable default policy for today's standards (balances usability and security)
 #  -'FUTURE': conservative security level that is believed to withstand any near-term future attacks
 #  -'FIPS': A level that conforms to the FIPS140-2 requirements
@@ -1163,7 +1157,7 @@ rhel10cis_pass_max_days: 365
 # This can break current connecting user access
 # Does not change the connecting user as this will break access to the system.
 rhel10cis_force_user_maxdays: false
-## Control 5.4.1.2 - Ensure minimum days between password changes is 7 or more
+## Control 5.4.1.2 - Ensure minimum days between password changes are 7 or more
 # This variable specifies the minimum number of days allowed between changing
 # passwords. CIS requires a value of at least 1.
 rhel10cis_pass_min_days: 7
@@ -1188,6 +1182,13 @@ rhel10cis_inactive_lock_days: 30
 # Allow ansible to expire password for account with a last changed date in the future. Setting it
 # to 'false' will just display users in violation, while 'true' will expire those users passwords.
 rhel10cis_futurepwchgdate_autofix: true
+
+## 5.4.2.5 Root user used
+# Root by default is not used unless setup by user
+# The role will only run certain commands if set to true
+# This allows the ability to skip tasks that may cause an issue
+# With the understanding root has full access
+rhel10cis_uses_root: false
 
 ## Control 5.4.2.6 - Ensure root user umask is configured
 # The following variable specifies the "umask" to configure for the root user.
@@ -1320,19 +1321,11 @@ rhel10cis_journald_runtimekeepfree: 100G
 # Current variable governs the settings for log retention(how long the log files will be kept).
 # Thus, it specifies the maximum time to store entries in a single journal
 # file before rotating to the next one. Set to 0 to turn off this feature.
-# The given values is interpreted as seconds, unless suffixed with the units
+# The given values are interpreted as seconds, unless suffixed with the units
 # `year`, `month`, `week`, `day`, `h` or `m` to override the default time unit of seconds.
 # Values are Xm, Xh, Xday, Xweek, Xmonth, Xyear, for example 2week is two weeks
 # ATTENTION: Uncomment the keyword below when values are set!
 rhel10cis_journald_maxfilesec: 1month
-## Control 6.2.2.2 - Ensure journald ForwardToSyslog is disabled
-# File used to configure ForwardToSyslog settings for systemd-journald.
-# The file will be created under /etc/systemd/journald.conf.d/.
-rhel10cis_journald_forwardsyslog: "forwardtosyslog.conf"
-## Control 6.2.2.3 - Ensure journald Compress is configured
-# File used to configure the Storage= setting for systemd-journald.
-# The configuration file will be written to /etc/systemd/journald.conf.d/.
-rhel10cis_journald_storage: "storage.conf"
 
 ## Control 6.2.2.1.2 - Ensure systemd-journal-upload authentication is configured
 # This uses a template file that is populated by using the following variables.
@@ -1455,7 +1448,7 @@ rhel10cis_auditd_max_log_file_size: 10
 ## Control 6.3.2.2 - Ensure audit logs are not automatically deleted
 # This variable determines what action the audit system should take when the maximum
 # size of a log file is reached.
-# The options for setting this variable are as follows:
+# The options for setting this variable is as follows:
 # - `ignore`: the system does nothing when the size of a log file is full;
 # - `syslog`: a message is sent to the system log indicating the problem;
 # - `suspend`: the system suspends recording audit events until the log file is cleared or rotated;
@@ -1492,7 +1485,7 @@ rhel10cis_auditd_disk_error_action: syslog
 ## Control 6.3.2.4 - Ensure system warns when audit logs are low on space
 # This variable tells the system what action to take when the system has detected
 # that it is starting to get low on disk space.
-# The options for setting this variable are as follows:
+# The options for setting this variable is as follows:
 # "ignore"  - the system does nothing when presented with the aforementioned issue;
 # "syslog" - a message is sent to the system log about disk space running low;
 # "email"  - the system sends an email notification to the email address
@@ -1506,7 +1499,7 @@ rhel10cis_auditd_disk_error_action: syslog
 rhel10cis_auditd_space_left_action: email
 # This variable tells the system what action to take when the system has detected
 # that it is low on disk space.
-# The options for setting this variable are as follows:
+# The options for setting this variable is as follows:
 # "ignore"  - the system does nothing when presented with the aforementioned issue;
 # "syslog"  - a message is sent to the system log about disk space running low;
 # "email"  - the system sends an email notification to the email address
