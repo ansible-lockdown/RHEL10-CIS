@@ -301,7 +301,7 @@
       notify: Sysctl update required
 
 - name: "1.5.8 | PATCH | Ensure kernel.randomize_va_space is configured"
-  when: rhel10cis_rule_1_5_1
+  when: rhel10cis_rule_1_5_8
   tags:
     - level1-server
     - level1-workstation

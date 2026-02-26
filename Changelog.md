@@ -1,4 +1,4 @@
-# Changes to rhel10CIS
+# Changes to RHEL10CIS
 
 ## 1.0.1 - Based upon CIS official 1.0.1
 
@@ -37,8 +37,21 @@
 - Added CCI references
 - relabel added to selinux - new variable added
 
+## 0.1.6 - FInal beta release updates
+
+- License Year
+- bootloader password filter added and documentation
+
+Thanks to @bykvaadm
+- password hash highlighting
+- 5.1.x ssh insertbefore Match updates
+- postfix notify naming
+
 ## 0.1.5
 
+- 3.1.1
+  - Added better sysctl logic to disable IPv6
+  - Added option to disable IPv6 via sysctl (original method) or via the kernel
 - run_audit logic update
 - improvements to 5.3.3.x logic for rhel10 and ansible-core 2.19 compatibility.
 - thanks to @piratesecurity

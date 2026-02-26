@@ -323,8 +323,8 @@
         - "cups.socket"
         - "cups.service"
 
-- name: "2.1.12 | PATCH | Ensure rpcbind services are not in use"
-  when: rhel10cis_rule_2_1_12
+- name: "2.1.11 | PATCH | Ensure rpcbind services are not in use"
+  when: rhel10cis_rule_2_1_11
   tags:
     - level1-server
     - level1-workstation
@@ -333,9 +333,9 @@
     - rpc
     - NIST800-53R5_CM-6
     - NIST800-53R5_CM-7
-    - rule_2.1.12
+    - rule_2.1.11
   block:
-    - name: "2.1.12 | PATCH | Ensure rpcbind services are not in use | Remove package"
+    - name: "2.1.11 | PATCH | Ensure rpcbind services are not in use | Remove package"
       when:
         - not rhel10cis_rpc_server
         - not rhel10cis_rpc_mask
@@ -343,7 +343,7 @@
         name: rpcbind
         state: absent
 
-    - name: "2.1.12 | PATCH | Ensure rpcbind services are not in use | Mask service"
+    - name: "2.1.11 | PATCH | Ensure rpcbind services are not in use | Mask service"
       when:
         - not rhel10cis_rpc_server
         - rhel10cis_rpc_mask

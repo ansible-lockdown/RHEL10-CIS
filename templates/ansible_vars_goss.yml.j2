@@ -292,7 +292,7 @@ rhel10cis_rule_5_3_1_1: {{ rhel10cis_rule_5_3_1_1 }}
 rhel10cis_rule_5_3_1_2: {{ rhel10cis_rule_5_3_1_2 }}
 rhel10cis_rule_5_3_1_3: {{ rhel10cis_rule_5_3_1_3 }}
 rhel10cis_rule_5_3_1_4: {{ rhel10cis_rule_5_3_1_4 }}
-rhel10cis_rule_5_3_1_5: {{ rhel10cis_rule_5_3_2_5 }}
+rhel10cis_rule_5_3_1_5: {{ rhel10cis_rule_5_3_1_5 }}
 # 5.3.2.1 Configure pam_faillock module
 rhel10cis_rule_5_3_2_1_1: {{ rhel10cis_rule_5_3_2_1_1 }}
 rhel10cis_rule_5_3_2_1_2: {{ rhel10cis_rule_5_3_2_1_2 }}
@@ -621,7 +621,7 @@ rhel10cis_passwd_complex_option: {{ rhel10cis_passwd_complex_option }}
   # This variable governs after how many days a password expires.
   # CIS requires a value of 365 or less.
 rhel10cis_pass_max_days: {{ rhel10cis_pass_max_days }}
-  ## Control 5.4.1.2 - Ensure minimum days between password changes is 7 or more
+  ## Control 5.4.1.2 - Ensure minimum days between password changes are 7 or more
   # This variable specifies the minimum number of days allowed between changing
   # passwords. CIS requires a value of at least 1.
 rhel10cis_pass_min_days: {{ rhel10cis_pass_min_days }}
@@ -673,32 +673,32 @@ rhel10cis_aide_cron:
   # This variable represents the user account under which the cron job for AIDE will run.
   cron_user: root
   # This variable represents the path to the AIDE crontab file.
-  cron_file: /etc/cron.d/aide_cron
+  cron_file: {{ rhel10cis_aide_cron_file }}
   # This variable represents the actual command or script that the cron job
   # will execute for running AIDE.
-  aide_job: '/usr/sbin/aide --check'
+  aide_job: '{{ rhel10cis_aide_cron_job }}'
   # These variables define the schedule for the cron job
   # This variable governs the minute of the time of day when the AIDE cronjob is run.
   # It must be in the range `0-59`.
-  aide_minute: 0
+  aide_minute: {{ rhel10cis_aide_cron_minute }}
   # This variable governs the hour of the time of day when the AIDE cronjob is run.
   # It must be in the range `0-23`.
-  aide_hour: 5
+  aide_hour: {{ rhel10cis_aide_cron_hour }}
   # This variable governs the day of the month when the AIDE cronjob is run.
   # `*` signifies that the job is run on all days; furthermore, specific days
   # can be given in the range `1-31`; several days can be concatenated with a comma.
   # The specified day(s) can must be in the range  `1-31`.
-  aide_day: '*'
+  aide_day: '{{ rhel10cis_aide_cron_day }}'
   # This variable governs months when the AIDE cronjob is run.
   # `*` signifies that the job is run in every month; furthermore, specific months
   # can be given in the range `1-12`; several months can be concatenated with commas.
   # The specified month(s) can must be in the range  `1-12`.
-  aide_month: '*'
+  aide_month: '{{ rhel10cis_aide_cron_month }}'
   # This variable governs the weekdays, when the AIDE cronjob is run.
   # `*` signifies that the job is run on all weekdays; furthermore, specific weekdays
   # can be given in the range `0-7` (both `0` and `7` represent Sunday); several weekdays
   # can be concatenated with commas.
-  aide_weekday: '*'
+  aide_weekday: '{{ rhel10cis_aide_cron_weekday }}'
 #
 ## Preferred method of logging
 ## Whether rsyslog or journald preferred method for local logging
@@ -733,7 +733,7 @@ rhel10cis_journald_runtimekeepfree: 100G
 # Current variable governs the settings for log retention(how long the log files will be kept).
 # Thus, it specifies the maximum time to store entries in a single journal
 # file before rotating to the next one. Set to 0 to turn off this feature.
-# The given values is interpreted as seconds, unless suffixed with the units
+# The given values are interpreted as seconds, unless suffixed with the units
 # `year`, `month`, `week`, `day`, `h` or `m` to override the default time unit of seconds.
 # Values are Xm, Xh, Xday, Xweek, Xmonth, Xyear, for example 2week is two weeks
 # ATTENTION: Uncomment the keyword below when values are set!
