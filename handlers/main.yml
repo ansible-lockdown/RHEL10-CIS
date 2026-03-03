@@ -153,9 +153,18 @@
   notify: Set reboot required
   listen: "Remount /boot/efi"
 
+- name: Sysctl update required
+  ansible.builtin.set_fact:
+    rhel10cis_sysctl_update: true
+
 - name: Reload sysctl
   ansible.builtin.command: sysctl --system
   changed_when: true
+
+- name: Coredump Reload
+  ansible.builtin.systemd:
+    name: systemd-coredump.socket
+    state: restarted
 
 - name: Sysctl flush ipv4 route table
   when:
@@ -166,6 +175,15 @@
     value: '1'
     sysctl_set: true
   ignore_errors: true  # noqa ignore-errors
+
+- name: Selinux relabel
+  when:
+    - rhel10cis_selinux_relabel_enabled
+    - ansible_selinux.status == 'disabled'
+    - rhel10cis_disruption_high
+  ansible.builtin.file:
+    path: /.autorelabel
+  notify: Set reboot required
 
 - name: Sysctl flush ipv6 route table
   when:
@@ -190,10 +208,10 @@
     - Set reboot required
     - Restart sshd
 
-- name: Restart firewalld
+- name: Reload firewalld
   ansible.builtin.systemd:
     name: firewalld
-    state: restarted
+    state: reloaded
 
 - name: Restart sshd
   ansible.builtin.systemd:
@@ -245,12 +263,13 @@
 ## Auditd tasks note order for handlers to run
 
 - name: Auditd immutable check
-  ansible.builtin.command: grep -c "^-e 2" /etc/audit/rules.d/99_auditd.rules
+  ansible.builtin.shell: auditctl -s | grep "enabled 2"
+  failed_when: discovered_auditd_immutable_check.rc not in [ 0, 1 ]
   changed_when: false
   register: discovered_auditd_immutable_check
 
 - name: Audit immutable fact
-  when: discovered_auditd_immutable_check is defined
+  when: discovered_auditd_immutable_check.rc == 0
   ansible.builtin.debug:
     msg: "Reboot required for auditd to apply new rules as immutable set"
   notify: Set reboot required

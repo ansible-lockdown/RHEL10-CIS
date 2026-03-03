@@ -2,9 +2,7 @@
 
 ## Configure a RHEL 10 machine to be [CIS](https://www.cisecurity.org/cis-benchmarks/) compliant
 
-### NOTE THIS IS NOT OFFICIAL AS NOT YET RELEASED BY CIS - BASED ON RHEL9
-
-#### Based on [CIS RedHat Enterprise Linux 9 Benchmark v2.0.0](https://www.cisecurity.org/cis-benchmarks/)
+### Based on [CIS RedHat Enterprise Linux 10 Benchmark v1.0.1](https://www.cisecurity.org/cis-benchmarks/)
 
 ---
 
@@ -15,7 +13,7 @@
 ![Forks](https://img.shields.io/github/forks/ansible-lockdown/RHEL10-CIS?style=social)
 ![Followers](https://img.shields.io/github/followers/ansible-lockdown?style=social)
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/AnsibleLockdown.svg?style=social&label=Follow%20%40AnsibleLockdown)](https://twitter.com/AnsibleLockdown)
-![Discord Badge](https://img.shields.io/discord/1025818806838101102210?logo=discord)
+![Discord Badge](https://img.shields.io/discord/925818806838919229?logo=discord)
 
 ![License](https://img.shields.io/github/license/ansible-lockdown/RHEL10-CIS?label=License)
 
@@ -58,9 +56,9 @@
 
 ## Looking for support? 🤝
 
-[Lockdown Enterprise](https://www.lockdownenterprise.com#GH_AL_RH10-CIS)
+[Lockdown Enterprise](https://www.lockdownenterprise.com#GH_AL_RHEL10-CIS)
 
-[Ansible support](https://www.mindpointgroup.com/cybersecurity-products/ansible-counselor#GH_AL_RH10-CIS)
+[Ansible support](https://www.mindpointgroup.com/cybersecurity-products/ansible-counselor#GH_AL_RHEL10-CIS)
 
 ### Community 💬
 
@@ -89,13 +87,15 @@ This role **will make changes to the system** which may have unintended conseque
 CIS release always contains changes, it is highly recommended to review the new references and available variables. This have changed significantly since ansible-lockdown initial release.
 This is now compatible with python3 if it is found to be the default interpreter. This does come with pre-requisites which it configures the system accordingly.
 
-Further details can be seen in the [Changelog](./ChangeLog.md)
+**General:**
+
+- Basic knowledge of Ansible, below are some links to the Ansible documentation to help get started if you are unfamiliar with Ansible
 
 ---
 
 ## Matching a security Level for CIS
 
-It is possible to to only run level 1 or level 2 controls for CIS.
+It is possible to only run level 1 or level 2 controls for CIS.
 This is managed using tags:
 
 - level1-server
@@ -121,7 +121,7 @@ The control found in defaults main also need to reflect this as this control the
 
 **Technical Dependencies:**
 
-RHEL Family OS 10
+RHEL family 10 - Other versions are not supported.
 
 - Access to download or add the goss binary and content to the system if using auditing
 (other options are available on how to get the content to the system.)
@@ -177,7 +177,16 @@ default                    : ok=270  changed=23   unreachable=0    failed=0    s
 
 ## Role Variables
 
-This role is designed that the end user should not have to edit the tasks themselves. All customizing should be done via the defaults/main.yml file or with extra vars within the project, job, workflow, etc.
+This role is designed that the end user should not have to edit the tasks themselves. All customizing should be done via the overriding options found in defaults/main.yml file by utilsing variable precedence in appropriate locations that is appropriate for yor environment e.g. group_vars, inventory vars, extra_vars
+
+## Workstation
+The following controls are not shown as applicable for workstation.
+While that can be implemented please set to false if required.
+•	1.3.1.8
+•	2.1.10
+•	2.1.19
+•	2.1.20
+•	3.1.2
 
 ## Tags 🏷️
 

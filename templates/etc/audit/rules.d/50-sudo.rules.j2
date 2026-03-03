@@ -1,0 +1,6 @@
+{{ file_managed_by_ansible }}
+
+# This template will set all of the auditd configurations via a handler in the role in one task instead of individually
+{% if rhel10cis_rule_6_3_3_3 %}
+-a always,exit -F arch=b64 -S all -F path=/var/log/sudo.log -F perm=wa -F key=sudo_log_file
+{% endif %}

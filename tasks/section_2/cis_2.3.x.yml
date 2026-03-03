@@ -1,4 +1,5 @@
 ---
+
 - name: "2.3.1 | PATCH | Ensure time synchronization is in use"
   when:
     - rhel10cis_rule_2_3_1

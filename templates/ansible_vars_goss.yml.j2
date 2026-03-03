@@ -1,6 +1,6 @@
 ---
 
-# Enable logrunning potential resource intensive tests
+# Enable log running potential resource intensive tests
 run_heavy_tests: {{ audit_run_heavy_tests }}
 
 # Extend default command timeout for longer running tests
@@ -33,10 +33,10 @@ rhel10cis_selinux_disable: {{ rhel10cis_selinux_disable }}
 # UEFI boot('/etc/grub2-efi.cfg') or in case of BIOS legacy-boot('/etc/grub2.cfg').
 rhel10cis_legacy_boot: {{ rhel10cis_legacy_boot }}
 
-## Benchmark name used by audting control role
+## Benchmark name used by auditing control role
 # The audit variable found at the base
 ## metadata for Audit benchmark
-benchmark_version: 'v0.1.0'
+benchmark_version: {{ benchmark_version }}
 
 benchmark: RHEL10-CIS
 
@@ -57,6 +57,8 @@ rhel10cis_rule_1_1_1_6: {{ rhel10cis_rule_1_1_1_6 }}
 rhel10cis_rule_1_1_1_7: {{ rhel10cis_rule_1_1_1_7 }}
 rhel10cis_rule_1_1_1_8: {{ rhel10cis_rule_1_1_1_8 }}
 rhel10cis_rule_1_1_1_9: {{ rhel10cis_rule_1_1_1_9 }}
+rhel10cis_rule_1_1_1_10: {{ rhel10cis_rule_1_1_1_10 }} ## New
+rhel10cis_rule_1_1_1_11: {{ rhel10cis_rule_1_1_1_11 }} ## New
 # Filesystems
 # /tmp
 rhel10cis_rule_1_1_2_1_1: {{ rhel10cis_rule_1_1_2_1_1 }}
@@ -98,6 +100,7 @@ rhel10cis_rule_1_2_1_1: {{ rhel10cis_rule_1_2_1_1 }}
 rhel10cis_rule_1_2_1_2: {{ rhel10cis_rule_1_2_1_2 }}
 rhel10cis_rule_1_2_1_3: {{ rhel10cis_rule_1_2_1_3 }}
 rhel10cis_rule_1_2_1_4: {{ rhel10cis_rule_1_2_1_4 }}
+rhel10cis_rule_1_2_1_5: {{ rhel10cis_rule_1_2_1_5 }}. ## New
 # Package updates
 rhel10cis_rule_1_2_2_1: {{ rhel10cis_rule_1_2_2_1 }}
 
@@ -120,15 +123,18 @@ rhel10cis_rule_1_5_1: {{ rhel10cis_rule_1_5_1 }}
 rhel10cis_rule_1_5_2: {{ rhel10cis_rule_1_5_2 }}
 rhel10cis_rule_1_5_3: {{ rhel10cis_rule_1_5_3 }}
 rhel10cis_rule_1_5_4: {{ rhel10cis_rule_1_5_4 }}
+rhel10cis_rule_1_5_5: {{ rhel10cis_rule_1_5_5 }}
+rhel10cis_rule_1_5_6: {{ rhel10cis_rule_1_5_6 }}
+rhel10cis_rule_1_5_7: {{ rhel10cis_rule_1_5_7 }}
+rhel10cis_rule_1_5_8: {{ rhel10cis_rule_1_5_8 }}
+rhel10cis_rule_1_5_9: {{ rhel10cis_rule_1_5_9 }}
+rhel10cis_rule_1_5_10: {{ rhel10cis_rule_1_5_10 }}
 
 # Config system wide Crypto
 rhel10cis_rule_1_6_1: {{ rhel10cis_rule_1_6_1 }}
 rhel10cis_rule_1_6_2: {{ rhel10cis_rule_1_6_2 }}
 rhel10cis_rule_1_6_3: {{ rhel10cis_rule_1_6_3 }}
 rhel10cis_rule_1_6_4: {{ rhel10cis_rule_1_6_4 }}
-rhel10cis_rule_1_6_5: {{ rhel10cis_rule_1_6_5 }}
-rhel10cis_rule_1_6_6: {{ rhel10cis_rule_1_6_6 }}
-rhel10cis_rule_1_6_7: {{ rhel10cis_rule_1_6_7 }}
 
 # Command line warning banners
 rhel10cis_rule_1_7_1: {{ rhel10cis_rule_1_7_1 }}
@@ -145,10 +151,6 @@ rhel10cis_rule_1_8_3: {{ rhel10cis_rule_1_8_3 }}
 rhel10cis_rule_1_8_4: {{ rhel10cis_rule_1_8_4 }}
 rhel10cis_rule_1_8_5: {{ rhel10cis_rule_1_8_5 }}
 rhel10cis_rule_1_8_6: {{ rhel10cis_rule_1_8_6 }}
-rhel10cis_rule_1_8_7: {{ rhel10cis_rule_1_8_7 }}
-rhel10cis_rule_1_8_8: {{ rhel10cis_rule_1_8_8 }}
-rhel10cis_rule_1_8_9: {{ rhel10cis_rule_1_8_9 }}
-rhel10cis_rule_1_8_10: {{ rhel10cis_rule_1_8_10 }}
 
 # Section 2 rules are controlling Services (Special Purpose Services, and service clients)
 ## Configure Server Services
@@ -180,7 +182,6 @@ rhel10cis_rule_2_2_1: {{ rhel10cis_rule_2_2_1 }}
 rhel10cis_rule_2_2_2: {{ rhel10cis_rule_2_2_2 }}
 rhel10cis_rule_2_2_3: {{ rhel10cis_rule_2_2_3 }}
 rhel10cis_rule_2_2_4: {{ rhel10cis_rule_2_2_4 }}
-rhel10cis_rule_2_2_5: {{ rhel10cis_rule_2_2_5 }}
 
 ## Configure Time Synchronization
 rhel10cis_rule_2_3_1: {{ rhel10cis_rule_2_3_1 }}
@@ -197,6 +198,7 @@ rhel10cis_rule_2_4_1_5: {{ rhel10cis_rule_2_4_1_5 }}
 rhel10cis_rule_2_4_1_6: {{ rhel10cis_rule_2_4_1_6 }}
 rhel10cis_rule_2_4_1_7: {{ rhel10cis_rule_2_4_1_7 }}
 rhel10cis_rule_2_4_1_8: {{ rhel10cis_rule_2_4_1_8 }}
+rhel10cis_rule_2_4_1_9: {{ rhel10cis_rule_2_4_1_9 }}
 ### at
 rhel10cis_rule_2_4_2_1: {{ rhel10cis_rule_2_4_2_1 }}
 
@@ -212,31 +214,46 @@ rhel10cis_rule_3_2_1: {{ rhel10cis_rule_3_2_1 }}
 rhel10cis_rule_3_2_2: {{ rhel10cis_rule_3_2_2 }}
 rhel10cis_rule_3_2_3: {{ rhel10cis_rule_3_2_3 }}
 rhel10cis_rule_3_2_4: {{ rhel10cis_rule_3_2_4 }}
-# Network Kernel Parameters
-rhel10cis_rule_3_3_1: {{ rhel10cis_rule_3_3_1 }}
-rhel10cis_rule_3_3_2: {{ rhel10cis_rule_3_3_2 }}
-rhel10cis_rule_3_3_3: {{ rhel10cis_rule_3_3_3 }}
-rhel10cis_rule_3_3_4: {{ rhel10cis_rule_3_3_4 }}
-rhel10cis_rule_3_3_5: {{ rhel10cis_rule_3_3_5 }}
-rhel10cis_rule_3_3_6: {{ rhel10cis_rule_3_3_6 }}
-rhel10cis_rule_3_3_7: {{ rhel10cis_rule_3_3_7 }}
-rhel10cis_rule_3_3_8: {{ rhel10cis_rule_3_3_8 }}
-rhel10cis_rule_3_3_9: {{ rhel10cis_rule_3_3_9 }}
-rhel10cis_rule_3_3_10: {{ rhel10cis_rule_3_3_10 }}
-rhel10cis_rule_3_3_11: {{ rhel10cis_rule_3_3_11 }}
+rhel10cis_rule_3_2_5: {{ rhel10cis_rule_3_2_5 }}
+rhel10cis_rule_3_2_6: {{ rhel10cis_rule_3_2_6 }}
+# Configure IPv4 parameters
+rhel10cis_rule_3_3_1_1: {{ rhel10cis_rule_3_3_1_1 }}
+rhel10cis_rule_3_3_1_2: {{ rhel10cis_rule_3_3_1_2 }}
+rhel10cis_rule_3_3_1_3: {{ rhel10cis_rule_3_3_1_3 }}
+rhel10cis_rule_3_3_1_4: {{ rhel10cis_rule_3_3_1_4 }}
+rhel10cis_rule_3_3_1_5: {{ rhel10cis_rule_3_3_1_5 }}
+rhel10cis_rule_3_3_1_6: {{ rhel10cis_rule_3_3_1_6 }}
+rhel10cis_rule_3_3_1_7: {{ rhel10cis_rule_3_3_1_7 }}
+rhel10cis_rule_3_3_1_8: {{ rhel10cis_rule_3_3_1_8 }}
+rhel10cis_rule_3_3_1_9: {{ rhel10cis_rule_3_3_1_9 }}
+rhel10cis_rule_3_3_1_10: {{ rhel10cis_rule_3_3_1_10 }}
+rhel10cis_rule_3_3_1_11: {{ rhel10cis_rule_3_3_1_11 }}
+rhel10cis_rule_3_3_1_12: {{ rhel10cis_rule_3_3_1_12 }}
+rhel10cis_rule_3_3_1_13: {{ rhel10cis_rule_3_3_1_13 }}
+rhel10cis_rule_3_3_1_14: {{ rhel10cis_rule_3_3_1_14 }}
+rhel10cis_rule_3_3_1_15: {{ rhel10cis_rule_3_3_1_15 }}
+rhel10cis_rule_3_3_1_16: {{ rhel10cis_rule_3_3_1_16 }}
+rhel10cis_rule_3_3_1_17: {{ rhel10cis_rule_3_3_1_17 }}
+rhel10cis_rule_3_3_1_18: {{ rhel10cis_rule_3_3_1_18 }}
+# Configure IPv6 parameters
+rhel10cis_rule_3_3_2_1: {{ rhel10cis_rule_3_3_2_1 }}
+rhel10cis_rule_3_3_2_2: {{ rhel10cis_rule_3_3_2_2 }}
+rhel10cis_rule_3_3_2_3: {{ rhel10cis_rule_3_3_2_3 }}
+rhel10cis_rule_3_3_2_4: {{ rhel10cis_rule_3_3_2_4 }}
+rhel10cis_rule_3_3_2_5: {{ rhel10cis_rule_3_3_2_5 }}
+rhel10cis_rule_3_3_2_6: {{ rhel10cis_rule_3_3_2_6 }}
+rhel10cis_rule_3_3_2_7: {{ rhel10cis_rule_3_3_2_7 }}
+rhel10cis_rule_3_3_2_8: {{ rhel10cis_rule_3_3_2_8 }}
 
 # Section 4 Firewalls
 ## Firewall utility
 rhel10cis_rule_4_1_1: {{ rhel10cis_rule_4_1_1 }}
 rhel10cis_rule_4_1_2: {{ rhel10cis_rule_4_1_2 }}
-## Configure firewalld
-rhel10cis_rule_4_2_1: {{ rhel10cis_rule_4_2_1 }}
-rhel10cis_rule_4_2_2: {{ rhel10cis_rule_4_2_2 }}
-# Configure nftables
-rhel10cis_rule_4_3_1: {{ rhel10cis_rule_4_3_1 }}
-rhel10cis_rule_4_3_2: {{ rhel10cis_rule_4_3_2 }}
-rhel10cis_rule_4_3_3: {{ rhel10cis_rule_4_3_3 }}
-rhel10cis_rule_4_3_4: {{ rhel10cis_rule_4_3_4 }}
+rhel10cis_rule_4_1_3: {{ rhel10cis_rule_4_1_3 }}
+rhel10cis_rule_4_1_4: {{ rhel10cis_rule_4_1_4 }}
+rhel10cis_rule_4_1_5: {{ rhel10cis_rule_4_1_5 }}
+rhel10cis_rule_4_1_6: {{ rhel10cis_rule_4_1_6 }}
+rhel10cis_rule_4_1_7: {{ rhel10cis_rule_4_1_7 }}
 
 ## Section 5
 ## 5.1. Configure SSH Server
@@ -270,39 +287,34 @@ rhel10cis_rule_5_2_4: {{ rhel10cis_rule_5_2_4 }}
 rhel10cis_rule_5_2_5: {{ rhel10cis_rule_5_2_5 }}
 rhel10cis_rule_5_2_6: {{ rhel10cis_rule_5_2_6 }}
 rhel10cis_rule_5_2_7: {{ rhel10cis_rule_5_2_7 }}
-# 5.3.1.x Configure PAM software packages
+# 5.3.1 Configure authselect
 rhel10cis_rule_5_3_1_1: {{ rhel10cis_rule_5_3_1_1 }}
 rhel10cis_rule_5_3_1_2: {{ rhel10cis_rule_5_3_1_2 }}
 rhel10cis_rule_5_3_1_3: {{ rhel10cis_rule_5_3_1_3 }}
-# 5.3.2 Configure authselect
-rhel10cis_rule_5_3_2_1: {{ rhel10cis_rule_5_3_2_1 }}
-rhel10cis_rule_5_3_2_2: {{ rhel10cis_rule_5_3_2_2 }}
-rhel10cis_rule_5_3_2_3: {{ rhel10cis_rule_5_3_2_3 }}
-rhel10cis_rule_5_3_2_4: {{ rhel10cis_rule_5_3_2_4 }}
-rhel10cis_rule_5_3_2_5: {{ rhel10cis_rule_5_3_2_5 }}
-# 5.3.3.1 Configure pam_faillock module
-rhel10cis_rule_5_3_3_1_1: {{ rhel10cis_rule_5_3_3_1_1 }}
-rhel10cis_rule_5_3_3_1_2: {{ rhel10cis_rule_5_3_3_1_2 }}
-rhel10cis_rule_5_3_3_1_3: {{ rhel10cis_rule_5_3_3_1_3 }}
-# 5.3.3.2 Configure pam_pwquality module
-rhel10cis_rule_5_3_3_2_1: {{ rhel10cis_rule_5_3_3_2_1 }}
-rhel10cis_rule_5_3_3_2_2: {{ rhel10cis_rule_5_3_3_2_2 }}
-rhel10cis_rule_5_3_3_2_3: {{ rhel10cis_rule_5_3_3_2_3 }}
-rhel10cis_rule_5_3_3_2_4: {{ rhel10cis_rule_5_3_3_2_4 }}
-rhel10cis_rule_5_3_3_2_5: {{ rhel10cis_rule_5_3_3_2_5 }}
-rhel10cis_rule_5_3_3_2_6: {{ rhel10cis_rule_5_3_3_2_6 }}
-rhel10cis_rule_5_3_3_2_7: {{ rhel10cis_rule_5_3_3_2_7 }}
-rhel10cis_rule_5_3_3_2_8: {{ rhel10cis_rule_5_3_3_2_8 }}
-# 5.3.3.3 Configure pam_pwhistory module
+rhel10cis_rule_5_3_1_4: {{ rhel10cis_rule_5_3_1_4 }}
+rhel10cis_rule_5_3_1_5: {{ rhel10cis_rule_5_3_1_5 }}
+# 5.3.2.1 Configure pam_faillock module
+rhel10cis_rule_5_3_2_1_1: {{ rhel10cis_rule_5_3_2_1_1 }}
+rhel10cis_rule_5_3_2_1_2: {{ rhel10cis_rule_5_3_2_1_2 }}
+rhel10cis_rule_5_3_2_1_3: {{ rhel10cis_rule_5_3_2_1_3 }}
+# 5.3.2.2 Configure pam_pwquality module
+rhel10cis_rule_5_3_2_2_1: {{ rhel10cis_rule_5_3_2_2_1 }}
+rhel10cis_rule_5_3_2_2_2: {{ rhel10cis_rule_5_3_2_2_2 }}
+rhel10cis_rule_5_3_2_2_3: {{ rhel10cis_rule_5_3_2_2_3 }}
+rhel10cis_rule_5_3_2_2_4: {{ rhel10cis_rule_5_3_2_2_4 }}
+rhel10cis_rule_5_3_2_2_5: {{ rhel10cis_rule_5_3_2_2_5 }}
+rhel10cis_rule_5_3_2_2_6: {{ rhel10cis_rule_5_3_2_2_6 }}
+rhel10cis_rule_5_3_2_2_7: {{ rhel10cis_rule_5_3_2_2_7 }}
+# 5.3.2.3 Configure pam_pwhistory module
 # This are added as part of 5.3.2.4 using jinja2 template
-rhel10cis_rule_5_3_3_3_1: {{ rhel10cis_rule_5_3_3_3_1 }}
-rhel10cis_rule_5_3_3_3_2: {{ rhel10cis_rule_5_3_3_3_2 }}
-rhel10cis_rule_5_3_3_3_3: {{ rhel10cis_rule_5_3_3_3_3 }}
+rhel10cis_rule_5_3_2_3_1: {{ rhel10cis_rule_5_3_2_3_1 }}
+rhel10cis_rule_5_3_2_3_2: {{ rhel10cis_rule_5_3_2_3_2 }}
+rhel10cis_rule_5_3_2_3_3: {{ rhel10cis_rule_5_3_2_3_3 }}
 # 5.3.3.4 Configure pam_unix module
-rhel10cis_rule_5_3_3_4_1: {{ rhel10cis_rule_5_3_3_4_1 }}
-rhel10cis_rule_5_3_3_4_2: {{ rhel10cis_rule_5_3_3_4_2 }}
-rhel10cis_rule_5_3_3_4_3: {{ rhel10cis_rule_5_3_3_4_3 }}
-rhel10cis_rule_5_3_3_4_4: {{ rhel10cis_rule_5_3_3_4_4 }}
+rhel10cis_rule_5_3_2_4_1: {{ rhel10cis_rule_5_3_2_4_1 }}
+rhel10cis_rule_5_3_2_4_2: {{ rhel10cis_rule_5_3_2_4_2 }}
+rhel10cis_rule_5_3_2_4_3: {{ rhel10cis_rule_5_3_2_4_3 }}
+rhel10cis_rule_5_3_2_4_4: {{ rhel10cis_rule_5_3_2_4_4 }}
 # 5.4 User Accounts and Environment
 # 5.4.1 Configure shadow password suite parameters
 rhel10cis_rule_5_4_1_1: {{ rhel10cis_rule_5_4_1_1 }}
@@ -387,6 +399,22 @@ rhel10cis_rule_6_3_3_18: {{ rhel10cis_rule_6_3_3_18 }}
 rhel10cis_rule_6_3_3_19: {{ rhel10cis_rule_6_3_3_19 }}
 rhel10cis_rule_6_3_3_20: {{ rhel10cis_rule_6_3_3_20 }}
 rhel10cis_rule_6_3_3_21: {{ rhel10cis_rule_6_3_3_21 }}
+rhel10cis_rule_6_3_3_22: {{ rhel10cis_rule_6_3_3_22 }}
+rhel10cis_rule_6_3_3_23: {{ rhel10cis_rule_6_3_3_23 }}
+rhel10cis_rule_6_3_3_24: {{ rhel10cis_rule_6_3_3_24 }}
+rhel10cis_rule_6_3_3_25: {{ rhel10cis_rule_6_3_3_25 }}
+rhel10cis_rule_6_3_3_26: {{ rhel10cis_rule_6_3_3_26 }}
+rhel10cis_rule_6_3_3_27: {{ rhel10cis_rule_6_3_3_27 }}
+rhel10cis_rule_6_3_3_28: {{ rhel10cis_rule_6_3_3_28 }}
+rhel10cis_rule_6_3_3_29: {{ rhel10cis_rule_6_3_3_29 }}
+rhel10cis_rule_6_3_3_30: {{ rhel10cis_rule_6_3_3_30 }}
+rhel10cis_rule_6_3_3_31: {{ rhel10cis_rule_6_3_3_31 }}
+rhel10cis_rule_6_3_3_32: {{ rhel10cis_rule_6_3_3_32 }}
+rhel10cis_rule_6_3_3_33: {{ rhel10cis_rule_6_3_3_33 }}
+rhel10cis_rule_6_3_3_34: {{ rhel10cis_rule_6_3_3_34 }}
+rhel10cis_rule_6_3_3_35: {{ rhel10cis_rule_6_3_3_35 }}
+rhel10cis_rule_6_3_3_36: {{ rhel10cis_rule_6_3_3_36 }}
+rhel10cis_rule_6_3_3_37: {{ rhel10cis_rule_6_3_3_37 }}
 ## 6.3.4 Configure auditd File Access
 rhel10cis_rule_6_3_4_1: {{ rhel10cis_rule_6_3_4_1 }}
 rhel10cis_rule_6_3_4_2: {{ rhel10cis_rule_6_3_4_2 }}
@@ -441,13 +469,7 @@ rhel10cis_warning_banner: {{ rhel10cis_warning_banner }}
 
 ## Control 1.8.x - Settings for GDM
 ## 1.8 GDM graphical interface
-rhel10cis_gui: {{ rhel10cis_gui }}
-
-# This variable specifies the GNOME configuration database file to which configurations are written.
-# (See "https://help.gnome.org/admin/system-admin-guide/stable/dconf-keyfiles.html.en")
-# The default database is 'local'.
-rhel10cis_dconf_db_name: {{ rhel10cis_dconf_db_name }}
-
+desktop_required: {{ rhel10_desktop_required }}
 
 ## Section 2. Services
 
@@ -465,28 +487,28 @@ rhel10cis_autofs_services: {{ rhel10cis_autofs_services }}
 rhel10cis_autofs_mask: {{ rhel10cis_autofs_mask }}
 rhel10cis_avahi_server: {{ rhel10cis_avahi_server }}
 rhel10cis_avahi_mask: {{ rhel10cis_avahi_mask }}
+rhel10cis_cockpit_server: {{ rhel10cis_cockpit_server }}
+rhel10cis_cockpit_mask: {{ rhel10cis_cockpit_mask }}
 rhel10cis_dhcp_server: {{ rhel10cis_dhcp_server }}
 rhel10cis_dhcp_mask: {{ rhel10cis_dhcp_mask }}
 rhel10cis_dns_server: {{ rhel10cis_dns_server }}
 rhel10cis_dns_mask: {{ rhel10cis_dns_mask }}
 rhel10cis_dnsmasq_server: {{ rhel10cis_dnsmasq_server }}
 rhel10cis_dnsmasq_mask: {{ rhel10cis_dnsmasq_mask }}
-rhel10cis_samba_server: {{ rhel10cis_samba_server }}
-rhel10cis_samba_mask: {{ rhel10cis_samba_mask }}
 rhel10cis_ftp_server: {{ rhel10cis_ftp_server }}
 rhel10cis_ftp_mask: {{ rhel10cis_ftp_mask }}
 rhel10cis_message_server: {{ rhel10cis_message_server }}  # This is for messaging dovecot and cyrus-imap
 rhel10cis_message_mask: {{ rhel10cis_message_mask }}
 rhel10cis_nfs_server: {{ rhel10cis_nfs_server }}
 rhel10cis_nfs_mask: {{ rhel10cis_nfs_mask }}
-rhel10cis_nis_server: {{ rhel10cis_nis_server }}  # set to mask if nis client required
-rhel10cis_nis_mask: {{ rhel10cis_nis_mask }}
 rhel10cis_print_server: {{ rhel10cis_print_server }}  # replaces cups
 rhel10cis_print_mask: {{ rhel10cis_print_mask }}
 rhel10cis_rpc_server: {{ rhel10cis_rpc_server }}
 rhel10cis_rpc_mask: {{ rhel10cis_rpc_mask }}
 rhel10cis_rsync_server: {{ rhel10cis_rsync_server }}
 rhel10cis_rsync_mask: {{ rhel10cis_rsync_mask }}
+rhel10cis_samba_server: {{ rhel10cis_samba_server }}
+rhel10cis_samba_mask: {{ rhel10cis_samba_mask }}
 rhel10cis_snmp_server: {{ rhel10cis_snmp_server }}
 rhel10cis_snmp_mask: {{ rhel10cis_snmp_mask }}
 rhel10cis_telnet_server: {{ rhel10cis_telnet_server }}
@@ -508,7 +530,6 @@ rhel10cis_is_mail_server: {{ rhel10cis_is_mail_server }}
 
 rhel10cis_ftp_client: {{ rhel10cis_ftp_client }}
 rhel10cis_openldap_clients_required: {{ rhel10cis_openldap_clients_required }}
-rhel10cis_ypbind_required: {{ rhel10cis_ypbind_required }}  # Same package as NIS server
 rhel10cis_telnet_required: {{ rhel10cis_telnet_required }}
 rhel10cis_tftp_client: {{ rhel10cis_tftp_client }}
 
@@ -537,16 +558,13 @@ rhel10cis_ipv6_required: {{ rhel10cis_ipv6_required }}
 # concerned with acceptance and routing of packages are skipped.
 rhel10cis_is_router: {{ rhel10cis_is_router }}
 
-# Section 4 vars
+## Section 4 vars
+
 ### Firewall Service to install and configure - Options are:
-# 1) either 'firewalld'
-# 2) or 'nftables'
-#### Some control allow for services to be removed or masked
-#### The options are under each heading
-#### absent = remove the package
-#### masked = leave package if installed and mask the service
+# firewalld anything else this will skip
 rhel10cis_firewall: {{ rhel10cis_firewall }}
 
+rhel10cis_active_firewall_zone: {{ rhel10cis_active_firewall_zone }}
 ## Section5 vars
 
 ## Section 5.1 - SSH
@@ -603,7 +621,7 @@ rhel10cis_passwd_complex_option: {{ rhel10cis_passwd_complex_option }}
   # This variable governs after how many days a password expires.
   # CIS requires a value of 365 or less.
 rhel10cis_pass_max_days: {{ rhel10cis_pass_max_days }}
-  ## Control 5.4.1.2 - Ensure minimum days between password changes is 7 or more
+  ## Control 5.4.1.2 - Ensure minimum days between password changes are 7 or more
   # This variable specifies the minimum number of days allowed between changing
   # passwords. CIS requires a value of at least 1.
 rhel10cis_pass_min_days: {{ rhel10cis_pass_min_days }}
@@ -655,41 +673,71 @@ rhel10cis_aide_cron:
   # This variable represents the user account under which the cron job for AIDE will run.
   cron_user: root
   # This variable represents the path to the AIDE crontab file.
-  cron_file: /etc/cron.d/aide_cron
+  cron_file: {{ rhel10cis_aide_cron_file }}
   # This variable represents the actual command or script that the cron job
   # will execute for running AIDE.
-  aide_job: '/usr/sbin/aide --check'
+  aide_job: '{{ rhel10cis_aide_cron_job }}'
   # These variables define the schedule for the cron job
   # This variable governs the minute of the time of day when the AIDE cronjob is run.
   # It must be in the range `0-59`.
-  aide_minute: 0
+  aide_minute: {{ rhel10cis_aide_cron_minute }}
   # This variable governs the hour of the time of day when the AIDE cronjob is run.
   # It must be in the range `0-23`.
-  aide_hour: 5
+  aide_hour: {{ rhel10cis_aide_cron_hour }}
   # This variable governs the day of the month when the AIDE cronjob is run.
   # `*` signifies that the job is run on all days; furthermore, specific days
   # can be given in the range `1-31`; several days can be concatenated with a comma.
   # The specified day(s) can must be in the range  `1-31`.
-  aide_day: '*'
+  aide_day: '{{ rhel10cis_aide_cron_day }}'
   # This variable governs months when the AIDE cronjob is run.
   # `*` signifies that the job is run in every month; furthermore, specific months
   # can be given in the range `1-12`; several months can be concatenated with commas.
   # The specified month(s) can must be in the range  `1-12`.
-  aide_month: '*'
+  aide_month: '{{ rhel10cis_aide_cron_month }}'
   # This variable governs the weekdays, when the AIDE cronjob is run.
   # `*` signifies that the job is run on all weekdays; furthermore, specific weekdays
   # can be given in the range `0-7` (both `0` and `7` represent Sunday); several weekdays
   # can be concatenated with commas.
-  aide_weekday: '*'
+  aide_weekday: '{{ rhel10cis_aide_cron_weekday }}'
 #
 ## Preferred method of logging
 ## Whether rsyslog or journald preferred method for local logging
-## Control 6.2.3 | Configure rsyslog
 ## Control 6.2.1 | Configure journald
-# This variable governs which logging service should be used, choosing between 'rsyslog'(CIS recommendation)
+## Control 6.2.2 | Configure rsyslog
+# This variable governs which logging service should be used, choosing between 'rsyslog'
 # or 'journald'(only one is implemented) will trigger the execution of the associated subsection, as the-best
 # practices are written wholly independent of each other.
+# Should your organization make use of both rsyslog and journald, take care how the recommendations may or may not apply to you.
 rhel10cis_syslog: {{ rhel10cis_syslog }}
+
+## Control 6.2.1.3 - Ensure journald log rotation is configured per site policy
+# Current variable configures the max amount of disk space the logs will use(thus, journal files
+# will not grow without bounds)
+# The variables below related to journald, please set these to your site specific values
+# These variable specifies how much disk space the journal may use up at most
+# Specify values in bytes or use K, M, G, T, P, E as units for the specified sizes.
+# See https://www.freedesktop.org/software/systemd/man/journald.conf.html for more information.
+rhel10cis_journald_systemmaxuse: 10M
+## Control 6.2.1.3 - Ensure journald log rotation is configured per site policy
+# Current variable configures the amount of disk space to keep free for other uses.
+rhel10cis_journald_systemkeepfree: 100G
+## Control 6.2.1.3 - Ensure journald log rotation is configured per site policy
+# This variable configures how much disk space the journal may use up at most.
+# Similar with 'rhel10cis_journald_systemmaxuse', but related to runtime space.
+rhel10cis_journald_runtimemaxuse: 10M
+## Control 6.2.1.3 - Ensure journald log rotation is configured per site policy
+# This variable configures the actual amount of disk space to keep free
+# Similar with 'rhel10cis_journald_systemkeepfree', but related to runtime space.
+rhel10cis_journald_runtimekeepfree: 100G
+## Control 6.2.1.3 - Ensure journald log rotation is configured per site policy
+# Current variable governs the settings for log retention(how long the log files will be kept).
+# Thus, it specifies the maximum time to store entries in a single journal
+# file before rotating to the next one. Set to 0 to turn off this feature.
+# The given values are interpreted as seconds, unless suffixed with the units
+# `year`, `month`, `week`, `day`, `h` or `m` to override the default time unit of seconds.
+# Values are Xm, Xh, Xday, Xweek, Xmonth, Xyear, for example 2week is two weeks
+# ATTENTION: Uncomment the keyword below when values are set!
+rhel10cis_journald_maxfilesec: 1month
 
 ## Control 6.2.2.x & 6.2.3.x - Ensure rsyslog is not configured to receive logs from a remote client
 # This variable expresses whether the system is used as a log server or not. If set to:

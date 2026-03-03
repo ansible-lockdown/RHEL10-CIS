@@ -3,7 +3,9 @@
 # List users in order to look files inside each home directory
 
 - name: PRELIM | Include audit specific variables
-  when: run_audit or audit_only or setup_audit
+  when:
+    - run_audit or audit_only
+    - setup_audit
   tags:
     - setup_audit
     - run_audit
@@ -65,14 +67,14 @@
 - name: PRELIM | AUDIT | Section 1.1 | Retrieve mount options
   tags: always
   block:
-    - name: PRELIM | AUDIT | Section 1.1 | Retrieve mount options - call mount  # noqa command-instead-of-module
+    - name: PRELIM | AUDIT | Section 1.1 | Retrieve mount options - call mount # noqa command-instead-of-module
       ansible.builtin.shell: |
         mount | awk '{print $1, $3, $5, $6}'
       changed_when: false
       check_mode: false
       register: prelim_mount_output
 
-    - name: PRELIM | AUDIT | Section 1.1 | Retrieve mount options - build fact  # This is inherited and used in mountpoints tasks
+    - name: PRELIM | AUDIT | Section 1.1 | Retrieve mount options - build fact # This is inherited and used in mountpoints tasks
       ansible.builtin.set_fact:
         prelim_mount_point_fs_and_options: >-
           {%- set prelim_mount_point_fs_and_options = {} -%}
@@ -141,13 +143,6 @@
     path: /usr/share/gnome/gnome-version.xml
   register: prelim_gnome_present
 
-- name: "PRELIM | AUDIT | Install dconf if gui installed"
-  when: rhel10cis_gui
-  tags: always
-  ansible.builtin.package:
-    name: dconf
-    state: present
-
 - name: "PRELIM | AUDIT | Wireless adapter pre-requisites"
   when:
     - rhel10cis_rule_3_1_2
@@ -156,17 +151,18 @@
   block:
     - name: "PRELIM | AUDIT | Discover is wireless adapter on system"
       ansible.builtin.shell: find /sys/class/net/*/ -type d -name wireless
-      register: discover_wireless_adapters
+      register: prelim_wireless_adapters
       changed_when: false
       check_mode: false
-      failed_when: discover_wireless_adapters.rc not in [ 0, 1 ]
+      failed_when: prelim_wireless_adapters.rc not in [ 0, 1 ]
 
     - name: "PRELIM | PATCH | Install Network-Manager | if wireless adapter present"
       when:
-        - discover_wireless_adapters.rc == 0
+        - prelim_wireless_adapters.rc == 0
         - "'NetworkManager' not in ansible_facts.packages"
+        - rhel10cis_install_network_manager
       ansible.builtin.package:
-        name: NetworkManager
+        name: "{{ rhel10cis_network_manager_package_name }}"
         state: present
 
 - name: "PRELIM | PATCH | Install Cronie"

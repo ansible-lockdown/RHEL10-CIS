@@ -1,6 +1,6 @@
 ---
 
-- name: "1.1.2.1.1 | PATCH | Ensure /tmp is a separate partition"
+- name: "1.1.2.1.1 | PATCH | Ensure /tmp is tmpfs or a separate partition"
   when:
     - required_mount not in prelim_mount_names
     - rhel10cis_rule_1_1_2_1_1
@@ -10,7 +10,8 @@
     - audit
     - mounts
     - rule_1.1.2.1.1
-    - NIST800-53R5_CM-7
+    - NIST800-53R5_CM-6
+    - CCI-000336
   vars:
     warn_control_id: "1.1.2.1.1"
     required_mount: "/tmp"
@@ -44,8 +45,8 @@
     - patch
     - mounts
     - rule_1.1.2.1.2
-    - NIST800-53R5_AC-3
-    - NIST800-53R5_MP-2
+    - NIST800-53R5_CM-7
+    - CCI-001764
   vars:
     mount_point: "/tmp"
     required_option: nodev
@@ -69,8 +70,8 @@
     - patch
     - mounts
     - rule_1.1.2.1.3
-    - NIST800-53R5_AC-3
-    - NIST800-53R5_MP-2
+    - NIST800-53R5_CM-7
+    - CCI-001764
   vars:
     mount_point: "/tmp"
     required_option: nosuid
@@ -91,8 +92,8 @@
     - patch
     - mounts
     - rule_1.1.2.1.4
-    - NIST800-53R5_AC-3
-    - NIST800-53R5_MP-2
+    - NIST800-53R5_CM-7
+    - CCI-001764
   vars:
     mount_point: "/tmp"
     required_option: noexec
@@ -119,8 +120,8 @@
     - rule_1.1.2.1.2
     - rule_1.1.2.1.3
     - rule_1.1.2.1.4
-    - NIST800-53R5_AC-3
-    - NIST800-53R5_MP-2
+    - NIST800-53R5_CM-7
+    - CCI-001764
   vars:
     mount_point: "/tmp"
   ansible.builtin.template:

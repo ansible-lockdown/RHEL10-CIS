@@ -1,0 +1,6 @@
+{{ file_managed_by_ansible }}
+
+# This template will set all of the auditd configurations via a handler in the role in one task instead of individually
+{% if rhel10cis_rule_6_3_3_9 %}
+-a always,exit -F arch=b64 -S all -F dir=/etc/NetworkManager/ -F perm=wa -F key=system-locale
+{% endif %}

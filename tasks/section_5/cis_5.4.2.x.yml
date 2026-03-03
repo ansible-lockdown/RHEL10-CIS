@@ -12,11 +12,7 @@
     - accounts
     - users
     - rule_5.4.2.1
-    - NIST800-53R5_CM-1
-    - NIST800-53R5_CM-2
     - NIST800-53R5_CM-6
-    - NIST800-53R5_CM-7
-    - NIST800-53R5_IA-5
   ansible.builtin.command: passwd -l {{ item }}
   changed_when: false
   failed_when: false
@@ -139,7 +135,7 @@
       ansible.builtin.stat:
         path: "{{ item }}"
       loop: "{{ discovered_root_paths_split.stdout_lines }}"
-      register: paths_stat
+      register: discovered_paths_stat
 
     - name: "5.4.2.5 | AUDIT | Ensure root PATH Integrity | Create dirs for some paths that are not dirs"
       ansible.builtin.file:
@@ -148,7 +144,7 @@
         owner: root
         group: root
         mode: 'go-w'
-      loop: "{{ paths_stat.results }}"
+      loop: "{{ discovered_paths_stat.results }}"
       when: not item.stat.exists
 
     - name: "5.4.2.5 | AUDIT | Ensure root PATH Integrity | Check for empty dirs"
@@ -203,7 +199,7 @@
     - NIST800-53R5_MP-2
   ansible.builtin.lineinfile:
     path: /root/.bash_profile
-    regexp: \s*umask
+    regexp: ^\s*umask
     line: "umask {{ rhel10cis_root_umask }}"
     create: true
     mode: 'g-wx,o-rwx'

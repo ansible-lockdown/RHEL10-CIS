@@ -48,6 +48,7 @@
     - patch
     - umask
     - rule_5.4.3.3
+    - CCI-000366
     - NIST800-53R5_AC-3
     - NIST800-53R5_MP-2
   ansible.builtin.replace:

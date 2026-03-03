@@ -7,6 +7,9 @@ rhel10cis_allowed_crypto_policies:
   - 'FUTURE'
   - 'FIPS'
 
+# variable built from rhel10cis_bootloader_password and rhel10cis_bootloader_salt or rhel10cis_bootloader_password_hash
+rhel10_compiled_bootloader_password: "{% if rhel10cis_bootloader_salt != '' %}{{ (rhel10cis_bootloader_password | grub_hash(salt=rhel10cis_bootloader_salt)) }}{% else %}{{ rhel10cis_bootloader_password_hash }}{% endif %}" # noqa template-instead-of-copy
+
 # Following is left blank for ability to build string
 rhel10cis_crypto_policy_module: ''
 
@@ -16,15 +19,12 @@ rhel10cis_allowed_crypto_policies_modules:
   - 'OSPP'
   - 'AD-SUPPORT'
   - 'AD-SUPPORT-LEGACY'
-  # The following are already included in 1.6.x controls
+  # The following are already included in 1.6.x or 5.1 controls
   - 'NO-SHA1'
   - 'NO-SSHCBC'
   - 'NO-SSHETM'
   - 'NO-SSHWEAKCIPHER'
   - 'NO-SSHWEAKMAC'
-  - 'NO-WEAKMAC'
-
-rhel10_compiled_bootloader_password: "{% if rhel10cis_bootloader_salt != '' %}{{ (rhel10cis_bootloader_password | grub_hash(salt=rhel10cis_bootloader_salt)) }}{% else %}{{ rhel10cis_bootloader_password_hash }}{% endif %}" # noqa template-instead-of-copy
 
 # Used to control warning summary
 warn_control_list: ""
@@ -32,11 +32,6 @@ warn_count: 0
 
 # list of dicts of interactive users, filled in during prelim.yml
 prelim_interactive_users: []
-
-# Default empty values for 1.4.2
-efi_mount_opts_addition: ''
-
-gpg_key_package: "{{ ansible_facts.distribution | lower }}-gpg-keys"
 
 ## Control 6.3.3.x - Audit template
 # This variable governs if the auditd logic should be executed(if value is true).
@@ -72,3 +67,10 @@ auditd_binaries:
   - /usr/sbin/ausearch
   - /usr/sbin/auditd
   - /usr/sbin/augenrules
+
+company_title: 'Mindpoint Group - A Tyto Athene Company'
+
+file_managed_by_ansible: |-
+  # File managed by ansible as part of {{ benchmark }} benchmark
+  # As part of Ansible-lockdown
+  # Provided by {{ company_title }}
