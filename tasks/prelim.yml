@@ -313,6 +313,9 @@
 
 - name: "PRELIM | PATCH | Install ACL if 7.2.8"
   when: rhel10cis_rule_7_2_8
+  tags:
+    - level1-server
+    - level1-workstation
   ansible.builtin.package:
     name: acl
     state: present
