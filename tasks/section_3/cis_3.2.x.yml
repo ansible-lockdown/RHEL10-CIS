@@ -63,8 +63,8 @@
 - name: "3.2.3 | PATCH | Ensure dccp kernel module is not available"
   when: rhel10cis_rule_3_2_3
   tags:
-    - level2-server
-    - level2-workstation
+    - level1-server
+    - level1-workstation
     - patch
     - rule_3.2.3
     - dccp
