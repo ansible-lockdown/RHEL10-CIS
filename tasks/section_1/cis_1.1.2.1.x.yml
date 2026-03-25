@@ -124,10 +124,18 @@
     - CCI-001764
   vars:
     mount_point: "/tmp"
-  ansible.builtin.template:
-    src: etc/systemd/system/tmp.mount.j2
-    dest: /etc/systemd/system/tmp.mount
-    owner: root
-    group: root
-    mode: 'go-wx'
-  notify: *mount_option_notify
+  block:
+    - name: "1.1.2.1.1 | PATCH | Ensure /tmp is tmpfs or a separate partition | Create tmp.mount.d directory"
+      ansible.builtin.file:
+        path: /etc/systemd/system/tmp.mount.d
+        state: directory
+        mode: 'go-wx'
+
+    - name: "1.1.2.1.1 | PATCH | Ensure /tmp is tmpfs or a separate partition | Create 60-options.conf file"
+      ansible.builtin.template:
+        src: etc/systemd/system/tmpmount.d/60-options.conf.j2
+        dest: /etc/systemd/system/tmp.mount.d/60-options.conf
+        owner: root
+        group: root
+        mode: 'go-wx'
+      notify: *mount_option_notify
