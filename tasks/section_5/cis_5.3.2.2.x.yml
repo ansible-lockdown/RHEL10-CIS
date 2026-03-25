@@ -65,7 +65,7 @@
     - NIST800-53R5_IA-5
     - pam
   block:
-    - name: "5.3.2.2.2 | PATCH | Ensure minimum password length is configured | Remove minlen from conf files except expected file"
+    - name: "5.3.2.2.2 | PATCH | Ensure password length is configured | Remove minlen from conf files except expected file"
       when:
         - "rhel10cis_passwd_minlen_file not in item.path"
         - rhel10cis_disruption_high
@@ -76,7 +76,7 @@
       with_items:
         - "{{ prelim_pam_pwquality_confs.files }}"
         - { path: '/etc/security/pwquality.conf'}
-    - name: "5.3.2.2.2 | PATCH | Ensure minimum password length is configured | Ensure minlen file exists"
+    - name: "5.3.2.2.2 | PATCH | Ensure password length is configured | Ensure minlen file exists"
       ansible.builtin.template:
         src: "{{ rhel10cis_passwd_minlen_file }}.j2"
         dest: "/{{ rhel10cis_passwd_minlen_file }}"
@@ -84,7 +84,7 @@
         group: root
         mode: 'u-x,go-rwx'
 
-    - name: "5.3.2.2.2 | PATCH | Ensure minimum password length is configured | Remove minlen from pam files NOT AuthSelect"
+    - name: "5.3.2.2.2 | PATCH | Ensure password length is configured | Remove minlen from pam files NOT AuthSelect"
       when:
         - not rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -96,7 +96,7 @@
         - password
         - system
 
-    - name: "5.3.2.2.2 | PATCH | Ensure minimum password length is configured | Remove minlen from pam files AuthSelect"
+    - name: "5.3.2.2.2 | PATCH | Ensure password length is configured | Remove minlen from pam files AuthSelect"
       when:
         - rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high

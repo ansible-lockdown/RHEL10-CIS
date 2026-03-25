@@ -111,7 +111,7 @@
       failed_when: false
       register: discovered_sudo_timeout_files
 
-    - name: "5.2.6 | PATCH | Ensure sudo authentication timeout is configured correctly | Set value if no results"
+    - name: "5.2.6 | PATCH | Ensure sudo timestamp_timeout is configured | Set value if no results"
       when: discovered_sudo_timeout_files.stdout | length == 0
       ansible.builtin.lineinfile:
         path: /etc/sudoers
@@ -119,7 +119,7 @@
         line: "Defaults timestamp_timeout={{ rhel10cis_sudo_timestamp_timeout }}"
         validate: "/usr/sbin/visudo -cf %s"
 
-    - name: "5.2.6 | PATCH | Ensure sudo authentication timeout is configured correctly | Set value if has results"
+    - name: "5.2.6 | PATCH | Ensure sudo timestamp_timeout is configured | Set value if has results"
       when: discovered_sudo_timeout_files.stdout | length > 0
       ansible.builtin.replace:
         path: "{{ item }}"
