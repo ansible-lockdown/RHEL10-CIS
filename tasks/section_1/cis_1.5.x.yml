@@ -249,7 +249,7 @@
         replace: ""
       loop: "{{ discovered_kernel_kptr_restrict.files }}"
 
-    - name: "1.5.6 | PATCH | Ensure kernel.dmesg_restrict is configured"
+    - name: "1.5.6 | PATCH | Ensure kernel.kptr_restrict is configured"
       ansible.builtin.template:
         src: etc/sysctl.d/60-kernel_sysctl.conf.j2
         dest: /etc/sysctl.d/60-kernel_sysctl.conf
@@ -291,7 +291,7 @@
         replace: ""
       loop: "{{ discovered_kernel_yama_ptrace_scope.files }}"
 
-    - name: "1.5.7 | PATCH | Ensure kernel.dmesg_restrict is configured"
+    - name: "1.5.7 | PATCH | Ensure kernel.yama.ptrace_scope is configured"
       ansible.builtin.template:
         src: etc/sysctl.d/60-kernel_sysctl.conf.j2
         dest: /etc/sysctl.d/60-kernel_sysctl.conf

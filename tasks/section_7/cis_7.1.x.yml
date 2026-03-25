@@ -301,7 +301,7 @@
           - "The files are listed below, please confirm the integrity of these binaries"
           - "{{ discovered_suid_sgid_files_flatten }}"
 
-    - name: "7.1.13 | PATCH | Audit SUID executables | Remove SUID bit"
+    - name: "7.1.13 | PATCH | Ensure SUID and SGID files are reviewed | Remove SUID bit"
       when:
         - rhel10cis_suid_sgid_adjust
         - discovered_suid_sgid_files_flatten | length > 0

@@ -165,7 +165,7 @@
         name: jffs2
         state: absent
 
-- name: "1.1.1.6 | PATCH | Ensure overlayfs kernel module is not available"
+- name: "1.1.1.6 | PATCH | Ensure overlay kernel module is not available"
   when: rhel10cis_rule_1_1_1_6
   tags:
     - level2-server
@@ -176,7 +176,7 @@
     - NIST800-53R5_CM-7
     - CCI-000381
   block:
-    - name: "1.1.1.6 | PATCH | Ensure overlayfs kernel module is not available | Edit modprobe config"
+    - name: "1.1.1.6 | PATCH | Ensure overlay kernel module is not available | Edit modprobe config"
       ansible.builtin.lineinfile:
         path: /etc/modprobe.d/CIS.conf
         regexp: "^(#)?install overlayfs(\\s|$)"
@@ -184,7 +184,7 @@
         create: true
         mode: 'go-rwx'
 
-    - name: "1.1.1.6 | PATCH | Ensure overlayfs kernel module is not available | blacklist"
+    - name: "1.1.1.6 | PATCH | Ensure overlay kernel module is not available | blacklist"
       ansible.builtin.lineinfile:
         path: /etc/modprobe.d/blacklist.conf
         regexp: "^(#)?blacklist overlayfs(\\s|$)"
@@ -192,7 +192,7 @@
         create: true
         mode: 'go-rwx'
 
-    - name: "1.1.1.6 | PATCH | Ensure overlayfs kernel module is not available | Disable overlayfs"
+    - name: "1.1.1.6 | PATCH | Ensure overlay kernel module is not available | Disable overlayfs"
       when: not system_is_container
       community.general.modprobe:
         name: overlayfs
@@ -367,3 +367,9 @@
       when: discovered_fs_modules_loaded.stdout | length > 0
       ansible.builtin.import_tasks:
         file: warning_facts.yml
+
+    - name: "1.1.1.11 | AUDIT | Ensure unused filesystems kernel modules are not available | Remove discovery script"
+      when: rhel10cis_remove_kernel_discovery_script
+      ansible.builtin.file:
+        path: /var/fs_with_cves.sh
+        state: absent
