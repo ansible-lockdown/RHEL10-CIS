@@ -153,6 +153,11 @@
   notify: Set reboot required
   listen: "Remount /boot/efi"
 
+- name: Restart chronyd
+  ansible.builtin.systemd:
+    name: chronyd
+    state: restarted
+
 - name: Sysctl update required
   ansible.builtin.set_fact:
     rhel10cis_sysctl_update: true
@@ -262,25 +267,27 @@
 
 ## Auditd tasks note order for handlers to run
 
-- name: Auditd immutable check
-  ansible.builtin.shell: auditctl -s | grep "enabled 2"
-  failed_when: discovered_auditd_immutable_check.rc not in [ 0, 1 ]
-  changed_when: false
-  register: discovered_auditd_immutable_check
+- name: Auditd rules reload
+  when: prelim_auditd_immutable_check.rc == 1 or discovered_augenrules_check.stdout is search('No change')
+  ansible.builtin.command: augenrules --load
+  changed_when: true
+  failed_when: discovered_augenrule_check.rc not in [ 0, 1 ]
+  register: discovered_augenrule_check
 
 - name: Audit immutable fact
-  when: discovered_auditd_immutable_check.rc == 0
+  when: prelim_auditd_immutable_check is defined
   ansible.builtin.debug:
     msg: "Reboot required for auditd to apply new rules as immutable set"
   notify: Set reboot required
 
 - name: Stop auditd process
+  when: prelim_auditd_immutable_check is defined
   ansible.builtin.command: systemctl kill auditd
   changed_when: true
   listen: Restart auditd
 
 - name: Start auditd process
-  ansible.builtin.systemd_service:
+  ansible.builtin.systemd:
     name: auditd
     state: started
   listen: Restart auditd
