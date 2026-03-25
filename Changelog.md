@@ -1,5 +1,27 @@
 # Changes to RHEL10CIS
 
+## March 2026 — Common alignment and CIS validation (`rhel10`)
+
+# 1.0.1 - March 26 updates
+- Common file updates
+- De-duped company
+- titles aligned
+- meta aligned
+
+- thanks to @defnotujine
+  - #70 tags for acl 7.2.8
+  - #72 3.2.3 correct level added
+
+- thanks to @mindrb
+  - #62 config aide enhancement
+  - #63 typo in 5.1.1
+  - #64 tmp.mount enhancement
+  - #65 tidy up modprobe blacklisting
+  - #68 6.2.3.8 package name typo fix
+  - #69 use passwd rule fixed
+  - #71 tuning chrony rules and new optional start variable
+  - #72 rhel10cis_remove_kernel_discovery_script
+
 ## 1.0.1 - Based upon CIS official 1.0.1
 
 - Thanks to Eugene@Frequentis for feedback
