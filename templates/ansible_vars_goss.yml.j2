@@ -463,7 +463,7 @@ rhel10cis_set_boot_pass: {{ rhel10cis_set_boot_pass }}
 # - 1.7.1 - Ensure message of the day is configured properly
 # - 1.7.2 - Ensure local login warning banner is configured properly
 # - 1.7.3 - Ensure remote login warning banner is configured properly
-# This variable  stores the content for the Warning Banner(relevant for issue, issue.net, motd).
+# This variable stores the content for the Warning Banner(relevant for issue, issue.net, motd).
 rhel10cis_warning_banner: {{ rhel10cis_warning_banner }}
 # End Banner
 
@@ -570,7 +570,7 @@ rhel10cis_active_firewall_zone: {{ rhel10cis_active_firewall_zone }}
 ## Section 5.1 - SSH
 
 ## Controls:
-## - 5.1.7  - Ensure SSH access is limited
+## - 5.1.7 - Ensure SSH access is limited
 # This variable, if specified, configures a list of USER name patterns, separated by spaces, to allow SSH
 # access for users whose user name matches one of the patterns. This is done
 # by setting the value of `AllowUsers` option in `/etc/ssh/sshd_config` file.
@@ -621,7 +621,7 @@ rhel10cis_passwd_complex_option: {{ rhel10cis_passwd_complex_option }}
   # This variable governs after how many days a password expires.
   # CIS requires a value of 365 or less.
 rhel10cis_pass_max_days: {{ rhel10cis_pass_max_days }}
-  ## Control 5.4.1.2 - Ensure minimum days between password changes are 7 or more
+  ## Control 5.4.1.2 - Ensure minimum days between a password change is 7 or more
   # This variable specifies the minimum number of days allowed between changing
   # passwords. CIS requires a value of at least 1.
 rhel10cis_pass_min_days: {{ rhel10cis_pass_min_days }}
@@ -640,7 +640,7 @@ rhel10cis_inactive_lock_days: {{ rhel10cis_inactive_lock_days }}
 rhel10cis_authselect_custom_profile_name: {{ rhel10cis_authselect_custom_profile_name }}
 
 ### Controls:
-# - 5.6.2 -  Ensure system accounts are secured
+# - 5.6.2 - Ensure system accounts are secured
 # - 6.2.10 - Ensure local interactive user home directories exist
 # - 6.2.11 - Ensure local interactive users own their home directories
 # UID settings for interactive users
@@ -669,36 +669,36 @@ rhel10cis_aide_scan: {{ rhel10cis_aide_scan }}
 # the cron job on the target system.
 # Cron is a time-based job scheduling program in Unix OS, which allows tasks to be scheduled
 # and executed automatically at a certain point in time.
-rhel10cis_aide_cron:
-  # This variable represents the user account under which the cron job for AIDE will run.
-  cron_user: root
-  # This variable represents the path to the AIDE crontab file.
-  cron_file: {{ rhel10cis_aide_cron_file }}
-  # This variable represents the actual command or script that the cron job
-  # will execute for running AIDE.
-  aide_job: '{{ rhel10cis_aide_cron_job }}'
-  # These variables define the schedule for the cron job
-  # This variable governs the minute of the time of day when the AIDE cronjob is run.
-  # It must be in the range `0-59`.
-  aide_minute: {{ rhel10cis_aide_cron_minute }}
-  # This variable governs the hour of the time of day when the AIDE cronjob is run.
-  # It must be in the range `0-23`.
-  aide_hour: {{ rhel10cis_aide_cron_hour }}
-  # This variable governs the day of the month when the AIDE cronjob is run.
-  # `*` signifies that the job is run on all days; furthermore, specific days
-  # can be given in the range `1-31`; several days can be concatenated with a comma.
-  # The specified day(s) can must be in the range  `1-31`.
-  aide_day: '{{ rhel10cis_aide_cron_day }}'
-  # This variable governs months when the AIDE cronjob is run.
-  # `*` signifies that the job is run in every month; furthermore, specific months
-  # can be given in the range `1-12`; several months can be concatenated with commas.
-  # The specified month(s) can must be in the range  `1-12`.
-  aide_month: '{{ rhel10cis_aide_cron_month }}'
-  # This variable governs the weekdays, when the AIDE cronjob is run.
-  # `*` signifies that the job is run on all weekdays; furthermore, specific weekdays
-  # can be given in the range `0-7` (both `0` and `7` represent Sunday); several weekdays
-  # can be concatenated with commas.
-  aide_weekday: '{{ rhel10cis_aide_cron_weekday }}'
+
+# This variable represents the user account under which the cron job for AIDE will run.
+rhel10cis_aide_cron_user: {{ rhel10cis_aide_cron_user }}
+# This variable represents the path to the AIDE crontab file.
+rhel10cis_aide_cron_file: {{ rhel10cis_aide_cron_file }}
+# This variable represents the actual command or script that the cron job
+# will execute for running AIDE.
+rhel10cis_aide_cron_job: '{{ rhel10cis_aide_cron_job }}'
+# These variables define the schedule for the cron job
+# This variable governs the minute of the time of day when the AIDE cronjob is run.
+# It must be in the range `0-59`.
+rhel10cis_aide_cron_minute: '{{ rhel10cis_aide_cron_minute }}'
+# This variable governs the hour of the time of day when the AIDE cronjob is run.
+# It must be in the range `0-23`.
+rhel10cis_aide_cron_hour: '{{ rhel10cis_aide_cron_hour }}'
+# This variable governs the day of the month when the AIDE cronjob is run.
+# `*` signifies that the job is run on all days; furthermore, specific days
+# can be given in the range `1-31`; several days can be concatenated with a comma.
+# The specified day(s) must be in the range `1-31`.
+rhel10cis_aide_cron_day: '{{ rhel10cis_aide_cron_day }}'
+# This variable governs months when the AIDE cronjob is run.
+# `*` signifies that the job is run in every month; furthermore, specific months
+# can be given in the range `1-12`; several months can be concatenated with commas.
+# The specified month(s) must be in the range `1-12`.
+rhel10cis_aide_cron_month: '{{ rhel10cis_aide_cron_month }}'
+# This variable governs the weekdays, when the AIDE cronjob is run.
+# `*` signifies that the job is run on all weekdays; furthermore, specific weekdays
+# can be given in the range `0-7` (both `0` and `7` represent Sunday); several weekdays
+# can be concatenated with commas.
+rhel10cis_aide_cron_weekday: '{{ rhel10cis_aide_cron_weekday }}'
 #
 ## Preferred method of logging
 ## Whether rsyslog or journald preferred method for local logging
@@ -733,7 +733,7 @@ rhel10cis_journald_runtimekeepfree: 100G
 # Current variable governs the settings for log retention(how long the log files will be kept).
 # Thus, it specifies the maximum time to store entries in a single journal
 # file before rotating to the next one. Set to 0 to turn off this feature.
-# The given values are interpreted as seconds, unless suffixed with the units
+# The given value is interpreted as seconds, unless suffixed with the units
 # `year`, `month`, `week`, `day`, `h` or `m` to override the default time unit of seconds.
 # Values are Xm, Xh, Xday, Xweek, Xmonth, Xyear, for example 2week is two weeks
 # ATTENTION: Uncomment the keyword below when values are set!

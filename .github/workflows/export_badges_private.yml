@@ -2,7 +2,6 @@
 
 name: Export Private Repo Badges
 
-
 on:
   push:
     branches:

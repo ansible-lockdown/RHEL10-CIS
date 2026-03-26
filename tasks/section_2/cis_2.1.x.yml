@@ -160,7 +160,7 @@
         state: stopped
         masked: true
 
-- name: "2.1.6 | PATCH | Ensure dnsmasq server services are not in use"
+- name: "2.1.6 | PATCH | Ensure dnsmasq services are not in use"
   when: rhel10cis_rule_2_1_6
   tags:
     - level1-server
@@ -171,7 +171,7 @@
     - NIST800-53R5_CM-7
     - rule_2.1.6
   block:
-    - name: "2.1.6 | PATCH | Ensure dnsmasq server services are not in use | Remove package"
+    - name: "2.1.6 | PATCH | Ensure dnsmasq services are not in use | Remove package"
       when:
         - not rhel10cis_dnsmasq_server
         - not rhel10cis_dnsmasq_mask
@@ -179,7 +179,7 @@
         name: dnsmasq
         state: absent
 
-    - name: "2.1.6 | PATCH | Ensure dnsmasq server services are not in use | Mask service"
+    - name: "2.1.6 | PATCH | Ensure dnsmasq services are not in use | Mask service"
       when:
         - not rhel10cis_dnsmasq_server
         - rhel10cis_dnsmasq_mask
@@ -327,11 +327,9 @@
   when: rhel10cis_rule_2_1_11
   tags:
     - level1-server
-    - level1-workstation
     - automated
     - patch
     - rpc
-    - NIST800-53R5_CM-6
     - NIST800-53R5_CM-7
     - rule_2.1.11
   block:
@@ -354,8 +352,8 @@
         state: stopped
         masked: true
       loop:
-        - rpcbind.service
-        - rpcbind.socket
+        - "rpcbind.socket"
+        - "rpcbind.service"
 
 - name: "2.1.12 | PATCH | Ensure rsync services are not in use"
   when: rhel10cis_rule_2_1_12

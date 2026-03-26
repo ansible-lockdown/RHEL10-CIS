@@ -317,8 +317,8 @@
           ansible.builtin.file:
             path: '{{ item }}'
             mode: 'u-x,go-wx'
-          failed_when: discovered_dot_bash_history_to_change_mode.state not in '[ file, absent ]'
-          register: discovered_dot_bash_history_to_change_mode
+          failed_when: discovered_dot_mode_to_change.state not in '[ file, absent ]'
+          register: discovered_dot_mode_to_change
           loop: "{{ discovered_homedir_hidden_files.stdout_lines }}"
 
         - name: "7.2.9 | AUDIT | Ensure local interactive user dot files access is configured | Changes files ownerships"
@@ -326,8 +326,8 @@
             path: "{{ item }}"
             owner: "{{ prelim_captured_passwd_data | selectattr('dir', 'in', prelim_interactive_users_home.stdout_lines) | selectattr('dir', 'in', item) | map(attribute='uid') | last }}"
             group: "{{ prelim_captured_passwd_data | selectattr('dir', 'in', prelim_interactive_users_home.stdout_lines) | selectattr('dir', 'in', item) | map(attribute='gid') | last }}"
-          failed_when: discovered_dot_bash_history_to_change_ownership.state not in '[ file, absent ]'
-          register: discovered_dot_bash_history_to_change_ownership
+          failed_when: discovered_dot_ownership_to_change.state not in '[ file, absent ]'
+          register: discovered_dot_ownership_to_change
           loop: "{{ discovered_homedir_hidden_files.stdout_lines }}"
 
         - name: "7.2.9 | PATCH | Ensure local interactive user dot files access is configured | Changes files if configured"

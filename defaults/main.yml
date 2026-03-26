@@ -561,6 +561,11 @@ rhel10cis_rule_7_2_9: true
 
 ## Section 1 vars
 
+## Control 1.1.1.11 - Ensure unused filesystems kernel modules are not available
+# This variable governs whether the discovery script is removed.
+# By setting to true this can affect the audit of the rule.
+rhel10cis_remove_kernel_discovery_script: false
+
 ## Ability to enable debug on mounts to assist in troubleshooting
 # Mount point changes are set based upon facts created in Prelim
 # these then build the variable and options that is passed to the handler to set the mount point for the controls in section1.
@@ -670,7 +675,7 @@ rhel10cis_yama_ptrace_scope_value: 1
 ## Controls 1.6.x
 # This variable contains the value to be set as the system-wide crypto policy. Current rule enforces NOT USING
 # 'LEGACY' value(as it is less secure, it just ensures compatibility with legacy systems), therefore
-# possible value for this variable is, as explained by RedHat docs:
+# The variable can have these possible values, as explained by RedHat docs:
 #  -'DEFAULT': reasonable default policy for today's standards (balances usability and security)
 #  -'FUTURE': conservative security level that is believed to withstand any near-term future attacks
 #  -'FIPS': A level that conforms to the FIPS140-2 requirements
@@ -693,7 +698,7 @@ rhel10cis_additional_crypto_policy_module: ''
 # - 1.7.1 - Ensure message of the day is configured properly
 # - 1.7.2 - Ensure local login warning banner is configured properly
 # - 1.7.3 - Ensure remote login warning banner is configured properly
-# This variable  stores the content for the Warning Banner(relevant for issue, issue.net, motd).
+# This variable stores the content for the Warning Banner(relevant for issue, issue.net, motd).
 rhel10cis_warning_banner: Authorized users only. All activity may be monitored and reported.
 # End Banner
 
@@ -710,39 +715,6 @@ rhel10cis_screensaver_idle_delay: 900
 rhel10cis_screensaver_lock_delay: 5
 
 ## Section 2. Services
-
-## Section 2.1 Time Synchronization
-
-## Control 2.1.2 Time Synchronization servers - used in template file chrony.conf.j2
-# The following variable represents a list of time servers used
-# for configuring chrony, timesyncd, and ntp.
-# Each list item contains two settings, `name` (the domain name of the server) and synchronization `options`.
-# The default setting for the `options` is `minpoll` but `iburst` can be used, please refer to the documentation
-# of the time synchronization mechanism you are using.
-rhel10cis_time_synchronization_servers:
-  - name: 0.pool.ntp.org
-    options: minpoll 8
-  - name: 1.pool.ntp.org
-    options: minpoll 8
-  - name: 2.pool.ntp.org
-    options: minpoll 8
-  - name: 3.pool.ntp.org
-    options: minpoll 8
-# This variable, if set to 'true'(default), will inform the kernel the system clock is kept synchronized
-# and the kernel will update the real-time clock every 11 minutes. Otherwise, if 'rtcsync' option is
-# disabled, chronyd will not be in sync(kernel discipline is disabled, 11 minutes mode will be off).
-rhel10cis_chrony_server_rtcsync: false
-# This variable configures the values to be used by chronyd to gradually correct any time offset,
-# by slowing down/speeding up the clock. An example of this directive usage would be:
-# 'makestep 1000 10'.
-# Step the system clock:
-#   - IF the adjustment is larger than 1000 seconds
-#   - but ONLY IN the first ten clock updates
-rhel10cis_chrony_server_makestep: "1.0 3"
-# This variable configures the minimum number of sources that need to be considered as selectable in the source
-# selection algorithm before the local clock is updated. Setting minsources to a larger number can be used to
-# improve the reliability, because multiple sources will need to correspond with each other.
-rhel10cis_chrony_server_minsources: 2
 
 ###
 ### The set of rules that make up section 2.1, are used for ensuring that
@@ -858,6 +830,42 @@ rhel10cis_telnet_required: false
 ## Control - 2.2.4 - Ensure tftp client is not installed
 # Set this variable to `true` to keep package `tftp`; otherwise, the package is uninstalled.
 rhel10cis_tftp_client: false
+
+## Control 2.3.1 - Ensure time synchronization is in use
+# This variable governs whether chrony is started and enabled.
+# This is not set as part of CIS but makes sense to start it by default.
+rhel10cis_start_chronyd: true
+
+## Control 2.3.2 Time Synchronization servers - used in template file chrony.conf.j2
+# The following variable represents a list of time servers used
+# for configuring chrony, timesyncd, and ntp.
+# Each list item contains two settings, `name` (the domain name of the server) and synchronization `options`.
+# The default setting for the `options` is `minpoll` but `iburst` can be used, please refer to the documentation
+# of the time synchronization mechanism you are using.
+rhel10cis_time_synchronization_servers:
+  - name: 0.pool.ntp.org
+    options: minpoll 8
+  - name: 1.pool.ntp.org
+    options: minpoll 8
+  - name: 2.pool.ntp.org
+    options: minpoll 8
+  - name: 3.pool.ntp.org
+    options: minpoll 8
+# This variable, if set to 'true'(default), will inform the kernel the system clock is kept synchronized
+# and the kernel will update the real-time clock every 11 minutes. Otherwise, if 'rtcsync' option is
+# disabled, chronyd will not be in sync(kernel discipline is disabled, 11 minutes mode will be off).
+rhel10cis_chrony_server_rtcsync: false
+# This variable configures the values to be used by chronyd to gradually correct any time offset,
+# by slowing down/speeding up the clock. An example of this directive usage would be:
+# 'makestep 1000 10'.
+# Step the system clock:
+#   - IF the adjustment is larger than 1000 seconds
+#   - but ONLY IN the first ten clock updates
+rhel10cis_chrony_server_makestep: "1.0 3"
+# This variable configures the minimum number of sources that need to be considered as selectable in the source
+# selection algorithm before the local clock is updated. Setting minsources to a larger number can be used to
+# improve the reliability, because multiple sources will need to correspond with each other.
+rhel10cis_chrony_server_minsources: 2
 
 ## Section 3 vars
 
@@ -1071,7 +1079,7 @@ rhel10cis_passwd_difok_value: 2
 # This variable holds the path to the configuration file that will be created (or overwritten if already existing)
 # in order to implement the 'Ensure minimum password length is configured' control.
 rhel10cis_passwd_minlen_file: etc/security/pwquality.conf.d/50-pwlength.conf  # pragma: allowlist secret
-# This variable specifies the minimum length that a password must  have to be considered valid.
+# This variable specifies the minimum length that a password must have to be considered valid.
 # CIS states that this value should be at least 14.
 rhel10cis_passwd_minlen_value: 14
 
@@ -1145,7 +1153,7 @@ rhel10cis_passwd_quality_enforce_root_value: enforce_for_root  # pragma: allowli
 # a user can re-use a password. CIS requires a value of 24 or more.
 rhel10cis_pamd_pwhistory_remember: 24
 
-## Controls  5.3.3.4.3, 5.4.1.4
+## Controls 5.3.3.4.3, 5.4.1.4
 # The following variable's value represents the hashing algorithm used
 rhel10cis_passwd_hash_algo: sha512  # pragma: allowlist secret
 
@@ -1157,7 +1165,7 @@ rhel10cis_pass_max_days: 365
 # This can break current connecting user access
 # Does not change the connecting user as this will break access to the system.
 rhel10cis_force_user_maxdays: false
-## Control 5.4.1.2 - Ensure minimum days between password changes are 7 or more
+## Control 5.4.1.2 - Ensure minimum days between a password change is 7 or more
 # This variable specifies the minimum number of days allowed between changing
 # passwords. CIS requires a value of at least 1.
 rhel10cis_pass_min_days: 7
@@ -1183,11 +1191,9 @@ rhel10cis_inactive_lock_days: 30
 # to 'false' will just display users in violation, while 'true' will expire those users passwords.
 rhel10cis_futurepwchgdate_autofix: true
 
-## 5.4.2.5 Root user used
-# Root by default is not used unless setup by user
-# The role will only run certain commands if set to true
-# This allows the ability to skip tasks that may cause an issue
-# With the understanding root has full access
+## Control 5.4.2.5 - Ensure root PATH Integrity
+# This variable governs whether the system uses the root account directly.
+# When set to true, the root PATH integrity check will skip permission changes.
 rhel10cis_uses_root: false
 
 ## Control 5.4.2.6 - Ensure root user umask is configured
@@ -1275,12 +1281,12 @@ rhel10cis_aide_cron_hour: 5
 # This variable governs the day of the month when the AIDE cronjob is run.
 # `*` signifies that the job is run on all days; furthermore, specific days
 # can be given in the range `1-31`; several days can be concatenated with a comma.
-# The specified day(s) can must be in the range  `1-31`.
+# The specified day(s) must be in the range `1-31`.
 rhel10cis_aide_cron_day: '*'
 # This variable governs months when the AIDE cronjob is run.
 # `*` signifies that the job is run in every month; furthermore, specific months
 # can be given in the range `1-12`; several months can be concatenated with commas.
-# The specified month(s) can must be in the range  `1-12`.
+# The specified month(s) must be in the range `1-12`.
 rhel10cis_aide_cron_month: '*'
 # This variable governs the weekdays, when the AIDE cronjob is run.
 # `*` signifies that the job is run on all weekdays; furthermore, specific weekdays
@@ -1321,7 +1327,7 @@ rhel10cis_journald_runtimekeepfree: 100G
 # Current variable governs the settings for log retention(how long the log files will be kept).
 # Thus, it specifies the maximum time to store entries in a single journal
 # file before rotating to the next one. Set to 0 to turn off this feature.
-# The given values are interpreted as seconds, unless suffixed with the units
+# The given value is interpreted as seconds, unless suffixed with the units
 # `year`, `month`, `week`, `day`, `h` or `m` to override the default time unit of seconds.
 # Values are Xm, Xh, Xday, Xweek, Xmonth, Xyear, for example 2week is two weeks
 # ATTENTION: Uncomment the keyword below when values are set!
@@ -1354,6 +1360,7 @@ rhel10cis_journal_servercertificatefile: "/etc/ssl/certs/journal-upload.pem"
 # to validate the authenticity of the remote server's certificate. The path below has the default
 ## path/file, but it is also allowed for a user to create its custom path/filename.
 rhel10cis_journal_trustedcertificatefile: "/etc/ssl/ca/trusted.pem"
+# ATTENTION: Uncomment the keyword below when values are set!
 
 ## Control 6.2.3.5 | PATCH | Ensure logging is configured
 # This variable governs if current Ansible role should manage syslog settings
@@ -1448,7 +1455,7 @@ rhel10cis_auditd_max_log_file_size: 10
 ## Control 6.3.2.2 - Ensure audit logs are not automatically deleted
 # This variable determines what action the audit system should take when the maximum
 # size of a log file is reached.
-# The options for setting this variable is as follows:
+# The variable can have the following possible values:
 # - `ignore`: the system does nothing when the size of a log file is full;
 # - `syslog`: a message is sent to the system log indicating the problem;
 # - `suspend`: the system suspends recording audit events until the log file is cleared or rotated;
@@ -1485,7 +1492,7 @@ rhel10cis_auditd_disk_error_action: syslog
 ## Control 6.3.2.4 - Ensure system warns when audit logs are low on space
 # This variable tells the system what action to take when the system has detected
 # that it is starting to get low on disk space.
-# The options for setting this variable is as follows:
+# The variable can have the following possible values:
 # "ignore"  - the system does nothing when presented with the aforementioned issue;
 # "syslog" - a message is sent to the system log about disk space running low;
 # "email"  - the system sends an email notification to the email address
@@ -1499,7 +1506,7 @@ rhel10cis_auditd_disk_error_action: syslog
 rhel10cis_auditd_space_left_action: email
 # This variable tells the system what action to take when the system has detected
 # that it is low on disk space.
-# The options for setting this variable is as follows:
+# The variable can have the following possible values:
 # "ignore"  - the system does nothing when presented with the aforementioned issue;
 # "syslog"  - a message is sent to the system log about disk space running low;
 # "email"  - the system sends an email notification to the email address
@@ -1530,6 +1537,12 @@ rhel10cis_auditd_extra_conf:
   # specific action to alert that the system is running low on disk space. Must be lower than
   # the 'space_left' variable.
   admin_space_left: '10%'
+
+# 6.3.3.6 exclude listed mountpoints from the find command to locate privileged binaries
+# Allows operator to exclude mounted devices from being considered as within scope to find privileged binaries; mainly in the case of
+# external/temporary mounted USB drives.
+#   rhel10cis_priv_command_excluded_mounts: ["/mnt/backup_disk", "/mnt/usb_external_storage"]
+rhel10cis_priv_command_excluded_mounts: []
 
 # Section 7 Vars
 

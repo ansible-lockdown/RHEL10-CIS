@@ -71,7 +71,8 @@
     - not system_is_ec2
   tags:
     - user_passwd
-    - rule_5.4.2.4
+    - rule_5.2.4
+    - level2-server
   vars:
     sudo_password_rule: rhel10cis_rule_5_2_4 # pragma: allowlist secret
   block:
@@ -124,7 +125,7 @@
       changed_when: false
       register: prelim_authselect_current_profile
 
-- name: "Ensure root password is set"
+- name: "Ensure root password is set or locked"
   when: rhel10cis_rule_5_4_2_4
   tags:
     - level1-server
@@ -134,17 +135,20 @@
     - root
     - rule_5.4.2.4
   block:
-    - name: "Ensure root password is set"
-      ansible.builtin.shell: grep '^root:' /etc/shadow | grep -qE '^\S+:\$y\$|^\S+:\$6\$|^\S+:!\$|^\S+:\*'
+    - name: "Ensure root password is set or locked"
+      ansible.builtin.shell: |
+        LC_ALL=C \
+        set -o pipefail \
+        passwd -S root | awk '$2 ~ /^(P|L)/ {print "User: \"" $1 "\" Password is status: " $2}'
       changed_when: false
-      failed_when: prelim_root_passwd_set.rc not in [ 0, 1 ]
+      failed_when: prelim_root_passwd_set.stdout not in [ 'P', 'L' ]
       register: prelim_root_passwd_set
 
-    - name: "Ensure root password is set"
+    - name: "Ensure root password is set or locked"
       ansible.builtin.assert:
-        that: prelim_root_passwd_set.rc == 0
-        fail_msg: "You have rule 5.4.2.4 enabled this requires that you have a root password set"
-        success_msg: "You have a root password set"
+        that: prelim_root_passwd_set.stdout in [ 'P', 'L' ]
+        fail_msg: "You have rule 5.4.2.4 enabled this requires that you have a root password set or locked"
+        success_msg: "You have a root password set or locked"
 
 - name: "Gather the package facts"
   tags: always
