@@ -137,9 +137,9 @@
   block:
     - name: "Ensure root password is set or locked"
       ansible.builtin.shell: |
+        set -o pipefail
         LC_ALL=C \
-        set -o pipefail \
-        passwd -S root | awk '$2 ~ /^(P|L)/ {print "User: \"" $1 "\" Password is status: " $2}'
+        passwd -S root | awk '{print $2;}'
       changed_when: false
       failed_when: prelim_root_passwd_set.stdout not in [ 'P', 'L' ]
       register: prelim_root_passwd_set
