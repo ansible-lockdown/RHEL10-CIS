@@ -47,11 +47,23 @@
     - NIST800-53R5_AU-4
     - NIST800-53R5_AU-12
     - NIST800-53R5_MP-2
-  ansible.builtin.lineinfile:
-    path: /usr/lib/systemd/journald.conf
-    regexp: "^#ForwardToSyslog=|^ForwardToSyslog="
-    line: ForwardToSyslog=yes
-  notify: Restart rsyslog
+  block:
+    - name: "6.2.3.3 | PATCH | Ensure journald is configured to send logs to rsyslog | Ensure directory exists"
+      ansible.builtin.file:
+        path: /etc/systemd/journald.conf.d/
+        state: directory
+        owner: root
+        group: root
+        mode: 'u=rwx,g=rx,o-rwx'
+
+    - name: "6.2.3.3 | PATCH | Ensure journald is configured to send logs to rsyslog | Add template"
+      ansible.builtin.template:
+        src: etc/systemd/journald.conf.d/forwardtosyslog.conf.j2
+        dest: /etc/systemd/journald.conf.d/forwardtosyslog.conf
+        owner: root
+        group: root
+        mode: 'u-x,g-wx,o-rwx'
+      notify: Restart journald
 
 - name: "6.2.3.4 | PATCH | Ensure rsyslog log file creation mode is configured"
   when:
