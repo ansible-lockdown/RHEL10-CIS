@@ -20,7 +20,8 @@
 
 - name: "PRELIM | AUDIT | Interactive Users"
   tags: always
-  ansible.builtin.shell: >
+  ansible.builtin.shell: |
+    set -o pipefail
     grep -E -v '^(root|halt|sync|shutdown)' /etc/passwd | awk -F: '(!index($7, "sbin/nologin") && $7 != "/bin/nologin" && $7 != "/bin/false" && $7 != "/dev/null") { print $1":"$3":"$6 }'
   changed_when: false
   check_mode: false
@@ -34,7 +35,8 @@
 
 - name: "PRELIM | AUDIT | Interactive User accounts home directories"
   tags: always
-  ansible.builtin.shell: >
+  ansible.builtin.shell: |
+    set -o pipefail
     grep -E -v '^(root|halt|sync|shutdown)' /etc/passwd | awk -F: '(!index($7, "sbin/nologin") && $7 != "/bin/nologin" && $7 != "/bin/false" && $7 != "/dev/null") { print $6 }'
   changed_when: false
   check_mode: false
@@ -42,7 +44,8 @@
 
 - name: "PRELIM | AUDIT | Interactive UIDs"
   tags: always
-  ansible.builtin.shell: >
+  ansible.builtin.shell: |
+    set -o pipefail
     grep -E -v '^(root|halt|sync|shutdown)' /etc/passwd | awk -F: '(!index($7, "sbin/nologin") && $7 != "/bin/nologin" && $7 != "/bin/false") { print $3 }'
   changed_when: false
   check_mode: false
@@ -69,6 +72,7 @@
   block:
     - name: PRELIM | AUDIT | Section 1.1 | Retrieve mount options - call mount  # noqa command-instead-of-module
       ansible.builtin.shell: |
+        set -o pipefail
         mount | awk '{print $1, $3, $5, $6}'
       changed_when: false
       check_mode: false
@@ -150,7 +154,9 @@
   tags: always
   block:
     - name: "PRELIM | AUDIT | Discover is wireless adapter on system"
-      ansible.builtin.shell: find /sys/class/net/*/ -type d -name wireless
+      ansible.builtin.shell: |
+        set -o pipefail
+        find /sys/class/net/*/ -type d -name wireless
       register: prelim_wireless_adapters
       changed_when: false
       check_mode: false
@@ -219,7 +225,9 @@
     - level1-server
     - level1-workstation
     - users
-  ansible.builtin.shell: "cat /etc/passwd | awk -F: '($3 == 0 && $1 != \"root\") {i++;print $1 } END {exit i}'"
+  ansible.builtin.shell: |
+    set -o pipefail
+    cat /etc/passwd | awk -F: '($3 == 0 && $1 != "root") {i++;print $1 } END {exit i}'
   changed_when: false
   check_mode: false
   register: prelim_uid_zero_accounts_except_root
@@ -272,7 +280,9 @@
 - name: "PRELIM | AUDIT | Discover audit logfile"
   when: rhel10cis_rule_6_3_4_1 or rhel10cis_rule_6_3_4_2 or rhel10cis_rule_6_3_4_3 or rhel10cis_rule_6_3_4_4
   tags: always
-  ansible.builtin.shell: grep ^log_file /etc/audit/auditd.conf | awk '{ print $NF }'
+  ansible.builtin.shell: |
+    set -o pipefail
+    grep ^log_file /etc/audit/auditd.conf | awk '{ print $NF }'
   changed_when: false
   check_mode: false
   register: prelim_auditd_logfile
