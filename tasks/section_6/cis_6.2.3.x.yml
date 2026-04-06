@@ -203,6 +203,7 @@
   when:
     - rhel10cis_rule_6_2_3_7
     - rhel10cis_rsyslog_ansiblemanaged
+    - not rhel10cis_system_is_log_server
   tags:
     - level1-server
     - level1-workstation
@@ -213,30 +214,16 @@
     - NIST800-53R5_AU-7
     - NIST800-53R5_AU-12
     - NIST800-53R5_CM-6
-  block:
-    - name: "6.2.3.7 | PATCH | Ensure rsyslog is not configured to receive logs from a remote client | When not log host"
-      when: not rhel10cis_system_is_log_server
-      ansible.builtin.replace:
-        path: /etc/rsyslog.conf
-        regexp: "{{ item }}"
-        replace: "#\\1"
-      notify: Restart rsyslog
-      loop:
-        - "^(\\$ModLoad imtcp)"
-        - "^(\\$InputTCPServerRun)"
-        - '^(module\(load="imtcp"\))'
-        - '^(input\(type="imtcp")'
-
-    - name: "6.2.3.7 | PATCH | Ensure rsyslog is not configured to receive logs from a remote client | When log host"
-      when: rhel10cis_system_is_log_server
-      ansible.builtin.replace:
-        path: /etc/rsyslog.conf
-        regexp: "^#(.*{{ item }}.*)"
-        replace: "\\1"
-      notify: Restart rsyslog
-      loop:
-        - "ModLoad imtcp"
-        - "InputTCPServerRun"
+  ansible.builtin.replace:
+    path: /etc/rsyslog.conf
+    regexp: "{{ item }}"
+    replace: "#\\1"
+    loop:
+      - "^(\\$ModLoad imtcp)"
+      - "^(\\$InputTCPServerRun)"
+      - '^(module\(load="imtcp"\))'
+      - '^(input\(type="imtcp")'
+  notify: Restart rsyslog
 
 - name: "6.2.3.8 | PATCH | Ensure rsyslog logrotate is configured"
   when:
