@@ -6,6 +6,7 @@
 
 - Tidy up and improve command and shell modules
 - 3.2.x linting updated permissions
+- Updated content in 6.2.3.8
 - Thanks to @mindrb
   - #76 6.2.3.7 removed second condition not part of CIS
   - #77 & #78 - 6.2.3.3 - moved to drop in file as better practice
