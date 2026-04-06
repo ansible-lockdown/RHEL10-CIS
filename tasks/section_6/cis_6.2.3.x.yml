@@ -47,11 +47,23 @@
     - NIST800-53R5_AU-4
     - NIST800-53R5_AU-12
     - NIST800-53R5_MP-2
-  ansible.builtin.lineinfile:
-    path: /usr/lib/systemd/journald.conf
-    regexp: "^#ForwardToSyslog=|^ForwardToSyslog="
-    line: ForwardToSyslog=yes
-  notify: Restart rsyslog
+  block:
+    - name: "6.2.3.3 | PATCH | Ensure journald is configured to send logs to rsyslog | Ensure directory exists"
+      ansible.builtin.file:
+        path: /etc/systemd/journald.conf.d/
+        state: directory
+        owner: root
+        group: root
+        mode: 'u=rwx,g=rx,o-rwx'
+
+    - name: "6.2.3.3 | PATCH | Ensure journald is configured to send logs to rsyslog | Add template"
+      ansible.builtin.template:
+        src: etc/systemd/journald.conf.d/forwardtosyslog.conf.j2
+        dest: /etc/systemd/journald.conf.d/forwardtosyslog.conf
+        owner: root
+        group: root
+        mode: 'u-x,g-wx,o-rwx'
+      notify: Restart journald
 
 - name: "6.2.3.4 | PATCH | Ensure rsyslog log file creation mode is configured"
   when:
@@ -87,7 +99,9 @@
     - NIST800-53R5_AU-12
   block:
     - name: "6.2.3.5 | AUDIT | Ensure logging is configured | rsyslog current config message out"
-      ansible.builtin.shell: cat /etc/rsyslog.conf | grep -Ev "^#|^$"
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep -Ev "^#|^$" /etc/rsyslog.conf
       changed_when: false
       failed_when: false
       check_mode: false
@@ -203,6 +217,7 @@
   when:
     - rhel10cis_rule_6_2_3_7
     - rhel10cis_rsyslog_ansiblemanaged
+    - not rhel10cis_system_is_log_server
   tags:
     - level1-server
     - level1-workstation
@@ -213,30 +228,16 @@
     - NIST800-53R5_AU-7
     - NIST800-53R5_AU-12
     - NIST800-53R5_CM-6
-  block:
-    - name: "6.2.3.7 | PATCH | Ensure rsyslog is not configured to receive logs from a remote client | When not log host"
-      when: not rhel10cis_system_is_log_server
-      ansible.builtin.replace:
-        path: /etc/rsyslog.conf
-        regexp: "{{ item }}"
-        replace: "#\\1"
-      notify: Restart rsyslog
-      loop:
-        - "^(\\$ModLoad imtcp)"
-        - "^(\\$InputTCPServerRun)"
-        - '^(module\(load="imtcp"\))'
-        - '^(input\(type="imtcp")'
-
-    - name: "6.2.3.7 | PATCH | Ensure rsyslog is not configured to receive logs from a remote client | When log host"
-      when: rhel10cis_system_is_log_server
-      ansible.builtin.replace:
-        path: /etc/rsyslog.conf
-        regexp: "^#(.*{{ item }}.*)"
-        replace: "\\1"
-      notify: Restart rsyslog
-      loop:
-        - "ModLoad imtcp"
-        - "InputTCPServerRun"
+  ansible.builtin.replace:
+    path: /etc/rsyslog.conf
+    regexp: "{{ item }}"
+    replace: "#\\1"
+  loop:
+    - "^(\\$ModLoad imtcp)"
+    - "^(\\$InputTCPServerRun)"
+    - '^(module\(load="imtcp"\))'
+    - '^(input\(type="imtcp")'
+  notify: Restart rsyslog
 
 - name: "6.2.3.8 | PATCH | Ensure rsyslog logrotate is configured"
   when:
@@ -253,7 +254,7 @@
   block:
     - name: "6.2.3.8 | PATCH | Ensure rsyslog logrotate is configured | installed"
       ansible.builtin.package:
-        name: rsyslog
+        name: logrotate
         state: present
 
     - name: "6.2.3.8 | PATCH | Ensure rsyslog logrotate is configured | scheduled"
@@ -265,7 +266,7 @@
     - name: "6.2.3.8 | PATCH | Ensure rsyslog logrotate is configured | set rsyslog conf"
       ansible.builtin.template:
         src: etc/logrotate.d/rsyslog_log.j2
-        dest: /etc/logrotate.d/rsyslog_log
+        dest: /etc/logrotate.d/rsyslog_log.conf
         owner: root
         group: root
         mode: 'u-x,g-wx,o-rwx'

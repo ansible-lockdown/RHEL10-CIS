@@ -13,8 +13,9 @@
   ansible.builtin.lineinfile:
     path: /etc/modprobe.d/60-atm.conf
     regexp: "^(#)?install atm(\\\\s|$)"
-    line: "{{ item}}"
+    line: "{{ item }}"
     create: true
+    mode: 'u-x,go-rwx'
   loop:
     - install atm /bin/true
     - blacklist atm
@@ -34,6 +35,7 @@
     regexp: "^(#)?install can(\\\\s|$)"
     line: "{{ item }}"
     create: true
+    mode: 'u-x,go-rwx'
   loop:
     - install can /bin/true
     - blacklist can
@@ -53,6 +55,7 @@
     regexp: "^(#)?install dccp(\\\\s|$)"
     line: "{{ item }}"
     create: true
+    mode: 'u-x,go-rwx'
   loop:
     - install dccp /bin/true
     - blacklist dccp
@@ -72,17 +75,10 @@
     regexp: "^(#)?install tipc(\\\\s|$)"
     line: "{{ item }}"
     create: true
+    mode: 'u-x,go-rwx'
   loop:
     - install tipc /bin/true
     - blacklist tipc
-
-    - name: "3.2.4 | PATCH | Ensure tipc kernel module is not available | blacklist"
-      ansible.builtin.lineinfile:
-        path: /etc/modprobe.d/blacklist.conf
-        regexp: "^(#)?blacklist tipc(\\s|$)"
-        line: "blacklist tipc"
-        mode: 'u-x,go-rwx'
-        create: true
 
 - name: "3.2.5 | PATCH | Ensure rds kernel module is not available"
   when: rhel10cis_rule_3_2_5

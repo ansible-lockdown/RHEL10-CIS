@@ -185,7 +185,9 @@
     - NIST800-53R5_SC-4
   block:
     - name: "7.1.11 | AUDIT | Ensure world writable files and directories are secured | Get list of world-writable files"
-      ansible.builtin.shell: df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -0002
+      ansible.builtin.shell: |
+        set -o pipefail
+        df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -0002
       failed_when: false
       changed_when: false
       register: discovered_worldwriteable_files
@@ -201,7 +203,9 @@
       loop: "{{ discovered_worldwriteable_files.stdout_lines }}"
 
     - name: "7.1.11 | PATCH | Ensure world writable files and directories are secured | sticky bit set on world-writable directories"
-      ansible.builtin.shell: df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d -perm -0002 2>/dev/null | xargs chmod a+t
+      ansible.builtin.shell: |
+        set -o pipefail
+        df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d -perm -0002 2>/dev/null | xargs chmod a+t
       changed_when: false
       failed_when: false
 
