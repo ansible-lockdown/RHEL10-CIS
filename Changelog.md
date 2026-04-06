@@ -5,11 +5,11 @@
 # 1.0.1 - April 2026 updates
 
 - Tidy up and improve command and shell modules
+- 3.2.x linting updated permissions
 - Thanks to @mindrb
   - #76 6.2.3.7 removed second condition not part of CIS
   - #77 & #78 - 6.2.3.3 - moved to drop in file as better practice
   - #79 root password check
-
 
 # 1.0.1 - March 26 updates
 - Common file updates
