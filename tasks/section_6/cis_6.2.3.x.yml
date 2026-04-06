@@ -254,7 +254,7 @@
   block:
     - name: "6.2.3.8 | PATCH | Ensure rsyslog logrotate is configured | installed"
       ansible.builtin.package:
-        name: rsyslog
+        name: logrotate
         state: present
 
     - name: "6.2.3.8 | PATCH | Ensure rsyslog logrotate is configured | scheduled"
@@ -266,7 +266,7 @@
     - name: "6.2.3.8 | PATCH | Ensure rsyslog logrotate is configured | set rsyslog conf"
       ansible.builtin.template:
         src: etc/logrotate.d/rsyslog_log.j2
-        dest: /etc/logrotate.d/rsyslog_log
+        dest: /etc/logrotate.d/rsyslog_log.conf
         owner: root
         group: root
         mode: 'u-x,g-wx,o-rwx'
