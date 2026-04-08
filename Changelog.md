@@ -13,6 +13,7 @@
   - #79 root password check
 - bootloader update rule 1.4.1 thanks to @skullbringer in the discord community
 - 7.1.12 and 7.1.13 - fixed logic and ordering
+- 2.1.x improved logic for stopped/disable/masked
 
 # 1.0.1 - March 26 updates
 - Common file updates
