@@ -12,6 +12,7 @@
   - #77 & #78 - 6.2.3.3 - moved to drop in file as better practice
   - #79 root password check
 - bootloader update rule 1.4.1 thanks to @skullbringer in the discord community
+- 7.1.12 and 7.1.13 - fixed logic and ordering
 
 # 1.0.1 - March 26 updates
 - Common file updates
