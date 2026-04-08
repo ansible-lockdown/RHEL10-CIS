@@ -11,6 +11,7 @@
   - #76 6.2.3.7 removed second condition not part of CIS
   - #77 & #78 - 6.2.3.3 - moved to drop in file as better practice
   - #79 root password check
+- bootloader update rule 1.4.1 thanks to @skullbringer in the discord community
 
 # 1.0.1 - March 26 updates
 - Common file updates
