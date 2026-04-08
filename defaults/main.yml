@@ -613,12 +613,15 @@ rhel10cis_selinux_enforce: enforcing
 rhel10cis_selinux_relabel_enabled: false
 
 ## Control 1.4.1
-# This variable governs whether a bootloader password should be set in '/boot/grub2/user.cfg' file.
-rhel10cis_set_boot_pass: false
 
 ################### bootloader password #####################################
 #
 # Two options for setting the bootloader password
+#
+# Will also need to add the set_boot_pass variable to the task to ensure the password is set.
+#
+# This variable governs whether a bootloader password should be set in '/boot/grub2/user.cfg' file.
+rhel10cis_set_boot_pass: false
 #
 # Option 1: Set the bootloader password and salt – requires the passlib Python module
 # to be available on the Ansible controller.
