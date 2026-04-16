@@ -40,7 +40,7 @@
 - name: POST | AUDITD | Set up auditd user logging exceptions
   when: rhel10cis_allow_auditd_uid_user_exclusions
   ansible.builtin.template:
-    src: audit/98_auditd_exception.rules.j2
+    src: etc/audit/rule.d/98_auditd_exception.rules.j2
     dest: /etc/audit/rules.d/98_auditd_exceptions.rules
     owner: root
     group: root
