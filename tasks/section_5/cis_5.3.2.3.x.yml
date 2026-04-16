@@ -11,18 +11,20 @@
     - NIST800-53R5_IA-5
   block:
     - name: "5.3.2.3.1 | AUDIT | Ensure password history remember is configured | Check existing files"
-      ansible.builtin.shell: grep -Psi -- '^\h*password\s+[^#\n\r]+\h+pam_pwhistory\.so\s+([^#\n\r]+\s+)?remember=\d+\b' /etc/pam.d/password-auth /etc/pam.d/system-auth
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep -Psi -- '^\h*password\s+[^#\n\r]+\h+pam_pwhistory\.so\s+([^#\n\r]+\s+)?remember=\d+\b' /etc/pam.d/password-auth /etc/pam.d/system-auth
       changed_when: false
       failed_when: discovered_pwhistory_remember.rc not in [0, 1]
       register: discovered_pwhistory_remember
 
-    - name: "5.3.2.3.1 | PATCH | Ensure password number of changed characters is configured | Ensure remember is set pwhistory file"
+    - name: "5.3.2.3.1 | PATCH | Ensure password history remember is configured | Ensure remember is set pwhistory file"
       ansible.builtin.lineinfile:
         path: "/etc/security/pwhistory.conf"
         regexp: remember\s*=\s*\d*
         line: remember = {{ rhel10cis_pamd_pwhistory_remember }}
 
-    - name: "5.3.2.3.1 | PATCH | Ensure password number of changed characters is configured | Remove remember from pam files NOT AuthSelect"
+    - name: "5.3.2.3.1 | PATCH | Ensure password history remember is configured | Remove remember from pam files NOT AuthSelect"
       when:
         - not rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -34,7 +36,7 @@
         - password
         - system
 
-    - name: "5.3.2.3.1 | PATCH | Ensure password number of changed characters is configured | Remove remember from pam files AuthSelect"
+    - name: "5.3.2.3.1 | PATCH | Ensure password history remember is configured | Remove remember from pam files AuthSelect"
       when:
         - rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
@@ -72,7 +74,9 @@
     - NIST800-53R5_IA-5
   block:
     - name: "5.3.2.3.3 | AUDIT | Ensure pam_pwhistory includes use_authtok | Check existing files"
-      ansible.builtin.shell: grep -Psi -- '^\h*password\h+[^#\n\r]+\h+pam_pwhistory\.so\h+([^#\n\r]+\h+)?use_authtok\b' /etc/pam.d/{system,password}-auth
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep -Psi -- '^\h*password\h+[^#\n\r]+\h+pam_pwhistory\.so\h+([^#\n\r]+\h+)?use_authtok\b' /etc/pam.d/{system,password}-auth
       register: discovered_pwhistory_use_authtok
       changed_when: false
       failed_when: discovered_pwhistory_use_authtok.rc not in [0, 1]

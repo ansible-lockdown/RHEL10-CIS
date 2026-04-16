@@ -11,13 +11,25 @@
     - patch
     - rule_1.4.1
     - NIST800-53R5_AC-3
-  ansible.builtin.copy:
-    dest: /boot/grub2/user.cfg
-    content: "GRUB2_PASSWORD={{ rhel10_compiled_bootloader_password }}"  # noqa template-instead-of-copy
-    owner: root
-    group: root
-    mode: 'u-x,go-rwx'
-  notify: Grub2cfg
+  block:
+    - name: "1.4.1 | PATCH | Ensure bootloader password is set | Set fact if using salt (no python passlib required)"
+      when: rhel10cis_bootloader_salt | length == 0
+      ansible.builtin.set_fact:
+        rhel10cis_compiled_bootloader_password: "{{ rhel10cis_bootloader_password_hash }}"
+
+    - name: "1.4.1 | PATCH | Ensure bootloader password is set | Set fact if using salt (python passlib required)"
+      when: rhel10cis_bootloader_salt | length > 0
+      ansible.builtin.set_fact:
+        rhel10cis_compiled_bootloader_password: "{{ (rhel10cis_bootloader_password | grub_hash(salt=rhel10cis_bootloader_salt)) }}" # noqa template-instead-of-copy
+
+    - name: "1.4.1 | PATCH | Ensure bootloader password is set"
+      ansible.builtin.copy:
+        dest: /boot/grub2/user.cfg
+        content: "GRUB2_PASSWORD={{ rhel10cis_compiled_bootloader_password }}"  # noqa template-instead-of-copy
+        owner: root
+        group: root
+        mode: 'u-x,go-rwx'
+      notify: Grub2cfg
 
 - name: "1.4.2 | PATCH | Ensure access to bootloader config is configured"
   when: rhel10cis_rule_1_4_2

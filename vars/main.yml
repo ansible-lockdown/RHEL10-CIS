@@ -1,14 +1,15 @@
 ---
+
 # vars file for RHEL10-CIS
+
+# Set default value for reboot value
+change_requires_reboot: false
 
 min_ansible_version: 2.12.1
 rhel10cis_allowed_crypto_policies:
   - 'DEFAULT'
   - 'FUTURE'
   - 'FIPS'
-
-# variable built from rhel10cis_bootloader_password and rhel10cis_bootloader_salt or rhel10cis_bootloader_password_hash
-rhel10_compiled_bootloader_password: "{% if rhel10cis_bootloader_salt != '' %}{{ (rhel10cis_bootloader_password | grub_hash(salt=rhel10cis_bootloader_salt)) }}{% else %}{{ rhel10cis_bootloader_password_hash }}{% endif %}" # noqa template-instead-of-copy
 
 # Following is left blank for ability to build string
 rhel10cis_crypto_policy_module: ''
@@ -45,7 +46,7 @@ update_audit_template: false
 # system_is_container the true. Otherwise, the default value
 # 'false' is left unchanged.
 system_is_container: false
-# The filename of the existing yml file in role's  'vars/' sub-directory
+# The filename of the existing yml file in role's 'vars/' sub-directory
 # to be used for managing the role-behavior when a container was detected:
 # (de)activating rules or for other tasks(e.g. disabling Selinux or a specific
 # firewall-type).
@@ -67,9 +68,7 @@ auditd_binaries:
   - /usr/sbin/ausearch
   - /usr/sbin/auditd
   - /usr/sbin/augenrules
-
-company_title: 'Mindpoint Group - A Tyto Athene Company'
-
+company_title: 'MindPoint Group - A Tyto Athene Company'
 file_managed_by_ansible: |-
   # File managed by ansible as part of {{ benchmark }} benchmark
   # As part of Ansible-lockdown

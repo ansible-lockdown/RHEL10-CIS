@@ -11,9 +11,18 @@
     - NIST800-53R5_AU-3
     - NIST800-53R5_AU-12
     - rule_2.3.1
-  ansible.builtin.package:
-    name: chrony
-    state: present
+  block:
+    - name: "2.3.1 | PATCH | Ensure time synchronization is in use | installed"
+      ansible.builtin.package:
+        name: chrony
+        state: present
+
+    - name: "2.3.1 | PATCH | Ensure time synchronization is in use | started"
+      when: rhel10cis_start_chronyd
+      ansible.builtin.systemd:
+        name: chronyd
+        state: started
+        enabled: true
 
 - name: "2.3.2 | PATCH | Ensure chrony is configured"
   when:
@@ -32,6 +41,7 @@
     owner: root
     group: root
     mode: 'u-x,go-wx'
+  notify: Restart chronyd
 
 - name: "2.3.3 | PATCH | Ensure chrony is not run as the root user"
   when:
@@ -49,3 +59,4 @@
     create: true
     backrefs: true
     mode: 'u-x,go-wx'
+  notify: Restart chronyd

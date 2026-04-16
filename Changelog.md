@@ -1,6 +1,62 @@
-# Changes to RHEL10CIS
+# Changes to rhel10CIS
+
+## March 2026 — Common alignment and CIS validation (`rhel10`)
+
+# 1.0.1 - April 2026 updates
+
+- Tidy up and improve command and shell modules
+- 3.2.x linting updated permissions
+- Updated content in 6.2.3.8
+- Thanks to @mindrb
+  - #76 6.2.3.7 removed second condition not part of CIS
+  - #77 & #78 - 6.2.3.3 - moved to drop in file as better practice
+  - #79 root password check
+- bootloader update rule 1.4.1 thanks to @skullbringer in the discord community
+- 7.1.12 and 7.1.13 - fixed logic and ordering
+- 2.1.x improved logic for stopped/disable/masked
+
+# 1.0.1 - March 26 updates
+- Common file updates
+- De-duped company
+- titles aligned
+- meta aligned
+
+- thanks to @defnotujine
+  - #70 tags for acl 7.2.8
+  - #72 3.2.3 correct level added
+
+- thanks to @mindrb
+  - #62 config aide enhancement
+  - #63 typo in 5.1.1
+  - #64 tmp.mount enhancement
+  - #65 tidy up modprobe blacklisting
+  - #68 6.2.3.8 package name typo fix
+  - #69 use passwd rule fixed
+  - #71 tuning chrony rules and new optional start variable
+  - #72 rhel10cis_remove_kernel_discovery_script
 
 ## 1.0.1 - Based upon CIS official 1.0.1
+
+2026 FEB QA Updates
+
+- Fixed repeated word typos in defaults/main.yml and task names (5.3.2.2.5)
+- Fixed missing apostrophe in 99-finalize.rules.j2 template
+- Fixed subject-verb agreement in defaults/main.yml and goss template comments
+- Fixed undefined variable references:
+  - 5.3.1.5 - rhel10cis_authselect dict access corrected to rhel10cis_authselect_custom_profile_name
+  - 5.4.1.3 - rhel10cis_pass dict access corrected to rhel10cis_pass_warn_age
+  - tmp.mount.j2 - corrected rule variable references to rhel10cis_rule_1_1_2_1_x
+- Added missing rhel10cis_uses_root variable definition to defaults
+- Fixed register variable naming: discover_wireless_adapters renamed to discovered_wireless_adapters
+- Fixed multiple consecutive spaces and grammar in comments across defaults, tasks, templates, and vars
+- Fixed "can must" grammar error in AIDE cron schedule comments
+- Removed 5.3.2.x controls from defaults/main
+- Typo on task 1.5.8: Fix rhel10cis_rule_1_5_1 to rhel10cis_rule_1_5_8
+- Add rule "Ensure rpcbind services are not in use" via 2.1.11
+- 1.5.1 added missing * thanks to @christoffer-appe
+- 6.3.3.33 and .34 fixed spacing in templates thanks to @christoffer-appe
+
+Improvements Jan 2026
 
 - Thanks to Eugene@Frequentis for feedback
 - Updated bootloader_password to bootloader_hash variable and context added
@@ -16,7 +72,8 @@
 - thanks to thulium-drake boot password hash Added passlib dependency in readme requirements
 - tidy up tags on tasks/main.yml
 
-- Fixes from Public RHEL9CIS PR 425
+Fixes from Public RHEL9CIS PR 425
+
 - 3.1.1
   - Added better sysctl logic to disable IPv6
   - Added option to disable IPv6 via sysctl (original method) or via the kernel
@@ -37,21 +94,8 @@
 - Added CCI references
 - relabel added to selinux - new variable added
 
-## 0.1.6 - FInal beta release updates
-
-- License Year
-- bootloader password filter added and documentation
-
-Thanks to @bykvaadm
-- password hash highlighting
-- 5.1.x ssh insertbefore Match updates
-- postfix notify naming
-
 ## 0.1.5
 
-- 3.1.1
-  - Added better sysctl logic to disable IPv6
-  - Added option to disable IPv6 via sysctl (original method) or via the kernel
 - run_audit logic update
 - improvements to 5.3.3.x logic for rhel10 and ansible-core 2.19 compatibility.
 - thanks to @piratesecurity
