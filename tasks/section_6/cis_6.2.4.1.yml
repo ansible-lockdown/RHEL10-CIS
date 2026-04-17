@@ -17,6 +17,23 @@
       failed_when: false
       register: discovered_logfiles
 
+    - name: "6.2.4.1 | AUDIT | Ensure access to all logfiles has been configured | get log files matching whitelist regex entries"
+      when:
+        - discovered_logfiles.stdout_lines | length > 0
+        - rhel10cis_logpermissions_whitelist | length > 0
+        - item.0 | regex_search(item.1)
+      ansible.builtin.set_fact:
+        logfiles_whitelist: "{{ (logfiles_whitelist | default([])) + [item.0] }}"
+      loop: "{{ discovered_logfiles.stdout_lines | product(rhel10cis_logpermissions_whitelist) | list }}"
+      loop_control:
+        label: "{{ item.0 }} with regex {{ item.1 }}"
+
+    - name: "6.2.4.1 | AUDIT | Ensure access to all logfiles has been configured | generate todo list by dropping whitelist matches from findings"
+      when:
+        - discovered_logfiles.stdout_lines | length > 0
+      ansible.builtin.set_fact:
+        logfiles_todo: "{{ discovered_logfiles.stdout_lines | difference(logfiles_whitelist | default([])) }}"
+
     - name: "6.2.4.1 | PATCH | Ensure access to all logfiles has been configured | change permissions SSSD min 660"
       when:
         - discovered_logfiles.stdout_lines | length > 0
@@ -26,7 +43,7 @@
         mode: 'ug-x,o-rwx'
       failed_when: discovered_logfile_sssd_list.state not in '[ file, absent ]'
       register: discovered_logfile_sssd_list
-      loop: "{{ discovered_logfiles.stdout_lines }}"
+      loop: "{{ logfiles_todo }}"
 
     - name: "6.2.4.1 | PATCH | Ensure access to all logfiles has been configured | change permissions tmp min 664"
       when:
@@ -37,7 +54,7 @@
         mode: 'ug-x,o-wx'
       failed_when: discovered_logfile_tmp_list.state not in '[ file, absent ]'
       register: discovered_logfile_tmp_list
-      loop: "{{ discovered_logfiles.stdout_lines }}"
+      loop: "{{ logfiles_todo }}"
 
     - name: "6.2.4.1 | PATCH | Ensure access to all logfiles has been configured | change permissions else all 640"
       when:
@@ -48,4 +65,6 @@
         mode: 'u-x,g-wx,o-rwx'
       failed_when: discovered_logfile_else_list.state not in '[ file, absent ]'
       register: discovered_logfile_else_list
-      loop: "{{ discovered_logfiles.stdout_lines }}"
+      loop: "{{ logfiles_todo }}"
+
+...
