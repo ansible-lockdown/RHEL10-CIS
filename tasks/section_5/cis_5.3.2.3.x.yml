@@ -94,7 +94,7 @@
         - rhel10cis_disruption_high
       ansible.builtin.lineinfile:
         path: "/{{ item }}"
-        regexp: ^(password\h+[^#\n\r]+\h+pam_pwhistory\.so\h+)(.*)(use_authtok)
+        regexp: ^(password[ \t]+[^#\n\r]+[ \t]+pam_pwhistory\.so[ \t]+)(.*)(use_authtok)
         line: "\\1\\2 use_authtok"
         backrefs: true
       loop:
