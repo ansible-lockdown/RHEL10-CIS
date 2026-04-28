@@ -102,7 +102,7 @@
       when:
         - not rhel10cis_bluetooth_service
         - rhel10cis_bluetooth_mask
-      notify: Systemd_daemon_reload
+      notify: Systemd daemon reload
       ansible.builtin.systemd:
         name: bluetooth.service
         enabled: "{{ ('bluez' in ansible_facts.packages) | ternary(false, omit) }}"
