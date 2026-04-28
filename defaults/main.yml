@@ -1439,6 +1439,10 @@ rhel10cis_rsyslog_logrotate_create: true
 # Uncomment and add the required options e.g. mode owner group
 # rhel10cis_rsyslog_logrotate_create_opts:
 
+# Control 6.2.4.1 allowing exceptions for /var/log permissions
+# This can be used to whitelist log files from permission changes, regex format
+rhel10cis_logpermissions_whitelist: []
+
 ##  Control 6.3.1.3 - Ensure audit_backlog_limit is sufficient
 # This variable represents the audit backlog limit, i.e., the maximum number of audit records that the
 # system can buffer in memory, if the audit subsystem is unable to process them in real-time.
