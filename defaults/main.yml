@@ -923,6 +923,10 @@ rhel10cis_active_firewall_zone: public
 # DROP - Will drop all attempts to connect that are not whitelisted
 rhel10cis_firewalld_target: DROP
 
+# Rules 4.1.5 / 4.1.6
+# Zone the loopback interface (lo) is assigned to
+rhel10cis_loopback_firewall_zone: trusted
+
 ## Section 5 vars
 
 ## Section 5.1 - SSH
