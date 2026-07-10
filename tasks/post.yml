@@ -10,7 +10,7 @@
   when:
     - rhel10cis_sysctl_update
     - not system_is_container
-    - "'procps-ng' in ansible_facts.packages"
+    - "'procps-ng' in ansible_facts['packages']"
   ansible.builtin.template:
     src: "etc/sysctl.d/{{ item }}.j2"
     dest: "/etc/sysctl.d/{{ item }}"
@@ -24,14 +24,31 @@
     - 60-netipv6_sysctl.conf
   notify: Reload sysctl
 
-- name: Flush handlers
+- name: POST | Sysctl flush ipv4 route table
+  when:
+    - rhel10cis_flush_ipv4_route
+    - not system_is_container
+  ansible.posix.sysctl:
+    name: net.ipv4.route.flush
+    value: '1'
+    sysctl_set: true
+  ignore_errors: true  # noqa ignore-errors
+
+- name: POST | Sysctl flush ipv6 route table
+  when:
+    - rhel10cis_flush_ipv6_route
+    - not system_is_container
+  ansible.posix.sysctl:
+    name: net.ipv6.route.flush
+    value: '1'
+    sysctl_set: true
+
+- name: POST | Flush handlers
   ansible.builtin.meta: flush_handlers
 
 - name: POST | reboot system if changes require it and not skipped
   when: change_requires_reboot
   tags: always
-  vars:
-    warn_control_id: Reboot_required
   block:
     - name: POST | Reboot system if changes require it and not skipped
       when: not skip_reboot
@@ -47,3 +64,5 @@
       when: skip_reboot
       ansible.builtin.import_tasks:
         file: warning_facts.yml
+      vars:
+        warn_control_id: Reboot_required

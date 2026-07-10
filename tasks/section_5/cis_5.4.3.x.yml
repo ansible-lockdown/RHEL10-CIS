@@ -51,10 +51,17 @@
     - CCI-000366
     - NIST800-53R5_AC-3
     - NIST800-53R5_MP-2
-  ansible.builtin.replace:
-    path: "{{ item.path }}"
-    regexp: (?i)(umask\s+\d*)
-    replace: "{{ item.line }} {{ rhel10cis_bash_umask }}"
-  loop:
-    - { path: "/etc/profile", line: "umask" }
-    - { path: "/etc/login.defs", line: "UMASK" }
+  block:
+    - name: "5.4.3.3 | PATCH | Ensure default user umask is configured | add profile script"
+      ansible.builtin.template:
+        src: etc/profile.d/60_default_umask.sh.j2
+        dest: /etc/profile.d/60_default_umask.sh
+        owner: root
+        group: root
+        mode: 'go-w'
+
+    - name: "5.4.3.3 | PATCH | Ensure default user umask is configured | update login.defs"
+      ansible.builtin.replace:
+        path: /etc/login.defs
+        regexp: (?i)(umask\s+\d*)
+        replace: "UMASK {{ rhel10cis_bash_umask }}"

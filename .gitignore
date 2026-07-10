@@ -9,14 +9,6 @@ tests/Dockerfile
 packer_cache
 delete*
 ignore*
-test_inv
-qa_report.md
-prompt.md
-plan.md
-history.md
-*.pdf
-# temp remove doc while this is built up
-doc/
 # VSCode
 .vscode
 vagrant
@@ -64,6 +56,8 @@ benchparse/
 *history.md
 *plan.md
 *qa_report*
+prompt.md
+test_inv
 
 # GitHub Action/Workflow files
 .github/

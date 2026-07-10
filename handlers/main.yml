@@ -1,33 +1,9 @@
 ---
 # handlers file for RHEL10-CIS
 
-- name: "Adding options for /tmp"
-  when: not rhel10cis_tmp_svc
-  vars:
-    mount_point: '/tmp'
-  ansible.posix.mount:
-    path: "{{ mount_point }}"
-    src: "{{ prelim_mount_point_fs_and_options[mount_point]['src'] }}"
-    state: present
-    fstype: "{{ prelim_mount_point_fs_and_options[mount_point]['fs_type'] }}"
-    opts: "{{ prelim_mount_point_fs_and_options[mount_point]['options'] | unique | join(',') }}"
-  listen: "Remount /tmp"
-
-- name: "Remounting /tmp"
-  vars:
-    mount_point: '/tmp'
-  ansible.posix.mount:
-    path: "{{ mount_point }}"
-    state: remounted
-  listen: "Remount /tmp"
-
-- name: "Remounting /tmp systemd"
-  vars:
-    mount_point: '/tmp'
-  ansible.builtin.systemd:
-    name: tmp.mount
-    state: restarted
-    daemon_reload: true
+- name: "Remount tmp filesystem"
+  ansible.builtin.include_tasks:
+    file: remount_tmp.yml
   listen: "Remount /tmp"
 
 - name: "Adding options for /dev/shm"
@@ -171,16 +147,6 @@
     name: systemd-coredump.socket
     state: restarted
 
-- name: Sysctl flush ipv4 route table
-  when:
-    - rhel10cis_flush_ipv4_route
-    - not system_is_container
-  ansible.posix.sysctl:
-    name: net.ipv4.route.flush
-    value: '1'
-    sysctl_set: true
-  ignore_errors: true  # noqa ignore-errors
-
 - name: Selinux relabel
   when:
     - rhel10cis_selinux_relabel_enabled
@@ -189,15 +155,6 @@
   ansible.builtin.file:
     path: /.autorelabel
   notify: Set reboot required
-
-- name: Sysctl flush ipv6 route table
-  when:
-    - rhel10cis_flush_ipv6_route
-    - not system_is_container
-  ansible.posix.sysctl:
-    name: net.ipv6.route.flush
-    value: '1'
-    sysctl_set: true
 
 - name: Update Crypto Policy
   ansible.builtin.set_fact:
@@ -248,15 +205,6 @@
     name: systemd-journald
     state: restarted
 
-- name: Restart systemd_journal_upload
-  ansible.builtin.systemd:
-    name: systemd-journal-upload
-    state: restarted
-
-- name: Aide db move
-  ansible.builtin.command: "mv /var/lib/aide/aide.db.new.gz {{ rhel10cis_aide_db_file }}"
-  changed_when: true
-
 - name: Systemd daemon reload
   ansible.builtin.systemd:
     daemon-reload: true
@@ -268,26 +216,31 @@
 ## Auditd tasks note order for handlers to run
 
 - name: Auditd rules reload
-  when: prelim_auditd_immutable_check.rc == 1 or discovered_augenrules_check.stdout is search('No change')
+  when:
+    - not system_is_container
+    - not discovered_auditd_immutable_check or
+      "'No change' not in discovered_audit_rules_diff"
   ansible.builtin.command: augenrules --load
   changed_when: true
-  failed_when: discovered_augenrule_check.rc not in [ 0, 1 ]
-  register: discovered_augenrule_check
+  listen: update auditd
 
 - name: Audit immutable fact
-  when: prelim_auditd_immutable_check is defined
+  when:
+    - discovered_audit_rules_updated.changed
+    - auditd_immutable_check is defined
   ansible.builtin.debug:
     msg: "Reboot required for auditd to apply new rules as immutable set"
   notify: Set reboot required
 
 - name: Stop auditd process
-  when: prelim_auditd_immutable_check is defined
-  ansible.builtin.command: systemctl kill auditd
+  when: not system_is_container
+  ansible.builtin.command: systemctl kill auditd  # noqa command-instead-of-module
   changed_when: true
   listen: Restart auditd
 
 - name: Start auditd process
-  ansible.builtin.systemd:
+  when: not system_is_container
+  ansible.builtin.systemd_service:
     name: auditd
     state: started
   listen: Restart auditd

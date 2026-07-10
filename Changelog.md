@@ -1,6 +1,48 @@
 # Changes to rhel10CIS
 
-## March 2026 — Common alignment and CIS validation (`rhel10`)
+## June 2026 — QA pass: tag, toggle, and hygiene fixes
+
+- Fixed 6 CIS level/profile tag mismatches against v1.0.1 recommendations (1.1.2.5.1, 1.8.5, 2.1.11, 2.1.20, 3.3.2.1, 6.3.3.22) — includes a `level2- workstation` typo (stray space) on 6.3.3.22
+- **Behavior change**: `rhel10cis_nfs_server` and `rhel10cis_rpc_server` now default to `false` (was `true`, contradicting `*_mask: true` on the same services — services were configured to be both kept running and masked simultaneously)
+- Removed a dead `notify:` on 6.3.3.10 referencing a non-existent "update auditd" handler (correct handler is "Restart auditd")
+- Removed `export_badges_public.yml` and `update_galaxy.yml` from `.github/workflows/` — these are public-mirror-only workflows and should not exist in this private repo
+- Fixed LICENSE copyright casing (`Mindpoint` → `MindPoint`)
+- Rebranded README Twitter badge to X (`x.com/AnsibleLockdown`)
+- Added `prompt.md` and `test_inv` patterns to `.gitignore`
+- Minor README grammar fix
+- molecule added
+- ansible_facts context change from ansible_facts.distribution to ansible_facts['distribution']
+- Moved prelim tasks to control areas for easier management
+- vars containing warning moved to actual task
+- container vars file now a variable
+- enable multiple line in the audit template
+- 2.1.x service and pkgs logic vars now in vars/main.yml enabled a more agnostic OS approach going forward
+- 5.4.3.3 thanks to @mboeker public pr #99 for raising this
+- aide improvements thanks to @thuliumdrake
+- 6.2.2 addressed some controls thanks to public issue #98 and @mboeker
+
+## April 2026 — Common alignment and CIS validation (`rhel10`)
+
+
+# 1.0.1 - June updates
+
+- Updated logic on mount checks
+- Updated tmp handler
+- Connecting User logic updated
+- Removed upcoming deprecation warning for ansible core modules - Use `ansible_facts["fact_name"]` (no `ansible_` prefix) instead.
+- Ansible_vars_goss renamed to lockdown_audit.yml
+- Updated collections/requirement.yml to use source now for core 2.16 or later
+- Ansible core version minimum now 2.16 inline with other repos
+
+# 1.0.1 - Additional public updates
+
+thanks to @aaronk1
+#85
+#86
+#86
+
+Thanks to @defnotyujine
+public PR 100
 
 # 1.0.1 - April 2026 updates
 

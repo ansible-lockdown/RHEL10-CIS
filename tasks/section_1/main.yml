@@ -61,6 +61,16 @@
     file: cis_1.7.x.yml
 
 - name: "SECTION | 1.8 | Gnome Display Manager"
-  when: prelim_gnome_present.exists is defined
-  ansible.builtin.import_tasks:
-    file: cis_1.8.x.yml
+  tags: always
+  block:
+    - name: "PRELIM | AUDIT | Discover Gnome Desktop Environment"
+      ansible.builtin.stat:
+        path: /usr/share/gnome/gnome-version.xml
+      register: prelim_gnome_present
+
+    - name: "PRELIM | AUDIT | Gnome Display Manager"
+      when:
+        - prelim_gnome_present['stat']['exists']
+        - rhel10cis_desktop_required
+      ansible.builtin.import_tasks:
+        file: cis_1.8.x.yml

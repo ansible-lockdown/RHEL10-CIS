@@ -57,6 +57,8 @@
       ansible.builtin.shell: |
         set -o pipefail
         grep -Ei '(nopasswd)' /etc/sudoers /etc/sudoers.d/* | cut -d':' -f1
+      args:
+        executable: "{{ rhel10cis_shell_executable }}"
       become: true
       changed_when: false
       failed_when: false
@@ -85,6 +87,8 @@
       ansible.builtin.shell: |
         set -o pipefail
         grep -Ei '(!authenticate)' /etc/sudoers /etc/sudoers.d/* | cut -d':' -f1
+      args:
+        executable: "{{ rhel10cis_shell_executable }}"
       become: true
       changed_when: false
       failed_when: false
@@ -109,10 +113,12 @@
     - rule_5.2.6
     - NIST800-53R5_IA-11
   block:
-    - name: "5.2.6 | AUDIT | Ensure sudo authentication timeout is configured correctly | Get files with timeout set"
+    - name: "5.2.6 | AUDIT | Ensure sudo timestamp_timeout is configured | Get files with timeout set"
       ansible.builtin.shell: |
         set -o pipefail
         grep -is 'timestamp_timeout' /etc/sudoers /etc/sudoers.d/* | cut -d":" -f1 | uniq | sort
+      args:
+        executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
       failed_when: false
       register: discovered_sudo_timeout_files

@@ -13,7 +13,9 @@
     - name: "5.3.2.3.1 | AUDIT | Ensure password history remember is configured | Check existing files"
       ansible.builtin.shell: |
         set -o pipefail
-        grep -Psi -- '^\h*password\s+[^#\n\r]+\h+pam_pwhistory\.so\s+([^#\n\r]+\s+)?remember=\d+\b' /etc/pam.d/password-auth /etc/pam.d/system-auth
+        grep -Psi -- '^\s*password\s+[^#\n\r]+\s+pam_pwhistory\.so\s+([^#\n\r]+\s+)?remember=\d+\b' /etc/pam.d/password-auth /etc/pam.d/system-auth
+      args:
+        executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pwhistory_remember.rc not in [0, 1]
       register: discovered_pwhistory_remember
@@ -76,7 +78,9 @@
     - name: "5.3.2.3.3 | AUDIT | Ensure pam_pwhistory includes use_authtok | Check existing files"
       ansible.builtin.shell: |
         set -o pipefail
-        grep -Psi -- '^\h*password\h+[^#\n\r]+\h+pam_pwhistory\.so\h+([^#\n\r]+\h+)?use_authtok\b' /etc/pam.d/{system,password}-auth
+        grep -Psi -- '^\s*password\s+[^#\n\r]+\s+pam_pwhistory\.so\s+([^#\n\r]+\s+)?use_authtok\b' /etc/pam.d/{system,password}-auth
+      args:
+        executable: "{{ rhel10cis_shell_executable }}"
       register: discovered_pwhistory_use_authtok
       changed_when: false
       failed_when: discovered_pwhistory_use_authtok.rc not in [0, 1]
@@ -94,7 +98,7 @@
         - rhel10cis_disruption_high
       ansible.builtin.lineinfile:
         path: "/{{ item }}"
-        regexp: ^(password\h+[^#\n\r]+\h+pam_pwhistory\.so\h+)(.*)(use_authtok)
+        regexp: ^(password\s+[^#\n\r]+\s+pam_pwhistory\.so\s+)(.*)(use_authtok)
         line: "\\1\\2 use_authtok"
         backrefs: true
       loop:

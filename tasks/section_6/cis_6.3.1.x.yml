@@ -21,7 +21,7 @@
         state: present
 
     - name: "6.3.1.1 | PATCH | Ensure auditd packages are installed | Install auditd-lib packages"
-      when: '"auditd-lib" not in ansible_facts.packages'
+      when: "'auditd-lib' not in ansible_facts['packages']"
       ansible.builtin.package:
         name: audit-libs
         state: present
@@ -41,6 +41,8 @@
       ansible.builtin.shell: |
         set -o pipefail
         grubby --info=ALL | grep args | sed -n 's/.*audit=\([[:alnum:]]\+\).*/\1/p'
+      args:
+        executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
       failed_when: false
       check_mode: false
@@ -64,27 +66,29 @@
     - NIST800-53R5_AU-12
     - NIST800-53R5_SI-5
   block:
-    - name: "6.3.1.3 | AUDIT | Ensure audit_backlog_limit is sufficient | Grubby existence of current value"
+    - name: "6.3.1.3 | AUDIT | Ensure audit_backlog_limit is configured | Grubby existence of current value"
       ansible.builtin.shell: |
         set -o pipefail
         grubby --info=ALL | grep args | grep -o -E "audit_backlog_limit=([[:digit:]])+" | grep -o -E "([[:digit:]])+"
+      args:
+        executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
       failed_when: false
       check_mode: false
       register: discovered_grubby_curr_value_backlog_linux
 
-    - name: "6.3.1.3 | AUDIT | Check to see if limits are set"
+    - name: "6.3.1.3 | AUDIT | Ensure audit_backlog_limit is configured | Check to see if limits are set"
       when: discovered_grubby_curr_value_backlog_linux is not defined or discovered_grubby_curr_value_backlog_linux.stdout_lines == []
       ansible.builtin.set_fact:
         discovered_reset_backlog_limits: true
 
-    - name: "6.3.1.3 | AUDIT | Check to see if any limits are too low"
+    - name: "6.3.1.3 | AUDIT | Ensure audit_backlog_limit is configured | Check to see if any limits are too low"
       when: (item | int < rhel10cis_audit_back_log_limit)
       ansible.builtin.set_fact:
         discovered_reset_backlog_limits: true
       loop: "{{ discovered_grubby_curr_value_backlog_linux.stdout_lines }}"
 
-    - name: "6.3.1.3 | AUDIT | Ensure audit_backlog_limit is sufficient | Grubby update applied"
+    - name: "6.3.1.3 | AUDIT | Ensure audit_backlog_limit is configured | Grubby update applied"
       when: discovered_reset_backlog_limits is defined
       ansible.builtin.command: 'grubby --update-kernel=ALL --args="audit_backlog_limit={{ rhel10cis_audit_back_log_limit }}"'
       changed_when: true

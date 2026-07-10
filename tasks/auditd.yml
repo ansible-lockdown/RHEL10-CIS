@@ -4,21 +4,35 @@
 # we need to update the auditd rules depending on the architecture of the system.
 # This task passed the syscalls table to the auditd template and updates the auditd rules
 - name: "POST | AUDITD | Set supported_syscalls variable"
-  ansible.builtin.shell: ausyscall --dump |  awk  '{print $2}'
+  ansible.builtin.shell: |
+    set -o pipefail
+    ausyscall --dump |  awk  '{print $2}'
+  args:
+    executable: "{{ rhel10cis_shell_executable }}"
   changed_when: false
   failed_when: discovered_auditd_syscalls.rc not in [ 0, 1 ]
   register: discovered_auditd_syscalls
 
 - name: "POST | AUDITD | Ensure use of privileged commands is collected"
   ansible.builtin.shell: |
+    set -o pipefail
     {%- set egrep_exclude = "(asdfmnop|{{ rhel10cis_priv_command_excluded_mounts | join('|') }})" -%}
     for i in $(df | grep '^/dev' | grep -Ev '{{ egrep_exclude }}' | awk '{ print $NF }'); do
       find $i -xdev -type f -perm /6000 2>/dev/null;
     done
+  args:
+    executable: "{{ rhel10cis_shell_executable }}"
   changed_when: false
   failed_when: false
   check_mode: false
   register: discovered_privileged_commands
+
+- name: "POST | AUDIT | Discover if auditd is immutable"
+  tags: always
+  ansible.builtin.command: grep -c "^-e 2" /etc/audit/rules.d/99_auditd.rules
+  changed_when: false
+  failed_when: discovered_auditd_immutable_check.rc not in [ 0, 1, 2 ]
+  register: discovered_auditd_immutable_check
 
 - name: "POST | AUDITD | Apply auditd template for section 6.2.4.x"
   when: update_audit_template
@@ -40,12 +54,17 @@
 - name: POST | AUDITD | Set up auditd user logging exceptions
   when: rhel10cis_allow_auditd_uid_user_exclusions
   ansible.builtin.template:
-    src: etc/audit/rule.d/98_auditd_exception.rules.j2
+    src: audit/98_auditd_exception.rules.j2
     dest: /etc/audit/rules.d/98_auditd_exceptions.rules
     owner: root
     group: root
     mode: 'u-x,go-rwx'
   notify: Restart auditd
+
+- name: POST | AUDITD | Check for auditd differences if reload required
+  ansible.builtin.command: augenrules --check
+  changed_when: false
+  register: discovered_audit_rules_diff
 
 - name: POST | AUDITD | Flush handlers
   ansible.builtin.meta: flush_handlers

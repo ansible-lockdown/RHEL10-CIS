@@ -13,9 +13,17 @@
     - NIST800-53R5_CM-6
     - NIST800-53R5_CM-7
     - NIST800-53R5_IA-5
-  ansible.builtin.service:
-    name: crond
-    enabled: true
+  block:
+    - name: "2.4.1.1 | PATCH | Ensure cron daemon is enabled and active | ensure cronie is installed"
+      ansible.builtin.package:
+        name: cronie
+        state: present
+
+    - name: "2.4.1.1 | PATCH | Ensure cron daemon is enabled and active | crond running"
+      ansible.builtin.service:
+        name: crond
+        enabled: true
+        state: started
 
 - name: "2.4.1.2 | PATCH | Ensure access to /etc/crontab is configured"
   when: rhel10cis_rule_2_4_1_2

@@ -133,6 +133,8 @@
       ansible.builtin.shell: |
         set -o pipefail
         for i in  $(df | grep '^/dev' | awk '{ print $NF }'); do find $i -xdev -type f -perm /6000 2>/dev/null; done
+      args:
+        executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
       failed_when: false
       check_mode: false
@@ -141,7 +143,6 @@
     - name: "6.3.3.10 | PATCH | Ensure use of privileged commands are collected"
       ansible.builtin.set_fact:
         update_audit_template: true
-      notify: update auditd
 
 # All changes selected are managed by the POST audit and handlers to update
 - name: "6.3.3.11 | PATCH | Ensure unsuccessful file access attempts are collected"
@@ -291,7 +292,7 @@
   when: rhel10cis_rule_6_3_3_22
   tags:
     - level2-server
-    - level2- workstation
+    - level2-workstation
     - patch
     - auditd
     - rule_6.3.3.22
@@ -496,9 +497,8 @@
     - auditd
     - rule_6.3.3.37
     - NIST800-53R5_AU-3
-  ansible.builtin.command: augenrules --check
-  changed_when: false
-  register: discovered_augenrules_check
+  ansible.builtin.debug:
+    msg: "This is run after the template has been updated as part of the tasksauditd.yml config"
 
 - name: Auditd | 6.3.3.x | Auditd controls updated
   when: update_audit_template

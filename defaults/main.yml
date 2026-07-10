@@ -4,6 +4,8 @@
 # These values may be overridden by other vars-setting options(e.g. like the below 'container_vars_file'), as explained here:
 # https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable
 
+container_vars_file: is_container.yml
+
 # Run the OS validation check
 # Supported OSs will not need for this to be changed - see README e.g. CentOS
 os_check: true
@@ -13,6 +15,19 @@ os_check: true
 ## Default false
 ## Will be fine if clean new un-configured build
 rhel10cis_disruption_high: false
+
+## Root user used
+# Root by default is not used unless setup by user
+# The role will only run certain commands if set to true
+# This allows the ability to skip tasks that may cause an issue
+rhel10cis_uses_root: false
+
+# Connecting user, due to the way many users work differently this is to try and assist the use of connecting user if required
+# This is useful when part of kickstart build or running as root and not defining the ansible_user option
+# used @ rhel10 5.2.4
+rhel10cis_default_user: root
+rhel10cis_connecting_user: "{{ ansible_facts['env']['SUDO_USER'] | default(rhel10cis_default_user) }}"
+rhel10cis_playbook_user: "{{ ansible_user | default(rhel10cis_connecting_user) }}"
 
 ## Switching on/off specific baseline sections
 # These variables govern whether the tasks of a particular section are to be executed when running the role.
@@ -49,7 +64,7 @@ rhel10cis_legacy_boot: false
 ## Benchmark name used by auditing control role
 # The audit variable found at the base
 ## metadata for Audit benchmark
-benchmark_version: 'v1.0.1'
+benchmark_version: '1.0.1'
 
 benchmark: RHEL10-CIS
 
@@ -60,76 +75,30 @@ skip_reboot: true
 # default value will change to true but won't reboot if not enabled but will error
 change_requires_reboot: false
 
-###
-### Settings for associated Audit role using Goss
-###
+# A location that can be used as as a temporary location to execute scripts
+# note the drive with need exec permissions used by 1.1.1.11
+rhel10cis_temp_exec_location: /var
 
 ###########################################
 ### Goss is required on the remote host ###
 ### vars/auditd.yml for other settings  ###
 
-## Audit setup
-# Audits are carried out using Goss. This variable
-# determines whether execution of the role prepares for auditing
-# by installing the required binary.
+# If the any of the following are set the variables used by them are loaded in vars/audit.yml these can be overridden by your
+# preferred method of variable management (e.g., vault, group_vars, host_vars, inventory etc.)
+
+# Allow audit to setup the requirements including installing git (if option chosen and downloading and adding goss binary to system)
 setup_audit: false
 
-## Enable audits to run - this runs the audit and get the latest content
-# This variable governs whether the audit using the
-# separately maintained audit role using Goss
-# is carried out.
-# This runs the audit and gets the latest content
+# enable audits to run - this runs the audit and get the latest content
 run_audit: false
-# Run heavy tests - some tests can have more impact on a system enabling these can have greater impact on a system
-audit_run_heavy_tests: true
-# Ability to limit the number of concurrent processes used by goss (default 50)
-audit_max_concurrent: 50
 
 ## Only run Audit do not remediate
 audit_only: false
 
-#############################
+# Run heavy tests - some tests can have more impact on a system enabling these can have greater impact on a system
+audit_run_heavy_tests: true
 
-## How to retrieve audit binary(Goss)
-# Options are 'copy' or 'download' - detailed settings at the bottom of this file
-# - if 'copy':
-#    - the filepath mentioned via the below 'audit_bin_copy_location' var will be used to access already downloaded Goss
-# - if 'download':
-#    - the GitHub Goss-releases URL will be used for a fresh-download, via 'audit_bin_url' and 'audit_pkg_arch_name' vars
-get_audit_binary_method: download
-
-## if get_audit_binary_method - copy the following needs to be updated for your environment
-## it is expected that it will be copied from somewhere accessible to the control node
-## e.g copy from ansible control node to remote host
-audit_bin_copy_location: /some/accessible/path
-
-## How to retrieve the audit role
-# The role for auditing is maintained separately.
-# This variable specifies the method of how to get the audit role
-# options are git/copy/archive/get_url other e.g. if you wish to run from already downloaded conf
-# onto the system. The options are as follows:
-# - 'git': clone audit content from GitHub REPOSITORY, set up via `audit_file_git` var, and
-#          VERSION(e.g. branch, tag name), set up via `audit_git_version` var.
-# - 'copy': copy from path as specified in variable `audit_conf_copy`.
-# - 'archive': same as 'copy', only that the specified filepath needs to be unpacked.
-# - 'get_url': Download from url as specified in variable `audit_files_url`
-audit_content: git
-
-# If using either archive, copy, get_url:
-## Note will work with .tar files - zip will require extra configuration
-### If using get_url this is expecting github url in tar.gz format e.g.
-### https://github.com/ansible-lockdown/RHEL10-CIS-Audit/archive/refs/heads/benchmark-v1.0.0.tar.gz
-audit_conf_source: "some path or url to copy from"
-
-# Destination for the audit content to be placed on managed node
-# note may not need full path e.g. /opt with the directory being the {{ benchmark }}-Audit directory
-audit_conf_dest: "/opt"
-
-# Where the audit logs are stored
-audit_log_dir: '/opt'
-
-## Ability to collect and take audit files moving to a centralized location
-# This enables the collection of the files from the host
+# Fetch audit output files back to the controller
 fetch_audit_output: false
 
 # Method of getting,uploading the summary files
@@ -141,6 +110,8 @@ audit_output_collection_method: fetch
 
 # Location to put the audit files
 audit_output_destination: /opt/audit_summaries/
+
+#############################
 
 ### Goss Settings ##
 ####### END ########
@@ -580,14 +551,14 @@ rhel10cis_tmp_svc: false
 ## Control 1.2.1
 ## Control 1.2.1.3
 # When installing RHEL from authorized Red Hat source, RHEL will come with default YUM repository. NOT having a default YUM
-# repo ('rhel10cis_rhel_default_repo' set as 'false'), in conjunction with 'rhel10cis_rule_enable_repogpg' set as 'True', will enable the tasks
+# repo ('rhel10cis_rhel_default_repo' set as 'false'), in conjunction with 'rhel10cis_enable_repogpg' set as 'True', will enable the tasks
 # which check the GPG signatures for all the individual YUM repositories.
 rhel10cis_rhel_default_repo: true
 ## Control 1.2.1.3
-# When 'rhel10cis_rule_enable_repogpg' is set to 'true'(in conjunction with 'rhel10cis_rhel_default_repo':'false'), conditions are met for
+# When 'rhel10cis_enable_repogpg' is set to 'true'(in conjunction with 'rhel10cis_rhel_default_repo':'false'), conditions are met for
 # enabling the GPG signatures-check for all the individual YUM repositories. If GPG signatures-check is enabled on repositories which do not
 # support it(like RedHat), installation of packages will fail.
-rhel10cis_rule_enable_repogpg: true
+rhel10cis_enable_repogpg: true
 
 ## Control 1.3.1.3|4|5 - SELinux policy settings
 # This selects type of policy; targeted or mls( multilevel )
@@ -705,10 +676,12 @@ rhel10cis_additional_crypto_policy_module: ''
 rhel10cis_warning_banner: Authorized users only. All activity may be monitored and reported.
 # End Banner
 
-## Control 1.8.x - Settings for GDM
-# If the system is running a desktop this will turn off removal of the GUI pkgs
-# and configure the required settings
-rhel10_desktop_required: false
+## Controls 1.8.x - Settings for GDM
+# To set whether this is required
+# If set to true and finds gui installed below is will run CIS
+# if set to false it will remove the gdm package and disable the service
+# then skip al the controls in 1.8.x
+rhel10cis_desktop_required: false
 
 # This variable governs the number of seconds of inactivity before the screen goes blank.
 # Set max value for idle-delay in seconds (between 1 and 900)
@@ -764,7 +737,7 @@ rhel10cis_message_server: false  # This is for messaging dovecot and cyrus-imap
 # Set this variable to `true` to mask service `message`.
 rhel10cis_message_mask: false
 # Set this variable to `true` to keep service `nfs`; otherwise, the service is uninstalled.
-rhel10cis_nfs_server: true
+rhel10cis_nfs_server: false
 # Set this variable to `true` to mask service `nfs`.
 rhel10cis_nfs_mask: true
 # Set this variable to `true` to keep service `print`; otherwise, the service is uninstalled.
@@ -772,7 +745,7 @@ rhel10cis_print_server: false  # replaces cups
 # Set this variable to `true` to mask service `print`.
 rhel10cis_print_mask: false
 # Set this variable to `true` to keep service `rpc`; otherwise, the service is uninstalled.
-rhel10cis_rpc_server: true
+rhel10cis_rpc_server: false
 # Set this variable to `true` to mask service `rpc`.
 rhel10cis_rpc_mask: true
 # Set this variable to `true` to keep service `rsync`; otherwise, the service is uninstalled.
@@ -915,6 +888,10 @@ rhel10cis_flush_ipv6_route: false
 # firewalld anything else this will skip
 rhel10cis_firewall: firewalld
 
+# Rules 4.1.5 / 4.1.6
+# Zone the loopback interface (lo) is assigned to
+rhel10cis_loopback_firewall_zone: trusted
+
 # Rule 4.1.4
 # Name of the new firewall zone that should be live
 rhel10cis_active_firewall_zone: public
@@ -937,7 +914,7 @@ rhel10cis_sshd_config_file: /etc/ssh/sshd_config
 # access for users whose user name matches one of the patterns. This is done
 # by setting the value of `AllowUsers` option in `/etc/ssh/sshd_config` file.
 # If an USER@HOST format will be used, the specified user will be allowed only on that particular host.
-rhel10cis_sshd_allowusers: "{% if ansible_facts.user_id != 'root' %}{{ ansible_facts.user_id }}{% elif ansible_env.SUDO_USER is defined %}{{ ansible_env.SUDO_USER }}{% endif %}"
+rhel10cis_sshd_allowusers: "{% if ansible_facts['user_id'] != 'root' %}{{ ansible_facts['user_id'] }}{% elif ansible_facts['env']['SUDO_USER'] is defined %}{{ ansible_facts['env']['SUDO_USER'] }}{% endif %}"
 ## Control 5.1.7 - Ensure sshd access is configured
 # (String) This variable, if specified, configures a list of GROUP name patterns, separated by spaces, to allow SSH access
 # for users whose primary group or supplementary group list matches one of the patterns. This is done
@@ -1197,7 +1174,7 @@ rhel10cis_futurepwchgdate_autofix: true
 ## Control 5.4.2.5 - Ensure root PATH Integrity
 # This variable governs whether the system uses the root account directly.
 # When set to true, the root PATH integrity check will skip permission changes.
-rhel10cis_uses_root: false
+# Set at the top of the file rhel10cis_uses_root: false
 
 ## Control 5.4.2.6 - Ensure root user umask is configured
 # The following variable specifies the "umask" to configure for the root user.
@@ -1209,7 +1186,7 @@ rhel10cis_uses_root: false
 # simply subtracted, but is processed bitwise. Bits set in the umask are cleared
 # in the resulting file mode. CIS recommends setting 'umask' to '0027' or more
 # restrictive.
-rhel10cis_root_umask: '0027'  # 0027 or more restrictive
+rhel10cis_root_umask: '027'  # 027 or more restrictive
 
 ## Control 5.4.2.7 - Ensure system accounts are secured | Set nologin
 # The system users on this list are allowed to have a shell (e.g. applications

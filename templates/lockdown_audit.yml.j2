@@ -100,7 +100,7 @@ rhel10cis_rule_1_2_1_1: {{ rhel10cis_rule_1_2_1_1 }}
 rhel10cis_rule_1_2_1_2: {{ rhel10cis_rule_1_2_1_2 }}
 rhel10cis_rule_1_2_1_3: {{ rhel10cis_rule_1_2_1_3 }}
 rhel10cis_rule_1_2_1_4: {{ rhel10cis_rule_1_2_1_4 }}
-rhel10cis_rule_1_2_1_5: {{ rhel10cis_rule_1_2_1_5 }}. ## New
+rhel10cis_rule_1_2_1_5: {{ rhel10cis_rule_1_2_1_5 }} # New
 # Package updates
 rhel10cis_rule_1_2_2_1: {{ rhel10cis_rule_1_2_2_1 }}
 
@@ -464,12 +464,13 @@ rhel10cis_set_boot_pass: {{ rhel10cis_set_boot_pass }}
 # - 1.7.2 - Ensure local login warning banner is configured properly
 # - 1.7.3 - Ensure remote login warning banner is configured properly
 # This variable stores the content for the Warning Banner(relevant for issue, issue.net, motd).
-rhel10cis_warning_banner: {{ rhel10cis_warning_banner }}
+rhel10cis_warning_banner: |
+{{ rhel10cis_warning_banner | indent(2, first=True) }}
 # End Banner
 
 ## Control 1.8.x - Settings for GDM
 ## 1.8 GDM graphical interface
-desktop_required: {{ rhel10_desktop_required }}
+desktop_required: {{ rhel10cis_desktop_required }}
 
 ## Section 2. Services
 
@@ -575,7 +576,7 @@ rhel10cis_active_firewall_zone: {{ rhel10cis_active_firewall_zone }}
 # access for users whose user name matches one of the patterns. This is done
 # by setting the value of `AllowUsers` option in `/etc/ssh/sshd_config` file.
 # If an USER@HOST format will be used, the specified user will be allowed only on that particular host.
-rhel10cis_sshd_allowusers: "{% if ansible_facts.user_id != 'root' %}{{ ansible_facts.user_id }}{% elif ansible_env.SUDO_USER is defined %}{{ ansible_env.SUDO_USER }}{% endif %}"
+rhel10cis_sshd_allowusers: "{% if ansible_facts['user_id'] != 'root' %}{{ ansible_facts['user_id'] }}{% elif ansible_facts['env']['SUDO_USER'] is defined %}{{ ansible_facts['env']['SUDO_USER'] }}{% endif %}"
 
 # (String) This variable, if specified, configures a list of GROUP name patterns, separated by spaces, to allow SSH access
 # for users whose primary group or supplementary group list matches one of the patterns. This is done
@@ -621,7 +622,7 @@ rhel10cis_passwd_complex_option: {{ rhel10cis_passwd_complex_option }}
   # This variable governs after how many days a password expires.
   # CIS requires a value of 365 or less.
 rhel10cis_pass_max_days: {{ rhel10cis_pass_max_days }}
-  ## Control 5.4.1.2 - Ensure minimum days between password changes are 7 or more
+  ## Control 5.4.1.2 - Ensure minimum days between a password change is 7 or more
   # This variable specifies the minimum number of days allowed between changing
   # passwords. CIS requires a value of at least 1.
 rhel10cis_pass_min_days: {{ rhel10cis_pass_min_days }}

@@ -5,7 +5,7 @@
 # Set default value for reboot value
 change_requires_reboot: false
 
-min_ansible_version: 2.12.1
+min_ansible_version: 2.16.1
 rhel10cis_allowed_crypto_policies:
   - 'DEFAULT'
   - 'FUTURE'
@@ -27,6 +27,11 @@ rhel10cis_allowed_crypto_policies_modules:
   - 'NO-SSHWEAKCIPHER'
   - 'NO-SSHWEAKMAC'
 
+# Ability to change the default shell
+# Note this can change how some of the ansible.builtin.shell tasks work and may require adjustments to args.executable for those tasks
+# Used mainly for overriding to use a more POSIX compliant shell such as dash or ash when running in a container environment
+rhel10cis_shell_executable: /bin/bash
+
 # Used to control warning summary
 warn_control_list: ""
 warn_count: 0
@@ -46,11 +51,7 @@ update_audit_template: false
 # system_is_container the true. Otherwise, the default value
 # 'false' is left unchanged.
 system_is_container: false
-# The filename of the existing yml file in role's 'vars/' sub-directory
-# to be used for managing the role-behavior when a container was detected:
-# (de)activating rules or for other tasks(e.g. disabling Selinux or a specific
-# firewall-type).
-container_vars_file: is_container.yml
+
 # rhel10cis is left off the front of this var for consistency in testing pipeline
 # system_is_ec2 toggle will disable tasks that fail on Amazon EC2 instances. Set true to skip and false to run tasks
 system_is_ec2: false
@@ -68,6 +69,99 @@ auditd_binaries:
   - /usr/sbin/ausearch
   - /usr/sbin/auditd
   - /usr/sbin/augenrules
+# Packages and services — 2.1.x
+avahi_pkgs:
+  - avahi-autoipd
+  - avahi
+avahi_services:
+  - avahi-daemon.socket
+  - avahi-daemon.service
+
+cockpit_pkgs:
+  - cockpit-ws
+cockpit_services:
+  - cockpit.service
+  - cockpit.socket
+
+dhcp_pkgs:
+  - kea
+dhcp_services:
+  - kea-dhcp-ddns.service
+  - kea-dhcp4.service
+  - kea-dhcp6.service
+
+dns_pkgs:
+  - bind
+dns_services:
+  - named.service
+
+dnsmasq_pkgs:
+  - dnsmasq
+dnsmasq_services:
+  - dnsmasq.service
+
+vsftpd_pkgs:
+  - vsftpd
+vsftpd_services:
+  - vsftpd.service
+
+message_pkgs:
+  - dovecot
+  - cyrus-imapd
+message_services:
+  - dovecot.socket
+  - dovecot.service
+  - cyrus-imapd.service
+
+nfs_pkgs:
+  - nfs-utils
+nfs_services:
+  - nfs-server.service
+
+print_pkgs:
+  - cups
+print_services:
+  - cups.socket
+  - cups.service
+
+rpcbind_pkgs:
+  - rpcbind
+rpcbind_services:
+  - rpcbind.socket
+  - rpcbind.service
+
+rsync_pkgs:
+  - rsync-daemon
+rsync_services:
+  - rsyncd.socket
+  - rsyncd.service
+
+samba_pkgs:
+  - samba
+samba_services:
+  - smb.service
+
+snmp_pkgs:
+  - net-snmp
+snmp_services:
+  - snmpd.service
+
+telnet_pkgs:
+  - telnet-server
+telnet_services:
+  - telnet.socket
+
+tftp_pkgs:
+  - tftp-server
+tftp_services:
+  - tftp.socket
+  - tftp.service
+
+proxy_pkgs:
+  - squid
+proxy_services:
+  - squid.service
+
 company_title: 'MindPoint Group - A Tyto Athene Company'
 file_managed_by_ansible: |-
   # File managed by ansible as part of {{ benchmark }} benchmark

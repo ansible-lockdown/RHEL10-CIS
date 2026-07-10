@@ -1,7 +1,16 @@
 ---
 
+- name: "Journald | AUDIT | 6.2.2.x Journald | find upload conf files"
+  ansible.builtin.find:
+    paths: /etc/systemd/journald.conf.d
+    patterns: "*.conf"
+    read_whole_file: true
+  register: discovered_journald_confdir_created
+
 - name: "6.2.2.2 | PATCH | Ensure journald ForwardToSyslog is disabled"
-  when: rhel10cis_rule_6_2_2_2
+  when:
+    - rhel10cis_rule_6_2_2_2
+    - rhel10cis_syslog == 'journald'
   tags:
     - level1-server
     - level1-workstation
@@ -24,14 +33,14 @@
 
     - name: "6.2.2.2 | PATCH | Ensure journald ForwardToSyslog is disabled | comment out current entries"
       when:
-        - prelim_journald_conf_files.files is defined
-        - prelim_journald_conf_files.matched > 0
+        - discovered_journald_confdir_created.files is defined
+        - discovered_journald_confdir_created.matched > 0
         - "'forwardtosyslog.conf' not in item.path"
       ansible.builtin.replace:
         path: "{{ item.path }}"
         regexp: ^(\s*ForwardToSyslog\s*=.*)
         replace: "#\\1"
-      loop: "{{ prelim_journald_conf_files.files }}"
+      loop: "{{ discovered_journald_confdir_created.files }}"
 
 - name: "6.2.2.3 | PATCH | Ensure journald Compress is configured"
   when: rhel10cis_rule_6_2_2_3
@@ -54,14 +63,14 @@
 
     - name: "6.2.2.3 | PATCH | Ensure journald Compress is configured | comment out current entries"
       when:
-        - prelim_journald_conf_files.files is defined
-        - prelim_journald_conf_files.matched > 0
+        - discovered_journald_confdir_created.files is defined
+        - discovered_journald_confdir_created.matched > 0
         - "'storage.conf' not in item.path"
       ansible.builtin.replace:
         path: "{{ item.path }}"
         regexp: ^(\s*Compress\s*=.*)
         replace: "#\\1"
-      loop: "{{ prelim_journald_conf_files.files }}"
+      loop: "{{ discovered_journald_confdir_created.files }}"
 
 - name: "6.2.2.4 | PATCH | Ensure journald Storage is configured"
   when: rhel10cis_rule_6_2_2_4
@@ -85,11 +94,11 @@
 
     - name: "6.2.2.4 | PATCH | Ensure journald Storage is configured | comment out current entries"
       when:
-        - prelim_journald_conf_files.files is defined
-        - prelim_journald_conf_files.matched > 0
+        - discovered_journald_confdir_created.files is defined
+        - discovered_journald_confdir_created.matched > 0
         - "'storage.conf' not in item.path"
       ansible.builtin.replace:
         path: "{{ item.path }}"
         regexp: ^(\s*Storage\s*=.*)
         replace: "#\\1"
-      loop: "{{ prelim_journald_conf_files.files }}"
+      loop: "{{ discovered_journald_confdir_created.files }}"

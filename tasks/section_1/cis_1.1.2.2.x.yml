@@ -1,9 +1,7 @@
 ---
 
 - name: "1.1.2.2.1 | PATCH | Ensure /dev/shm is tmpfs or a separate partition"
-  when:
-    - rhel10cis_rule_1_1_2_2_1
-    - required_mount not in prelim_mount_names
+  when: rhel10cis_rule_1_1_2_2_1
   tags:
     - level1-server
     - level1-workstation

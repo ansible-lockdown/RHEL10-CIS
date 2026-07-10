@@ -13,7 +13,11 @@
     - NIST800-53R5_CM-6
   block:
     - name: "5.3.2.4.1 | PATCH | Ensure pam_unix does not include nullok | capture state"
-      ansible.builtin.shell: grep -E "pam_unix.so.*nullok" /etc/pam.d/*-auth | cut -d ':' -f1 | uniq
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep -E "pam_unix.so.*nullok" /etc/pam.d/*-auth | cut -d ':' -f1 | uniq
+      args:
+        executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_nullok.rc not in [ 0, 1 ]
       register: discovered_pam_nullok
@@ -51,6 +55,8 @@
       ansible.builtin.shell: |
         set -o pipefail
         grep -E "password.*pam_unix.so.*remember" /etc/pam.d/*-auth | cut -d ':' -f1 | uniq
+      args:
+        executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_remember.rc not in [ 0, 1 ]
       register: discovered_pam_remember
@@ -92,6 +98,8 @@
       ansible.builtin.shell: |
         set -o pipefail
         grep -E "password.*pam_unix.so.*(sha512|yescrypt)" /etc/pam.d/*-auth | cut -d ':' -f1 | uniq
+      args:
+        executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_pwhash.rc not in [ 0, 1 ]
       register: discovered_pam_pwhash
@@ -133,7 +141,9 @@
     - name: "5.3.2.4.4 | PATCH | Ensure pam_unix includes use_authtok | capture state"
       ansible.builtin.shell: |
         set -o pipefail
-        grep -PH -- '^\h*^password\h*[^#\n\r]+\h+pam_unix.so\b' /etc/pam.d/{password,system}-auth | grep -Pv -- '\buse_authtok\b'
+        grep -PH -- '^\s*^password\s*[^#\n\r]+\s+pam_unix.so\b' /etc/pam.d/{password,system}-auth | grep -Pv -- '\buse_authtok\b'
+      args:
+        executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
       failed_when: discovered_pam_authtok.rc not in [ 0, 1 ]
       register: discovered_pam_authtok

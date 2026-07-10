@@ -1,5 +1,37 @@
 ---
 
+# Added to ensure ssh drop in file exists if not default /etc/ssh/sshd_config
+- name: "SSHD | PATCH | SSH Config file is not exist"
+  when:
+    - rhel10cis_sshd_config_file != '/etc/ssh/sshd_config'
+    - "'openssh-server' in ansible_facts['packages']"
+  tags:
+    - always
+    - level1-server
+    - level1-workstation
+    - patch
+  ansible.builtin.file:
+    path: "{{ rhel10cis_sshd_config_file }}"
+    owner: root
+    group: root
+    mode: 'u-x,go-rwx'
+    state: touch
+
+- name: "PRELIM | PATCH | sshd_config.d/50-redhat.conf exists"
+  when:
+    - rhel10cis_rule_5_1_10 or
+      rhel10cis_rule_5_1_11
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_5.1.10
+    - rule_5.1.11
+    - sshd
+  ansible.builtin.stat:
+    path: /etc/ssh/sshd_config.d/50-redhat.conf
+  register: discovered_sshd_50_redhat_file
+
 - name: "5.1.1 | PATCH | Ensure access to /etc/ssh/sshd_config is configured"
   when: rhel10cis_rule_5_1_1
   tags:
@@ -46,7 +78,7 @@
     - CCI-000366
     - NIST800-53R5_CM-6
   block:
-    - name: "5.1.2 | AUDIT | Ensure permissions on SSH private host key files are configured | Find the SSH private host keys"
+    - name: "5.1.2 | AUDIT | Ensure access to SSH private host key files is configured | Find the SSH private host keys"
       ansible.builtin.find:
         paths: /etc/ssh
         patterns: 'ssh_host_*_key'
@@ -75,7 +107,7 @@
     - CCI-000366
     - NIST800-53R5_CM-6
   block:
-    - name: "5.1.3 | AUDIT | Ensure permissions on SSH public host key files are configured | Find the SSH public host keys"
+    - name: "5.1.3 | AUDIT | Ensure access to SSH public host key files is configured | Find the SSH public host keys"
       ansible.builtin.find:
         paths: /etc/ssh
         patterns: 'ssh_host_*_key.pub'
@@ -242,7 +274,7 @@
       notify: Restart sshd
 
     - name: "5.1.8 | PATCH | Ensure sshd DisableForwarding is enabled | override if redhat-50 exists"
-      when: prelim_sshd_50_redhat_file.stat.exists
+      when: discovered_sshd_50_redhat_file.stat.exists
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config.d/50-redhat.conf
         regexp: (?i)^(#|)\s*X11Forwarding
@@ -270,7 +302,7 @@
       notify: Restart sshd
 
     - name: "5.1.9 | PATCH | Ensure sshd GSSAPIAuthentication is disabled | override if redhat-50 exists"
-      when: prelim_sshd_50_redhat_file.stat.exists
+      when: discovered_sshd_50_redhat_file.stat.exists
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config.d/50-redhat.conf
         regexp: (?i)^(#|)\s*GSSAPIAuthentication
