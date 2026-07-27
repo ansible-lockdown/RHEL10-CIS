@@ -21,7 +21,7 @@
       when:
         - discovered_logfiles.stdout_lines | length > 0
         - rhel10cis_logpermissions_whitelist | length > 0
-        - item.0 | regex_search(item.1)
+        - (item.0 | regex_search(item.1)) is not none
       ansible.builtin.set_fact:
         logfiles_whitelist: "{{ (logfiles_whitelist | default([])) + [item.0] }}"
       loop: "{{ discovered_logfiles.stdout_lines | product(rhel10cis_logpermissions_whitelist) | list }}"
