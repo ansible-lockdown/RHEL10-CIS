@@ -637,10 +637,9 @@
     - not rhel10cis_desktop_required
   tags:
     - level2-server
-    - level1-workstation
     - automated
     - patch
-    - xinetd
+    - gdm
     - NIST800-53R5_CM-7
     - rule_2.1.19
   ansible.builtin.package:

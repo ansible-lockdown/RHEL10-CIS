@@ -49,7 +49,7 @@
         read_whole_file: true
       register: discovered_journald_remote_upload_conf
 
-    - name: "6.2.2.1.2 | PATCH| Ensure systemd-journal-upload authentication is configured"
+    - name: "6.2.2.1.2 | PATCH | Ensure systemd-journal-upload authentication is configured"
       when: not discovered_journal_upload_conf_dir_created.changed
       ansible.builtin.replace:
         path: "{{ item.path }}"

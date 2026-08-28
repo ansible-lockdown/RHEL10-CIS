@@ -3,6 +3,7 @@
 # File to skip controls if container
 # Based on standard image no changes
 # it expected all pkgs required for the container are already installed
+# Rule numbering follows CIS RHEL 10 Benchmark v1.0.1
 
 ## controls
 
@@ -13,77 +14,86 @@ rhel10cis_firewall: None
 rhel10cis_selinux_disable: true
 
 ## Related individual rules
-# Aide
+
+# Bootloader - no bootloader in a container
 rhel10cis_rule_1_4_1: false
 rhel10cis_rule_1_4_2: false
 
-# auditd
-rhel10cis_rule_4_1_1_1: false
-rhel10cis_rule_4_1_2_1: false
-rhel10cis_rule_4_1_2_2: false
-rhel10cis_rule_4_1_2_3: false
+# Crypto policy - inherited from the host kernel
+rhel10cis_rule_1_6_1: false
+rhel10cis_rule_1_6_2: false
+rhel10cis_rule_1_6_3: false
+rhel10cis_rule_1_6_4: false
 
-# time sync
-rhel10cis_rule_2_2_1_1: false
-rhel10cis_rule_2_2_1_2: false
+# usb-storage kernel module - host owned
+rhel10cis_rule_1_1_1_10: false
 
-# cron
-rhel10cis_rule_5_1_1: false
-rhel10cis_rule_5_1_2: false
-rhel10cis_rule_5_1_3: false
-rhel10cis_rule_5_1_4: false
-rhel10cis_rule_5_1_5: false
-rhel10cis_rule_5_1_6: false
-rhel10cis_rule_5_1_7: false
-rhel10cis_rule_5_1_8: false
-
-# crypto
-rhel10cis_rule_1_10: false
-
-# grub
-rhel10cis_rule_1_5_1: false
-rhel10cis_rule_1_5_2: false
-rhel10cis_rule_1_5_3: false
-
-## mounts
+## Mounts - namespaced by the container runtime
 # /tmp
-rhel10cis_rule_1_1_2: false
-rhel10cis_rule_1_1_3: false
-rhel10cis_rule_1_1_4: false
-rhel10cis_rule_1_1_5: false
-# /var
-rhel10cis_rule_1_1_6: false
-# /var/tmp
-rhel10cis_rule_1_1_7: false
-rhel10cis_rule_1_1_8: false
-rhel10cis_rule_1_1_9: false
-rhel10cis_rule_1_1_10: false
-# /var/log
-rhel10cis_rule_1_1_11: false
-# /var/log/audit
-rhel10cis_rule_1_1_12: false
-# /home
-rhel10cis_rule_1_1_13: false
-rhel10cis_rule_1_1_14: false
+rhel10cis_rule_1_1_2_1_1: false
+rhel10cis_rule_1_1_2_1_2: false
+rhel10cis_rule_1_1_2_1_3: false
+rhel10cis_rule_1_1_2_1_4: false
 # /dev/shm
-rhel10cis_rule_1_1_15: false
-rhel10cis_rule_1_1_16: false
-rhel10cis_rule_1_1_17: false
-# usb-storage
-rhel10cis_rule_1_1_23: false
+rhel10cis_rule_1_1_2_2_1: false
+rhel10cis_rule_1_1_2_2_2: false
+rhel10cis_rule_1_1_2_2_3: false
+rhel10cis_rule_1_1_2_2_4: false
+# /home
+rhel10cis_rule_1_1_2_3_1: false
+rhel10cis_rule_1_1_2_3_2: false
+rhel10cis_rule_1_1_2_3_3: false
+# /var
+rhel10cis_rule_1_1_2_4_1: false
+rhel10cis_rule_1_1_2_4_2: false
+rhel10cis_rule_1_1_2_4_3: false
+# /var/tmp
+rhel10cis_rule_1_1_2_5_1: false
+rhel10cis_rule_1_1_2_5_2: false
+rhel10cis_rule_1_1_2_5_3: false
+rhel10cis_rule_1_1_2_5_4: false
+# /var/log
+rhel10cis_rule_1_1_2_6_1: false
+rhel10cis_rule_1_1_2_6_2: false
+rhel10cis_rule_1_1_2_6_3: false
+rhel10cis_rule_1_1_2_6_4: false
+# /var/log/audit
+rhel10cis_rule_1_1_2_7_1: false
+rhel10cis_rule_1_1_2_7_2: false
+rhel10cis_rule_1_1_2_7_3: false
+rhel10cis_rule_1_1_2_7_4: false
 
-# logging
-rhel10cis_rule_4_2_1_1: false
-rhel10cis_rule_4_2_1_2: false
-rhel10cis_rule_4_2_1_3: false
-rhel10cis_rule_4_2_1_4: false
-rhel10cis_rule_4_2_1_5: false
-rhel10cis_rule_4_2_1_6: false
-rhel10cis_rule_4_2_2_1: false
-rhel10cis_rule_4_2_2_2: false
-rhel10cis_rule_4_2_2_3: false
+# Time synchronization - host owned
+rhel10cis_rule_2_3_1: false
 
-# systemd
+# Cron - no cron daemon in a base container image
+rhel10cis_rule_2_4_1_1: false
 
-# Users/passwords/accounts
-rhel10cis_rule_5_5_2: false
+# AIDE - filesystem integrity is a host concern
+rhel10cis_rule_6_1_1: false
+rhel10cis_rule_6_1_2: false
+rhel10cis_rule_6_1_3: false
+
+# Logging - journald/rsyslog are host owned
+rhel10cis_rule_6_2_1_1: false
+rhel10cis_rule_6_2_1_2: false
+rhel10cis_rule_6_2_1_3: false
+rhel10cis_rule_6_2_1_4: false
+rhel10cis_rule_6_2_2_1_1: false
+rhel10cis_rule_6_2_2_1_2: false
+rhel10cis_rule_6_2_2_1_3: false
+rhel10cis_rule_6_2_2_1_4: false
+rhel10cis_rule_6_2_3_1: false
+rhel10cis_rule_6_2_3_2: false
+rhel10cis_rule_6_2_3_3: false
+rhel10cis_rule_6_2_3_4: false
+rhel10cis_rule_6_2_3_5: false
+rhel10cis_rule_6_2_3_6: false
+rhel10cis_rule_6_2_3_7: false
+rhel10cis_rule_6_2_3_8: false
+
+# auditd - the kernel audit subsystem is not namespaced
+rhel10cis_rule_6_3_1_1: false
+rhel10cis_rule_6_3_1_2: false
+rhel10cis_rule_6_3_1_3: false
+rhel10cis_rule_6_3_1_4: false

@@ -15,13 +15,11 @@ galaxy_info:
   galaxy_tags:
     - system
     - security
-    - stig
     - hardening
     - benchmark
     - compliance
     - redhat
     - complianceascode
-    - disa
     - rhel10
     - cis
     - rocky

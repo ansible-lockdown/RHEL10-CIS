@@ -48,10 +48,10 @@
         group: root
         mode: 'go-wx'
 
-    - name: "1.8.2 | PATCH | Ensure GDM disable-user-list is configured | gdm profile"
+    - name: "1.8.1 | PATCH | Ensure GDM login banner is configured | gdm profile"
       ansible.builtin.template:
         src: etc/dconf/db/local.d/60-banner-message.j2
-        dest: /etc/dconf/db/local.d/060-banner-message
+        dest: /etc/dconf/db/local.d/60-banner-message
         owner: root
         group: root
         mode: 'u-x,go-wx'

@@ -69,7 +69,7 @@ auditd_binaries:
   - /usr/sbin/ausearch
   - /usr/sbin/auditd
   - /usr/sbin/augenrules
-# Packages and services — 2.1.x
+# Packages and services - 2.1.x
 avahi_pkgs:
   - avahi-autoipd
   - avahi

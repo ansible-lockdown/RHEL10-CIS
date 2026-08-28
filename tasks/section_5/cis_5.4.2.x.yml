@@ -16,10 +16,11 @@
     - name: 5.4.2.1 | PATCH | Ensure root is the only UID 0 account | discover accounts with uid 0
       ansible.builtin.shell: |
         set -o pipefail
-        cat /etc/passwd | awk -F: '($3 == 0 && $1 != "root") {i++;print $1 } END {exit i}'
+        awk -F: '($3 == 0 && $1 != "root") { print $1 }' /etc/passwd
       args:
         executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
+      failed_when: false
       check_mode: false
       register: discovered_uid_zero_accounts_except_root
 
@@ -260,6 +261,7 @@
   ansible.builtin.user:
     name: "{{ item.id }}"
     shell: /usr/sbin/nologin
+    create_home: false
   loop: "{{ prelim_captured_passwd_data }}"
   loop_control:
     label: "{{ item.id }}"

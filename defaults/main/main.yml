@@ -53,9 +53,9 @@ create_benchmark_facts: true
 # The path where the ansible facts file is created if audit facts are not present
 ansible_facts_path: /etc/ansible/facts.d
 
-## Section 1.6 - Mandatory Access Control
+## Section 1.3 - Mandatory Access Control (SELinux)
 # This variable governs whether SELinux is disabled or not. If SELinux is NOT DISABLED by setting
-# 'rhel10cis_selinux_disable' to 'true', the 1.6 subsection will be executed.
+# 'rhel10cis_selinux_disable' to 'true', the 1.3 subsection will be executed.
 rhel10cis_selinux_disable: false
 # This variable is used in a preliminary task, handling grub2 paths either in case of
 # UEFI boot('/etc/grub2-efi.cfg') or in case of BIOS legacy-boot('/etc/grub2.cfg').
@@ -73,48 +73,12 @@ benchmark: RHEL10-CIS
 skip_reboot: true
 
 # default value will change to true but won't reboot if not enabled but will error
-change_requires_reboot: false
 
 # A location that can be used as as a temporary location to execute scripts
 # note the drive with need exec permissions used by 1.1.1.11
 rhel10cis_temp_exec_location: /var
 
-###########################################
-### Goss is required on the remote host ###
-### vars/auditd.yml for other settings  ###
-
-# If the any of the following are set the variables used by them are loaded in vars/audit.yml these can be overridden by your
-# preferred method of variable management (e.g., vault, group_vars, host_vars, inventory etc.)
-
-# Allow audit to setup the requirements including installing git (if option chosen and downloading and adding goss binary to system)
-setup_audit: false
-
-# enable audits to run - this runs the audit and get the latest content
-run_audit: false
-
-## Only run Audit do not remediate
-audit_only: false
-
-# Run heavy tests - some tests can have more impact on a system enabling these can have greater impact on a system
-audit_run_heavy_tests: true
-
-# Fetch audit output files back to the controller
-fetch_audit_output: false
-
-# Method of getting,uploading the summary files
-## Ensure access and permissions are available for these to occur.
-## options are
-# fetch - fetches from server and moves to location on the ansible controller (could be a mount point available to controller)
-# copy - copies file to a location available to the managed node
-audit_output_collection_method: fetch
-
-# Location to put the audit files
-audit_output_destination: /opt/audit_summaries/
-
-#############################
-
-### Goss Settings ##
-####### END ########
+### Goss / audit settings now live in defaults/main/audit.yml ###
 
 # These variables correspond with the CIS rule IDs or paragraph numbers defined in
 # the CIS benchmark documents.
@@ -316,8 +280,7 @@ rhel10cis_rule_3_3_2_7: true
 rhel10cis_rule_3_3_2_8: true
 
 ## Section 4 Fixes
-# Section 4 rules are Logging and Auditing (Configure System Accounting (auditd),
-# Configure Data Retention, and Configure Logging)
+# Section 4 rules are Host Based Firewall (firewalld configuration)
 # Firewall utility
 rhel10cis_rule_4_1_1: true
 rhel10cis_rule_4_1_2: true
@@ -407,7 +370,7 @@ rhel10cis_rule_5_4_2_5: true
 rhel10cis_rule_5_4_2_6: true
 rhel10cis_rule_5_4_2_7: true
 rhel10cis_rule_5_4_2_8: true
-# 5.4.2 Configure user default environment
+# 5.4.3 Configure user default environment
 rhel10cis_rule_5_4_3_1: true
 rhel10cis_rule_5_4_3_2: true
 rhel10cis_rule_5_4_3_3: true
@@ -594,7 +557,7 @@ rhel10cis_selinux_relabel_enabled: false
 # This variable governs whether a bootloader password should be set in '/boot/grub2/user.cfg' file.
 rhel10cis_set_boot_pass: false
 #
-# Option 1: Set the bootloader password and salt – requires the passlib Python module
+# Option 1: Set the bootloader password and salt - requires the passlib Python module
 # to be available on the Ansible controller.
 # Set this value to something secure to have predictable hashes,
 # which will prevent unnecessary changes.
@@ -606,7 +569,7 @@ rhel10cis_bootloader_salt: ''
 
 rhel10cis_bootloader_password: 'password'  # pragma: allowlist secret
 
-# Option 2: Set the bootloader password hash – if the salt value is empty,
+# Option 2: Set the bootloader password hash - if the salt value is empty,
 # the password will be set using the variable below.
 # If you are not using the bootloader hash filter, you can set it here
 # in encrypted format, e.g. grub.pbkdf2.sha512.hashstring
@@ -737,7 +700,7 @@ rhel10cis_message_server: false  # This is for messaging dovecot and cyrus-imap
 # Set this variable to `true` to mask service `message`.
 rhel10cis_message_mask: false
 # Set this variable to `true` to keep service `nfs`; otherwise, the service is uninstalled.
-rhel10cis_nfs_server: false
+rhel10cis_nfs_server: true
 # Set this variable to `true` to mask service `nfs`.
 rhel10cis_nfs_mask: true
 # Set this variable to `true` to keep service `print`; otherwise, the service is uninstalled.
@@ -745,7 +708,7 @@ rhel10cis_print_server: false  # replaces cups
 # Set this variable to `true` to mask service `print`.
 rhel10cis_print_mask: false
 # Set this variable to `true` to keep service `rpc`; otherwise, the service is uninstalled.
-rhel10cis_rpc_server: false
+rhel10cis_rpc_server: true
 # Set this variable to `true` to mask service `rpc`.
 rhel10cis_rpc_mask: true
 # Set this variable to `true` to keep service `rsync`; otherwise, the service is uninstalled.
@@ -1046,7 +1009,7 @@ rhel10cis_pam_faillock_unlock_time: 900
 # with the line parameter's value.
 rhel10cis_pamroot_lock_option: even_deny_root
 
-## Control 5.3.3.2.1 - Ensure password number of changed characters is configured
+## Control 5.3.2.2.1 - Ensure password number of changed characters is configured
 # This variable holds the path to the configuration file that will be created (or overwritten if already existing)
 # in order to implement the 'Ensure password number of changed characters is configured' control.
 rhel10cis_passwd_difok_file: etc/security/pwquality.conf.d/50-pwdifok.conf  # pragma: allowlist secret
@@ -1055,7 +1018,7 @@ rhel10cis_passwd_difok_file: etc/security/pwquality.conf.d/50-pwdifok.conf  # pr
 # are too similar to their previous ones, enhancing security. CIS states that this value should be at least 2.
 rhel10cis_passwd_difok_value: 2
 
-## Control 5.3.3.2.2 - Ensure minimum password length is configured
+## Control 5.3.2.2.2 - Ensure minimum password length is configured
 # This variable holds the path to the configuration file that will be created (or overwritten if already existing)
 # in order to implement the 'Ensure minimum password length is configured' control.
 rhel10cis_passwd_minlen_file: etc/security/pwquality.conf.d/50-pwlength.conf  # pragma: allowlist secret
@@ -1063,7 +1026,7 @@ rhel10cis_passwd_minlen_file: etc/security/pwquality.conf.d/50-pwlength.conf  # 
 # CIS states that this value should be at least 14.
 rhel10cis_passwd_minlen_value: 14
 
-## Control 5.3.3.2.3 - Ensure password complexity is configured
+## Control 5.3.2.2.3 - Ensure password complexity is configured
 # The following variable holds the path to the configuration file that will be created (or overwritten if already existing)
 # in order to implement the 'Ensure password complexity is configured' control.
 rhel10cis_passwd_complex_file: etc/security/pwquality.conf.d/50-pwcomplexity.conf  # pragma: allowlist secret
@@ -1093,14 +1056,14 @@ rhel10cis_passwd_ocredit: 0
 # e.g. lcredit = -1 requires at least one lowercase character
 rhel10cis_passwd_lcredit: -2
 
-## Control 5.3.3.2.4 - Ensure password same consecutive characters is configured
+## Control 5.3.2.2.4 - Ensure password same consecutive characters is configured
 # This variable holds the path to the configuration file that will be created (or overwritten if already existing)
 # in order to implement the 'Ensure password same consecutive characters is configured' control.
 rhel10cis_passwd_maxrepeat_file: etc/security/pwquality.conf.d/50-pwrepeat.conf  # pragma: allowlist secret
 # The following variable sets the maximum number of allowed same consecutive characters in a new password.
 rhel10cis_passwd_maxrepeat_value: 3
 
-## Control 5.3.3.2.5 - Ensure password maximum sequential characters is configured
+## Control 5.3.2.2.5 - Ensure password maximum sequential characters is configured
 # This variable holds the path to the configuration file that will be created (or overwritten if already existing)
 # in order to implement the 'Ensure password maximum sequential characters is configured' control.
 rhel10cis_passwd_maxsequence_file: etc/security/pwquality.conf.d/50-pwmaxsequence.conf  # pragma: allowlist secret
@@ -1108,7 +1071,7 @@ rhel10cis_passwd_maxsequence_file: etc/security/pwquality.conf.d/50-pwmaxsequenc
 # Examples of such sequence are '12345' or 'fedcb' . The check is disabled if the value is 0 .
 rhel10cis_passwd_maxsequence_value: 3
 
-## Control 5.3.3.2.6 - Ensure password dictionary check is enabled
+## Control 5.3.2.2.6 - Ensure password dictionary check is enabled
 # This variable holds the path to the configuration file that will be created (or overwritten if already existing)
 # in order to implement the 'Ensure password dictionary check is enabled' control
 rhel10cis_passwd_dictcheck_file: etc/security/pwquality.conf.d/50-pwdictcheck.conf  # pragma: allowlist secret
@@ -1121,19 +1084,19 @@ rhel10cis_passwd_dictcheck_value: 1
 # This variable is used in one of the config files to ensure password quality checking is enforced
 rhel10cis_passwd_quality_enforce_value: 1
 
-## Control 5.3.3.2.7 - Ensure password quality is enforced for the root user
+## Control 5.3.2.2.7 - Ensure password quality is enforced for the root user
 # This variable holds the path to the configuration file that will be created (or overwritten if already existing)
 # in order to implement the 'Ensure password quality is enforced for the root user' control.
 rhel10cis_passwd_quality_enforce_root_file: etc/security/pwquality.conf.d/50-pwroot.conf  # pragma: allowlist secret
 # The following variable enforces that the root user must adhere to the same password quality policies as other users.
 rhel10cis_passwd_quality_enforce_root_value: enforce_for_root  # pragma: allowlist secret
 
-## Control 5.3.3.3.1 - Ensure password history remember is configured
+## Control 5.3.2.3.1 - Ensure password history remember is configured
 # This variable represents the number of password change cycles, after which
 # a user can re-use a password. CIS requires a value of 24 or more.
 rhel10cis_pamd_pwhistory_remember: 24
 
-## Controls 5.3.3.4.3, 5.4.1.4
+## Controls 5.3.2.4.3, 5.4.1.4
 # The following variable's value represents the hashing algorithm used
 rhel10cis_passwd_hash_algo: sha512  # pragma: allowlist secret
 

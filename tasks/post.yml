@@ -18,30 +18,51 @@
     group: root
     mode: 'u-x,go-rwx'
   loop:
+    - 60-fs_sysctl.conf
     - 60-kernel_sysctl.conf
     - 60-disable_ipv6.conf
     - 60-netipv4_sysctl.conf
     - 60-netipv6_sysctl.conf
-  notify: Reload sysctl
+  notify:
+    - Reload sysctl
+    - Sysctl flush ipv4 route table
+    - Sysctl flush ipv6 route table
 
-- name: POST | Sysctl flush ipv4 route table
+- name: POST | AUDIT | Check running sysctl values against configuration
   when:
-    - rhel10cis_flush_ipv4_route
     - not system_is_container
-  ansible.posix.sysctl:
-    name: net.ipv4.route.flush
-    value: '1'
-    sysctl_set: true
-  ignore_errors: true  # noqa ignore-errors
+    - "'procps-ng' in ansible_facts['packages']"
+  ansible.builtin.shell: |
+    set -o pipefail
+    # Collect configured key=value pairs in the order sysctl --system applies them.
+    # /etc/sysctl.conf is read last on this platform, so a later line wins.
+    configured=$(for conf_file in /etc/sysctl.d/*.conf /etc/sysctl.conf; do
+        [ -r "$conf_file" ] && sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' "$conf_file"
+    done | grep '=' | tr -d '[:blank:]')
+    drift=0
+    for sysctl_key in $(printf '%s\n' "$configured" | cut -d= -f1 | sort -u); do
+        [ -n "$sysctl_key" ] || continue
+        sysctl_want=$(printf '%s\n' "$configured" | grep "^${sysctl_key}=" | tail -1 | cut -d= -f2-)
+        sysctl_have=$(sysctl -n "$sysctl_key" 2>/dev/null) || continue
+        [ -n "$sysctl_have" ] || continue
+        sysctl_have=$(printf '%s' "$sysctl_have" | tr -d '[:blank:]')
+        [ "$sysctl_have" = "$sysctl_want" ] || drift=1
+    done
+    printf '%s' "$drift"
+  args:
+    executable: "{{ rhel10cis_shell_executable }}"
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  register: discovered_sysctl_drift
 
-- name: POST | Sysctl flush ipv6 route table
+- name: POST | Reload sysctl where running values have drifted from configuration
   when:
-    - rhel10cis_flush_ipv6_route
     - not system_is_container
-  ansible.posix.sysctl:
-    name: net.ipv6.route.flush
-    value: '1'
-    sysctl_set: true
+    - discovered_sysctl_drift.stdout is defined
+    - discovered_sysctl_drift.stdout | trim == '1'
+  ansible.builtin.command: sysctl --system
+  changed_when: true
 
 - name: POST | Flush handlers
   ansible.builtin.meta: flush_handlers

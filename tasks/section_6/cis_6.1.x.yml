@@ -17,8 +17,8 @@
 
 - name: "AIDE | PATCH | If rpm new exist update aide conf"
   when:
-    - discovered_aide_conf_rpmnew['stat']['exists']
     - rhel10cis_config_aide
+    - discovered_aide_conf_rpmnew['stat']['exists']
     - rhel10cis_rule_6_1_1
   tags:
     - level1-server

@@ -96,8 +96,8 @@
     - rhel10cis_rule_1_3_1_6
     - not rhel10cis_selinux_disable
   tags:
-    - level1-server
-    - level1-workstation
+    - level2-server
+    - level2-workstation
     - audit
     - services
     - rule_1.3.1.6

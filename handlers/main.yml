@@ -2,7 +2,7 @@
 # handlers file for RHEL10-CIS
 
 - name: "Remount tmp filesystem"
-  ansible.builtin.include_tasks:
+  ansible.builtin.import_tasks:
     file: remount_tmp.yml
   listen: "Remount /tmp"
 
@@ -142,6 +142,26 @@
   ansible.builtin.command: sysctl --system
   changed_when: true
 
+- name: Sysctl flush ipv4 route table
+  when:
+    - rhel10cis_flush_ipv4_route
+    - not system_is_container
+  ansible.posix.sysctl:
+    name: net.ipv4.route.flush
+    value: '1'
+    sysctl_set: true
+  ignore_errors: true  # noqa ignore-errors
+
+- name: Sysctl flush ipv6 route table
+  when:
+    - rhel10cis_flush_ipv6_route
+    - not system_is_container
+  ansible.posix.sysctl:
+    name: net.ipv6.route.flush
+    value: '1'
+    sysctl_set: true
+  ignore_errors: true  # noqa ignore-errors
+
 - name: Coredump Reload
   ansible.builtin.systemd:
     name: systemd-coredump.socket
@@ -218,8 +238,8 @@
 - name: Auditd rules reload
   when:
     - not system_is_container
-    - not discovered_auditd_immutable_check or
-      "'No change' not in discovered_audit_rules_diff"
+    - discovered_auditd_immutable_check.rc == 1
+    - "'Rules have changed' in discovered_audit_rules_diff.stdout"
   ansible.builtin.command: augenrules --load
   changed_when: true
   listen: update auditd
@@ -227,7 +247,7 @@
 - name: Audit immutable fact
   when:
     - discovered_audit_rules_updated.changed
-    - auditd_immutable_check is defined
+    - discovered_auditd_immutable_check.rc == 0
   ansible.builtin.debug:
     msg: "Reboot required for auditd to apply new rules as immutable set"
   notify: Set reboot required

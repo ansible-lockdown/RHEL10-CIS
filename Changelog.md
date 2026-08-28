@@ -1,12 +1,42 @@
 # Changes to rhel10CIS
 
-## June 2026 — QA pass: tag, toggle, and hygiene fixes
+## August 2026 - QA pass: handler, sysctl and default fixes
 
-- Fixed 6 CIS level/profile tag mismatches against v1.0.1 recommendations (1.1.2.5.1, 1.8.5, 2.1.11, 2.1.20, 3.3.2.1, 6.3.3.22) — includes a `level2- workstation` typo (stray space) on 6.3.3.22
-- **Behavior change**: `rhel10cis_nfs_server` and `rhel10cis_rpc_server` now default to `false` (was `true`, contradicting `*_mask: true` on the same services — services were configured to be both kept running and masked simultaneously)
+- Fixed /tmp mount options never applying - remount_tmp.yml flattened so every task carries listen thanks to @rajsshah86 public issue #112
+- Fixed runtime sysctl drift never being corrected and added 60-fs_sysctl.conf to the POST reload
+- Removed coredump replace tasks that commented out the RPM-owned /usr/lib vendor file each run thanks to @mindrb public issue #108
+- Route flush moved to handlers so it only fires when sysctl config changes thanks to @goegol public issue #115
+- Reload sysctl now defined before the route flush handlers so config is applied before the cache is flushed
+- nfs_server and rpc_server now default true so the masking tasks actually run
+- Corrected level tags for 1.2.1.3, 1.3.1.6 and 2.1.19 against the v1.0.1 benchmark
+- Rebuilt vars/is_container.yml against v1.0.1 rule numbering - all 58 toggles were stale
+- Audit variables moved from vars/audit.yml to defaults/main/audit.yml so they can be overridden
+- Fixed auditd handler guards, exception template path, and added failed_when to greps that fail on no match
+- README updates and updated contributing and contributors
+
+## July 2026
+
+- actions workflow update version
+- Updated location that goss is taken from goss-org moved to krameff
+- Fixed ansible dot notation missed last time
+- auditd immutable check fix and handler logic
+- thanks to @defnotyujine
+  - rhel10cis_loopback_firewall_zone fixed for 4.1.6
+  - tmp mount handler changed to import_tasks
+
+issues:
+thanks to @mindrb
+- #104 tags on user check in main.yml
+- #106 conditional logic not correct
+- #108 missing notifies when changing conf files 1.5.x and values that don't adhere to standards to be commented out where docs advise
+
+## June 2026 - QA pass: tag, toggle, and hygiene fixes
+
+- Fixed 6 CIS level/profile tag mismatches against v1.0.1 recommendations (1.1.2.5.1, 1.8.5, 2.1.11, 2.1.20, 3.3.2.1, 6.3.3.22) - includes a `level2- workstation` typo (stray space) on 6.3.3.22
+- **Behavior change**: `rhel10cis_nfs_server` and `rhel10cis_rpc_server` now default to `false` (was `true`, contradicting `*_mask: true` on the same services - services were configured to be both kept running and masked simultaneously)
 - Removed a dead `notify:` on 6.3.3.10 referencing a non-existent "update auditd" handler (correct handler is "Restart auditd")
-- Removed `export_badges_public.yml` and `update_galaxy.yml` from `.github/workflows/` — these are public-mirror-only workflows and should not exist in this private repo
-- Fixed LICENSE copyright casing (`Mindpoint` → `MindPoint`)
+- Removed `export_badges_public.yml` and `update_galaxy.yml` from `.github/workflows/` - these are public-mirror-only workflows and should not exist in this private repo
+- Fixed LICENSE copyright casing (`Mindpoint` -> `MindPoint`)
 - Rebranded README Twitter badge to X (`x.com/AnsibleLockdown`)
 - Added `prompt.md` and `test_inv` patterns to `.gitignore`
 - Minor README grammar fix
@@ -21,7 +51,7 @@
 - aide improvements thanks to @thuliumdrake
 - 6.2.2 addressed some controls thanks to public issue #98 and @mboeker
 
-## April 2026 — Common alignment and CIS validation (`rhel10`)
+## April 2026 - Common alignment and CIS validation (`rhel10`)
 
 
 # 1.0.1 - June updates
