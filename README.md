@@ -127,7 +127,7 @@ The control found in defaults main also need to reflect this as this control the
 
 RHEL family 10 - Other versions are not supported.
 
-- Access to download or add the goss binary and content to the system if using auditing
+- Access to download or add the syver binary and content to the system if using auditing
 (other options are available on how to get the content to the system.)
 - Python3.8
 - Ansible 2.16+
@@ -142,12 +142,14 @@ If you are using the option to create your own bootloader hash the ansible contr
 
 ## Auditing
 
-This can be turned on or off within the defaults/main.yml file with the variable run_audit. The value is false by default, please refer to the wiki for more details. The defaults file also populates the goss checks to check only the controls that have been enabled in the ansible role.
+This can be turned on or off within the defaults/main.yml file with the variable run_audit. The value is false by default, please refer to the wiki for more details. The defaults file also populates the audit checks to check only the controls that have been enabled in the ansible role.
 
 This is a much quicker, very lightweight, checking (where possible) config compliance and live/running settings.
 
-A new form of auditing has been developed, by using a small (16MB) go binary called [goss](https://github.com/krameff/goss) along with the relevant configurations to check. Without the need for infrastructure or other tooling.
+A new form of auditing has been developed, by using a small go binary called [syver](https://github.com/krameff/syver), the continuation of [goss](https://github.com/krameff/goss), along with the relevant configurations to check. Without the need for infrastructure or other tooling.
 This audit will not only check the config has the correct setting but aims to capture if it is running with that configuration also trying to remove [false positives](https://www.mindpointgroup.com/blog/is-compliance-scanning-still-relevant/) in the process.
+
+Syver replaces goss as it is a signed fork that is regularly updated, and it reads the same goss audit content unchanged.
 
 Refer to [RHEL10-CIS-Audit](https://github.com/ansible-lockdown/RHEL10-CIS-Audit).
 

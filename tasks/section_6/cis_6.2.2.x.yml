@@ -10,7 +10,7 @@
 - name: "6.2.2.2 | PATCH | Ensure journald ForwardToSyslog is disabled"
   when:
     - rhel10cis_rule_6_2_2_2
-    - rhel10cis_syslog == 'journald'
+    - not rhel10cis_rsyslog_config
   tags:
     - level1-server
     - level1-workstation

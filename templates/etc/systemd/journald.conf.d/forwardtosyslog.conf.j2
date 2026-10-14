@@ -1,5 +1,5 @@
 {{ file_managed_by_ansible }}
 
-# CIS rule 6_2_3_3
+# CIS rules 6_2_2_2 (journald) and 6_2_3_3 (rsyslog)
 [Journal]
-ForwardToSyslog=yes
+ForwardToSyslog={{ 'yes' if rhel10cis_rsyslog_config | bool else 'no' }}

@@ -5,21 +5,21 @@
     file: cis_6.1.x.yml
 
 - name: "SECTION | 6.2.1 | Configure systemd-journald service"
-  when: rhel10cis_syslog == 'journald'
   ansible.builtin.import_tasks:
     file: cis_6.2.1.x.yml
 
 - name: "SECTION | 6.2.2.1.x | Configure journald-remote"
-  when: rhel10cis_syslog == 'journald'
+  when: rhel10cis_journald_config
   ansible.builtin.import_tasks:
     file: cis_6.2.2.1.x.yml
 
 - name: "SECTION | 6.2.2.x | Configure journald"
+  when: rhel10cis_journald_config
   ansible.builtin.import_tasks:
     file: cis_6.2.2.x.yml
 
 - name: "SECTION | 6.2.3 | Configure rsyslog"
-  when: rhel10cis_syslog == 'rsyslog'
+  when: rhel10cis_rsyslog_config
   ansible.builtin.import_tasks:
     file: cis_6.2.3.x.yml
 

@@ -12,6 +12,6 @@
 {% if rhel10cis_rule_6_3_3_33 %}
 -a always,exit -F arch=b64 -S delete_module -F auid>={{ prelim_min_int_uid }} -F auid!=unset -k kernel_modules
 {% endif %}
-{% if rhel10cis_rule_6_3_3_34 %}
+{% if rhel10cis_rule_6_3_3_34 and "query_module" in supported_syscalls %}
 -a always,exit -F arch=b64 -S query_module -F auid>={{ prelim_min_int_uid }} -F auid!=unset -k kernel_modules
 {% endif %}
