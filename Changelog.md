@@ -1,5 +1,34 @@
 # Changes to rhel10CIS
 
+## CIS Benchmark 1.0.1
+## October 2026 - QA fixes
+
+- auditd: privileged commands discovery pipefail line join fixed
+- auditd: excluded mounts now applied to privileged commands discovery
+- 1.8.6: WaylandEnable written inside the [daemon] section
+- 5.4.2.5: root PATH lookup falls back when sudo fails in containers
+- 7.1.13: SUID/SGID find expression corrected (addresses https://github.com/ansible-lockdown/RHEL10-CIS/issues/123) - Thank you @baka-yuki
+- 7.1.12: missing space before the exclude path (addresses https://github.com/ansible-lockdown/RHEL10-CIS/issues/123) - Thank you @baka-yuki
+- 1.1.1.11: discovery script exits 0 when no modules found (addresses https://github.com/ansible-lockdown/RHEL10-CIS/issues/124) - Thank you @nisseblankendaal
+- 5.4.2.6: /root/.bash_profile mode aligned with 7.2.9 (addresses https://github.com/ansible-lockdown/RHEL10-CIS/issues/122) - Thank you @baka-yuki
+- 5.3.2.2.x: pam.d glob removed from pwquality conf search (addresses https://github.com/ansible-lockdown/RHEL10-CIS/issues/121) - Thank you @baka-yuki
+- 6.3.3.34: query_module rule only where the syscall is supported (addresses https://github.com/ansible-lockdown/RHEL10-CIS/issues/120) - Thank you @baka-yuki
+- 6.3.3.3: sudo log rule uses rhel10cis_sudolog_location (addresses https://github.com/ansible-lockdown/RHEL10-CIS/issues/120) - Thank you @baka-yuki
+- 6.2.1.x: journald tasks run for both syslog options (addresses https://github.com/ansible-lockdown/RHEL10-CIS/issues/114) - Thank you @rajsshah86
+- 6.2.1.4: systemd-journald no longer stopped when using rsyslog (addresses https://github.com/ansible-lockdown/RHEL10-CIS/issues/114) - Thank you @rajsshah86
+- 6.2.2.2: ForwardToSyslog set to no when using journald
+- 6.2.4.1: rhel10cis_logfile_perms_exclude leaves matching log files unchanged (addresses https://github.com/ansible-lockdown/RHEL10-CIS/issues/91) - Thank you @skullbringer
+- audit binary switched from goss to syver v0.13.0
+- prelim_goss_available renamed prelim_audit_bin_available
+- README audit section describes syver
+- 6.2.x: rhel10cis_journald_config and rhel10cis_rsyslog_config configure each logging system independently - Thank you @skullbringer
+- 6.2.2.x: journald controls only run when journald is configured
+- 6.2.2.2: skipped when rsyslog is also configured
+- 6.2.1.4: skipped when both logging systems are configured
+- 6.2.3.5: mail.none restored to the catch-all messages rule
+- 6.2.3.8: logrotate covers the log files 6.2.3.5 configures
+- benchmark header added to changelog
+
 ## August 2026 - QA pass: handler, sysctl and default fixes
 
 - Fixed /tmp mount options never applying - remount_tmp.yml flattened so every task carries listen thanks to @rajsshah86 public issue #112

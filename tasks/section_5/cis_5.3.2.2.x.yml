@@ -21,7 +21,6 @@
   ansible.builtin.find:
     paths:
       - /etc/security/pwquality.conf.d/
-      - /etc/pam.d/*-auth
     patterns: '*.conf'
   register: prelim_pam_pwquality_confs
 

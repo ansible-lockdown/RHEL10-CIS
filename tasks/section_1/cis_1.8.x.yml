@@ -270,6 +270,6 @@
     - rule_1.8.6
   ansible.builtin.lineinfile:
     path: /etc/gdm/custom.conf
-    regexp: WaylandEnable\s*=\s*true
+    regexp: '^\s*#?\s*WaylandEnable\s*='
     line: WaylandEnable=false
-    insertafter: '[daemon]'
+    insertafter: '^\[daemon\]'

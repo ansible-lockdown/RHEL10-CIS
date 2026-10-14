@@ -1,5 +1,14 @@
 {{ file_managed_by_ansible }}
 
+# Log files added by 6.2.3.5 - cron, maillog, messages, secure and spooler stay with the
+# vendor /etc/logrotate.d/rsyslog, listing them twice is a logrotate duplicate entry error
+/var/log/mail
+/var/log/mail.info
+/var/log/mail.warning
+/var/log/mail.err
+/var/log/news/news.crit
+/var/log/warn
+/var/log/localmessages
 /var/log/rsyslog/*.log {
     {{ rhel10cis_rsyslog_logrotate_rotated_when }}
     rotate {{ rhel10cis_rsyslog_logrotate_rotatation_keep }}
@@ -22,6 +31,7 @@
     create{% if rhel10cis_rsyslog_logrotate_create_opts is defined %} {{ rhel10cis_rsyslog_logrotate_create_opts }}{% endif %}
 {% endif %}
 
+    sharedscripts
     postrotate
         /usr/bin/systemctl reload rsyslog.service >/dev/null || true
     endscript
