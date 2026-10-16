@@ -37,4 +37,5 @@
    "- There are \"${#a_output2[@]}\" kernel modules currently loaded:" "${a_output2[@]}"
    [ "${#a_output3[@]}" -gt 0 ] && printf '%s\n' "" \
    "- There are \"${#a_output3[@]}\" Kernel modules currently loadable:" "${a_output3[@]}"
+   exit 0
 }

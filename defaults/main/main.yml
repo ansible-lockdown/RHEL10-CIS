@@ -64,7 +64,7 @@ rhel10cis_legacy_boot: false
 ## Benchmark name used by auditing control role
 # The audit variable found at the base
 ## metadata for Audit benchmark
-benchmark_version: '1.0.1'
+benchmark_version: 'v1.0.1'
 
 benchmark: RHEL10-CIS
 
@@ -78,7 +78,7 @@ skip_reboot: true
 # note the drive with need exec permissions used by 1.1.1.11
 rhel10cis_temp_exec_location: /var
 
-### Goss / audit settings now live in defaults/main/audit.yml ###
+### Audit settings now live in defaults/main/audit.yml ###
 
 # These variables correspond with the CIS rule IDs or paragraph numbers defined in
 # the CIS benchmark documents.
@@ -1247,6 +1247,20 @@ rhel10cis_aide_cron_weekday: '*'
 # Should your organization make use of both rsyslog and journald, take care how the recommendations may or may not apply to you.
 rhel10cis_syslog: journald
 
+# Configure journald (6.2.2.x, 6.2.2.1.x) and rsyslog (6.2.3.x) independently. Both default from rhel10cis_syslog,
+# so a single choice behaves as before. Setting both true is a site choice outside the CIS either/or model:
+# journald forwards to rsyslog (6.2.3.3 applies, 6.2.2.2 is skipped) and 6.2.1.4 is skipped.
+# Log upload is controlled per control: rhel10cis_rule_6_2_2_1_1 to 6_2_2_1_3 (journald) and rhel10cis_rule_6_2_3_6 (rsyslog).
+# e.g. both logging systems configured, with neither uploading logs:
+#   rhel10cis_journald_config: true
+#   rhel10cis_rsyslog_config: true
+#   rhel10cis_rule_6_2_2_1_1: false
+#   rhel10cis_rule_6_2_2_1_2: false
+#   rhel10cis_rule_6_2_2_1_3: false
+#   rhel10cis_rule_6_2_3_6: false
+rhel10cis_journald_config: "{{ rhel10cis_syslog == 'journald' }}"
+rhel10cis_rsyslog_config: "{{ rhel10cis_syslog == 'rsyslog' }}"
+
 ## Control 6.2.1.3 - Ensure journald log rotation is configured per site policy
 # Current variable configures the max amount of disk space the logs will use(thus, journal files
 # will not grow without bounds)
@@ -1378,6 +1392,11 @@ rhel10cis_rsyslog_logrotate_create: true
 # Extra options that can be added according to rsyslog documentation
 # Uncomment and add the required options e.g. mode owner group
 # rhel10cis_rsyslog_logrotate_create_opts:
+
+## Control 6.2.4.1 - Ensure access to all logfiles has been configured
+# Log files whose permissions are left unchanged, as extended regex matched anywhere in the path
+# e.g. ['^/var/log/myapp/'] - excluded files are also left out of the audit check
+rhel10cis_logfile_perms_exclude: []
 
 ##  Control 6.3.1.3 - Ensure audit_backlog_limit is sufficient
 # This variable represents the audit backlog limit, i.e., the maximum number of audit records that the

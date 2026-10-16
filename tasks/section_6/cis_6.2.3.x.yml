@@ -139,7 +139,7 @@
           # misc. logging additions to meet CIS standards
           *.=warning;*.=err                                        -/var/log/warn
           *.crit                                                   /var/log/warn
-          *.*;news.none                                            /var/log/messages
+          *.*;mail.none;news.none                                  /var/log/messages
         insertbefore: '# ### sample forwarding rule ###'
       notify: Restart rsyslog
 

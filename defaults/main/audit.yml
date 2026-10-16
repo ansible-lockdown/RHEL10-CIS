@@ -15,7 +15,7 @@ get_audit_binary_method: download
 ## e.g copy from ansible control node to remote host
 audit_bin_copy_location: /some/accessible/path
 
-# Ability to limit the number of concurrent processes used by goss (default 50)
+# Ability to limit the number of concurrent processes used by the audit binary (syver) (default 50)
 audit_max_concurrent: 50
 
 # how to get audit files onto host options
@@ -37,19 +37,21 @@ audit_conf_source: "some path or url to copy from"
 audit_conf_dest: "/opt"
 
 ### options below this line don't often need changing but can be if your environment requires it
-# - e.g. timeout for long running cmds, location of goss binary if using copy method, url for goss binary if using download method etc. ###
+# - e.g. timeout for long running cmds, location of the syver binary if using copy method, url for the syver binary if using download method etc. ###
 
 # if get_audit_binary_method == download change accordingly
-audit_bin_url: "https://github.com/krameff/goss/releases/download/{{ audit_bin_version.release }}/goss-linux-"
+# Syver (https://github.com/krameff/syver) is the continuation of the krameff goss fork - a signed fork that is
+# regularly updated and reads the same goss.yml audit content
+audit_bin_url: "https://github.com/krameff/syver/releases/download/{{ audit_bin_version.release }}/syver-linux-"
 
-### Goss Audit Benchmark file ###
+### Audit Benchmark content ###
 ## managed by the control audit_content
 # git
 audit_file_git: "https://github.com/ansible-lockdown/{{ benchmark }}-Audit.git"
 audit_git_version: "benchmark_{{ benchmark_version }}"
 
-## Goss configuration information
-# Where the goss audit configuration will be stored - NOTE benchmark-audit is expected
+## Audit configuration information
+# Where the audit configuration will be stored - NOTE benchmark-audit is expected
 audit_conf_dir: "{{ audit_conf_dest | default('/opt') }}/{{ benchmark }}-Audit"
 
 # If changed these can affect other products
@@ -60,11 +62,11 @@ post_audit_outfile: "{{ audit_log_dir }}/{{ ansible_facts['hostname'] }}-{{ benc
 
 ### Audit binary settings ###
 audit_bin_version:
-  release: v0.5.0
-  AMD64_checksum: 'sha256:1371df12806586e4c6b122a22e1dbc2b9008160099eaf2816d139cc825ffc40a'
-  ARM64_checksum: 'sha256:d34fae1b2e33bbe2f461418891c88dd636f212a0a2d4bb0601111a8dfa09efa2'
+  release: v0.13.0
+  AMD64_checksum: 'sha256:8d1b210b6a9c4e24341e77cde11ed278f809b193a4368b0723e344c04111ae6e'
+  ARM64_checksum: 'sha256:c40886ee66b893276299a320abcd3c56b00b6e343ff5343e67cd3b348390a8a7'
 audit_bin_path: /usr/local/bin/
-audit_bin: "{{ audit_bin_path }}goss"
+audit_bin: "{{ audit_bin_path }}syver"
 audit_format: json
 
 audit_vars_path: "{{ audit_conf_dir }}/vars/{{ ansible_facts['hostname'] }}.yml"
@@ -75,13 +77,13 @@ audit_results: |
   Full breakdown can be found in {{ audit_log_dir }}
 
 ###########################################
-### Goss is required on the remote host ###
+### Syver is required on the remote host ###
 ### see also defaults/main/main.yml     ###
 
 # If the any of the following are set the variables used by them are defined in this file, these can be overridden by your
 # preferred method of variable management (e.g., vault, group_vars, host_vars, inventory etc.)
 
-# Allow audit to setup the requirements including installing git (if option chosen and downloading and adding goss binary to system)
+# Allow audit to setup the requirements including installing git (if option chosen and downloading and adding the syver binary to system)
 setup_audit: false
 
 # enable audits to run - this runs the audit and get the latest content

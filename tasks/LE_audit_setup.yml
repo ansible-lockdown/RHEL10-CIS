@@ -15,7 +15,7 @@
 - name: Pre Audit Setup | Download audit binary
   when: get_audit_binary_method == 'download'
   ansible.builtin.get_url:
-    url: "{{ audit_bin_url }}{{ audit_pkg_arch_name }}"
+    url: "{{ audit_bin_url }}{{ audit_pkg_arch_name | lower }}"
     dest: "{{ audit_bin }}"
     owner: root
     group: root
