@@ -7,6 +7,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - firewalld
     - rule_4.1.1
@@ -20,6 +21,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - firewalld
     - rule_4.1.2
@@ -34,6 +36,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - firewalld
     - rule_4.1.3
@@ -48,6 +51,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - firewalld
     - rule_4.1.4
@@ -60,56 +64,84 @@
         state: present
       notify: Reload firewalld
 
-    - name: "4.1.4 | AUDIT | Ensure firewalld active zone target is configured | get active zone settings"
+    - name: "4.1.4 | AUDIT | Ensure firewalld active zone target is configured | Get active zone targets"
       ansible.builtin.shell: |
         set -o pipefail
-        firewall-cmd --list-all-zones | grep -A1 active
+        firewall-cmd --get-active-zones | awk '!/^[[:space:]]/ {print $1}' | while read -r l_zone; do
+          l_interfaces="$(firewall-cmd --zone="$l_zone" --list-interfaces)"
+          if [ -n "$l_interfaces" ] && [ -z "$(tr ' ' '\n' <<< "$l_interfaces" | grep -Pv '^(lo|virbr\S+)?$')" ]; then
+            continue
+          fi
+          l_target="$(firewall-cmd --zone="$l_zone" --list-all | awk '/^[[:space:]]*target:/ {print $2}')"
+          l_ptarget="$(firewall-cmd --permanent --zone="$l_zone" --get-target)"
+          echo "${l_zone}:${l_target}:${l_ptarget}"
+        done
       args:
         executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
       failed_when: false
-      register: discovered_active_firewall_zone_settings
+      check_mode: false
+      register: discovered_firewalld_zone_targets
 
-    - name: "4.1.4 | PATCH | Ensure firewalld active zone target is configured | Ensure zone settings are permanent"
-      when: rhel10cis_disruption_high
-      ansible.posix.firewalld:
-        zone: "{{ rhel10cis_active_firewall_zone }}"
-        permanent: true
-        state: enabled
-      notify: Reload firewalld
-
-    - name: "4.1.4 | PATCH | Ensure firewalld active zone target is configured | set zone if required"
+    - name: "4.1.4 | PATCH | Ensure firewalld active zone target is configured | Allow ssh before changing zone target"
       when:
         - rhel10cis_disruption_high
-        - "'accept' in discovered_active_firewall_zone_settings.stdout"
+        - item.split(':')[2] | upper == 'ACCEPT'
       ansible.posix.firewalld:
-        zone: "{{ rhel10cis_active_firewall_zone }}"
+        zone: "{{ item.split(':')[0] }}"
+        service: ssh
         permanent: true
+        immediate: true
         state: enabled
+      loop: "{{ discovered_firewalld_zone_targets.stdout_lines }}"
+
+    - name: "4.1.4 | PATCH | Ensure firewalld active zone target is configured | Set permanent zone target"
+      when:
+        - rhel10cis_disruption_high
+        - item.split(':')[2] | upper == 'ACCEPT'
+      ansible.posix.firewalld:
+        zone: "{{ item.split(':')[0] }}"
         target: "{{ rhel10cis_firewalld_target }}"
+        permanent: true
+        state: present
+      loop: "{{ discovered_firewalld_zone_targets.stdout_lines }}"
       notify: Reload firewalld
 
-    - name: "4.1.4 | AUDIT | Ensure firewalld active zone target is configured | Absent"
+    - name: "4.1.4 | PATCH | Ensure firewalld active zone target is configured | Load permanent zone target"
       when:
-        - not rhel10cis_disruption_high
-        - "'accept' in discovered_active_firewall_zone_settings.stdout"
-      ansible.builtin.debug:
-        msg: "Warning!! The active firewall zone need investigation to match requirements"
+        - rhel10cis_disruption_high
+        - item.split(':')[2] | upper != 'ACCEPT'
+        - item.split(':')[1] | upper != item.split(':')[2] | upper
+      ansible.builtin.command: firewall-cmd --reload
+      changed_when: true
+      loop: "{{ discovered_firewalld_zone_targets.stdout_lines }}"
 
-    - name: "4.1.4 | AUDIT | Ensure firewalld active zone target is configured | Present"
+    - name: "4.1.4 | AUDIT | Ensure firewalld active zone target is configured | Warn if not compliant"
       when:
         - not rhel10cis_disruption_high
-        - "'accept' in discovered_active_firewall_zone_settings.stdout"
-      ansible.builtin.import_tasks:
-        file: warning_facts.yml
-      vars:
-        warn_control_id: '4.1.4'
+        - (discovered_firewalld_zone_targets.stdout_lines | length == 0) or
+          (discovered_firewalld_zone_targets.stdout_lines | select('match', '^[^:]+:(?!ACCEPT:)([^:]+):\\1$') | list | length !=
+          discovered_firewalld_zone_targets.stdout_lines | length)
+      block:
+        - name: "4.1.4 | AUDIT | Ensure firewalld active zone target is configured | Warn if not compliant | Message"
+          ansible.builtin.debug:
+            msg:
+              - "Warning!! No active zone found, or an active zone target is ACCEPT or not written as a permanent rule"
+              - "Set rhel10cis_disruption_high: true to set the target to {{ rhel10cis_firewalld_target }}, or correct manually"
+              - "{{ discovered_firewalld_zone_targets.stdout_lines }}"
+
+        - name: "4.1.4 | AUDIT | Ensure firewalld active zone target is configured | Warn if not compliant | Warn count"
+          ansible.builtin.import_tasks:
+            file: warning_facts.yml
+          vars:
+            warn_control_id: '4.1.4'
 
 - name: "4.1.5 | PATCH | Ensure firewalld loopback traffic is configured"
   when: rhel10cis_rule_4_1_5
   tags:
     - level1-server
     - level1-workstation
+    - manual
     - patch
     - firewalld
     - rule_4.1.5
@@ -122,6 +154,7 @@
       args:
         executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
+      check_mode: false
       failed_when: false
       register: discovered_loopback_zone
 
@@ -148,6 +181,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - manual
     - patch
     - firewalld
     - rule_4.1.6

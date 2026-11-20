@@ -7,6 +7,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - gui
     - gdm
@@ -38,7 +39,7 @@
       ansible.builtin.file:
         path: /etc/dconf/db/local.d/locks
         state: directory
-        mode: 'go=rx'
+        mode: 'go-w'
 
     - name: "1.8.1 | PATCH | Ensure GDM login banner is configured | create lock file"
       ansible.builtin.template:
@@ -64,6 +65,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - gui
     - rule_1.8.2
@@ -88,7 +90,7 @@
       ansible.builtin.file:
         path: /etc/dconf/db/local.d/locks
         state: directory
-        mode: 'go=rx'
+        mode: 'go-w'
 
     - name: "1.8.2 | PATCH | Ensure GDM disable-user-list is configured | create lock file"
       ansible.builtin.template:
@@ -114,6 +116,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - gui
     - rule_1.8.3
@@ -138,7 +141,7 @@
       ansible.builtin.file:
         path: /etc/dconf/db/local.d/locks
         state: directory
-        mode: 'go=rx'
+        mode: 'go-w'
 
     - name: "1.8.3 | PATCH | Ensure GDM screen lock is configured | create lock file"
       ansible.builtin.template:
@@ -164,6 +167,7 @@
   tags:
     - level1-server
     - level2-workstation
+    - automated
     - patch
     - gui
     - rule_1.8.4
@@ -189,7 +193,7 @@
       ansible.builtin.file:
         path: /etc/dconf/db/local.d/locks
         state: directory
-        mode: 'go=rx'
+        mode: 'go-w'
 
     - name: "1.8.4 | PATCH | Ensure GDM automount is configured | create lock file"
       ansible.builtin.template:
@@ -215,6 +219,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - gui
     - rule_1.8.5
@@ -239,7 +244,7 @@
       ansible.builtin.file:
         path: /etc/dconf/db/local.d/locks
         state: directory
-        mode: 'go=rx'
+        mode: 'go-w'
 
     - name: "1.8.5 | PATCH | Ensure GDM autorun-never is configured | create lock file"
       ansible.builtin.template:
@@ -265,6 +270,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - gui
     - rule_1.8.6

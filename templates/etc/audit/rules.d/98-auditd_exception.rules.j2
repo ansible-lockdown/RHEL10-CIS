@@ -3,6 +3,7 @@
 # This file contains users whose actions are not logged by auditd
 {% if rhel10cis_allow_auditd_uid_user_exclusions %}
 {% for user in rhel10cis_auditd_uid_exclude %}
--a never,user -F uid!={{ user }} -F auid!={{ user }}
+-a never,exit -F auid={{ user }}
+-a never,user -F auid={{ user }}
 {% endfor %}
 {% endif %}

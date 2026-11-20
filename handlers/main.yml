@@ -1,5 +1,4 @@
 ---
-# handlers file for RHEL10-CIS
 
 - name: "Remount tmp filesystem"
   ansible.builtin.import_tasks:
@@ -120,15 +119,6 @@
     state: remounted
   listen: "Remount /var/log/audit"
 
-- name: "Remounting /boot/efi"
-  vars:
-    mount_point: '/boot/efi'
-  ansible.posix.mount:
-    path: "{{ mount_point }}"
-    state: remounted
-  notify: Set reboot required
-  listen: "Remount /boot/efi"
-
 - name: Restart chronyd
   ansible.builtin.systemd:
     name: chronyd
@@ -146,21 +136,16 @@
   when:
     - rhel10cis_flush_ipv4_route
     - not system_is_container
-  ansible.posix.sysctl:
-    name: net.ipv4.route.flush
-    value: '1'
-    sysctl_set: true
-  ignore_errors: true  # noqa ignore-errors
+  ansible.builtin.command: sysctl -w net.ipv4.route.flush=1
+  changed_when: true
 
 - name: Sysctl flush ipv6 route table
   when:
     - rhel10cis_flush_ipv6_route
     - not system_is_container
-  ansible.posix.sysctl:
-    name: net.ipv6.route.flush
-    value: '1'
-    sysctl_set: true
-  ignore_errors: true  # noqa ignore-errors
+    - (ansible_facts['cmdline'] | default({})).get('ipv6.disable', '0') | string != '1'
+  ansible.builtin.command: sysctl -w net.ipv6.route.flush=1
+  changed_when: true
 
 - name: Coredump Reload
   ansible.builtin.systemd:
@@ -170,7 +155,7 @@
 - name: Selinux relabel
   when:
     - rhel10cis_selinux_relabel_enabled
-    - ansible_selinux.status == 'disabled'
+    - ansible_facts['selinux']['status'] == 'disabled'
     - rhel10cis_disruption_high
   ansible.builtin.file:
     path: /.autorelabel
@@ -210,8 +195,8 @@
   changed_when: true
 
 - name: Grub2cfg
+  when: not system_is_container
   ansible.builtin.command: "grub2-mkconfig -o /boot/grub2/grub.cfg"
-  ignore_errors: true  # noqa ignore-errors
   changed_when: true
   notify: Set reboot required
 
@@ -250,6 +235,7 @@
     - discovered_auditd_immutable_check.rc == 0
   ansible.builtin.debug:
     msg: "Reboot required for auditd to apply new rules as immutable set"
+  changed_when: true
   notify: Set reboot required
 
 - name: Stop auditd process

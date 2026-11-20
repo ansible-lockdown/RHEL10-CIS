@@ -5,6 +5,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - auditd
     - rule_6.3.1.1
@@ -20,8 +21,8 @@
           - audit-rules
         state: present
 
-    - name: "6.3.1.1 | PATCH | Ensure auditd packages are installed | Install auditd-lib packages"
-      when: "'auditd-lib' not in ansible_facts['packages']"
+    - name: "6.3.1.1 | PATCH | Ensure auditd packages are installed | Install audit-libs package"
+      when: "'audit-libs' not in ansible_facts['packages']"
       ansible.builtin.package:
         name: audit-libs
         state: present
@@ -31,6 +32,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - auditd
     - grub
@@ -58,6 +60,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - auditd
     - grub
@@ -98,6 +101,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - auditd
     - rule_6.3.1.4

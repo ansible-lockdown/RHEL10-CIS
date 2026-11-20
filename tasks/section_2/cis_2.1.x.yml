@@ -201,6 +201,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - automation
     - patch
     - ftp
@@ -443,6 +444,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - automation
     - patch
     - snmp
@@ -549,6 +551,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - automation
     - patch
     - squid
@@ -605,7 +608,9 @@
         - not rhel10cis_nginx_server
         - not rhel10cis_nginx_mask
       ansible.builtin.package:
-        name: nginx
+        name:
+          - nginx
+          - nginx-plus
         state: absent
 
     - name: "2.1.18 | PATCH | Ensure web server services are not in use | Mask httpd service"
@@ -623,13 +628,15 @@
       when:
         - not rhel10cis_nginx_server
         - rhel10cis_nginx_mask
-        - "'nginx' in ansible_facts['packages']"
+        - nginx_installed
       notify: Systemd daemon reload
       ansible.builtin.systemd:
         name: nginx.service
-        enabled: "{{ ('nginx' in ansible_facts['packages']) | ternary(false, omit) }}"
-        state: "{{ ('nginx' in ansible_facts['packages']) | ternary('stopped', omit) }}"
+        enabled: false
+        state: stopped
         masked: true
+      vars:
+        nginx_installed: "{{ (['nginx', 'nginx-plus'] | select('in', ansible_facts['packages']) | list | length) > 0 }}"
 
 - name: "2.1.19 | PATCH | Ensure GNOME Display Manager is removed"
   when:

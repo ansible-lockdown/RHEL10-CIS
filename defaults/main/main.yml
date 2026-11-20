@@ -1,4 +1,5 @@
 ---
+
 # defaults file for rhel10-cis
 # WARNING:
 # These values may be overridden by other vars-setting options(e.g. like the below 'container_vars_file'), as explained here:
@@ -54,8 +55,8 @@ create_benchmark_facts: true
 ansible_facts_path: /etc/ansible/facts.d
 
 ## Section 1.3 - Mandatory Access Control (SELinux)
-# This variable governs whether SELinux is disabled or not. If SELinux is NOT DISABLED by setting
-# 'rhel10cis_selinux_disable' to 'true', the 1.3 subsection will be executed.
+# This variable governs whether the SELinux controls run. When 'rhel10cis_selinux_disable' is
+# 'false' (the default) the 1.3.1 subsection is executed; set it to 'true' to skip it.
 rhel10cis_selinux_disable: false
 # This variable is used in a preliminary task, handling grub2 paths either in case of
 # UEFI boot('/etc/grub2-efi.cfg') or in case of BIOS legacy-boot('/etc/grub2.cfg').
@@ -72,10 +73,8 @@ benchmark: RHEL10-CIS
 # System will reboot if false, can give better audit results
 skip_reboot: true
 
-# default value will change to true but won't reboot if not enabled but will error
-
-# A location that can be used as as a temporary location to execute scripts
-# note the drive with need exec permissions used by 1.1.1.11
+# A location that can be used as a temporary location to execute scripts
+# note the drive needs exec permissions, used by 1.1.1.11
 rhel10cis_temp_exec_location: /var
 
 ### Audit settings now live in defaults/main/audit.yml ###
@@ -86,8 +85,9 @@ rhel10cis_temp_exec_location: /var
 # You must enable an entire section in order for the variables below to take effect.
 
 ## Section 1 Fixes
-# Section 1 is Initial setup (FileSystem Configuration, Configure Software Updates, Filesystem Integrity Checking, Secure Boot Settings,
-# Additional Process Hardening, Mandatory Access Control, Command Line Warning Banners, and GNOME Display Manager)
+# Section 1 is Initial setup (Filesystem, Package Management, Mandatory Access Control, Configure Bootloader,
+# Configure Additional Process Hardening, Configure system wide crypto policy, Configure Command Line Warning Banners
+# and Configure GNOME Display Manager)
 # Filesystem kernel modules
 rhel10cis_rule_1_1_1_1: true
 rhel10cis_rule_1_1_1_2: true
@@ -291,8 +291,8 @@ rhel10cis_rule_4_1_6: true
 rhel10cis_rule_4_1_7: true
 
 ## Section 5 Fixes
-# Section 5 rules control Access, Authentication, and Authorization (Configure time-based job schedulers,
-# Configure sudo, Configure SSH Server, Configure PAM and User Accounts and Environment)
+# Section 5 rules control Access Control (Configure SSH Server, Configure privilege escalation,
+# Pluggable Authentication Modules and User Accounts and Environment)
 # Configure SSH Server
 rhel10cis_rule_5_1_1: true
 rhel10cis_rule_5_1_2: true
@@ -344,7 +344,6 @@ rhel10cis_rule_5_3_2_2_6: true
 rhel10cis_rule_5_3_2_2_7: true
 
 # 5.3.2.3 Configure pam_pwhistory module
-# These are added as part of 5.3.2.4 using jinja2 template
 rhel10cis_rule_5_3_2_3_1: true
 rhel10cis_rule_5_3_2_3_2: true
 rhel10cis_rule_5_3_2_3_3: true
@@ -505,11 +504,13 @@ rhel10cis_remove_kernel_discovery_script: false
 # these then build the variable and options that is passed to the handler to set the mount point for the controls in section1.
 rhel10cis_debug_mount_data: false
 
-## Control 1.1.2
-# If set to `true`, rule will be implemented using the `tmp.mount` systemd-service,
-# otherwise fstab configuration will be used.
+## Controls 1.1.2.1.x - /tmp
+# How /tmp mount options are managed:
+#  - auto:  discover it - a tmp.mount unit if /tmp is mounted by one, otherwise /etc/fstab
+#  - true:  always use the tmp.mount systemd unit (creates it if needed)
+#  - false: always use /etc/fstab
 # These /tmp settings will include nosuid,nodev,noexec to conform to CIS standards.
-rhel10cis_tmp_svc: false
+rhel10cis_tmp_svc: auto
 
 ## Control 1.2.1
 ## Control 1.2.1.3
@@ -521,7 +522,9 @@ rhel10cis_rhel_default_repo: true
 # When 'rhel10cis_enable_repogpg' is set to 'true'(in conjunction with 'rhel10cis_rhel_default_repo':'false'), conditions are met for
 # enabling the GPG signatures-check for all the individual YUM repositories. If GPG signatures-check is enabled on repositories which do not
 # support it(like RedHat), installation of packages will fail.
-rhel10cis_enable_repogpg: true
+# The OS default comes from rhel10cis_os_enable_repogpg in vars/<distribution>.yml (false for AlmaLinux, OracleLinux
+# and RedHat, true when unset); set rhel10cis_enable_repogpg in inventory to override it per host.
+rhel10cis_enable_repogpg: "{{ rhel10cis_os_enable_repogpg | default(true) }}"
 
 ## Control 1.3.1.3|4|5 - SELinux policy settings
 # This selects type of policy; targeted or mls( multilevel )
@@ -617,14 +620,6 @@ rhel10cis_yama_ptrace_scope_value: 1
 #  -'FUTURE': conservative security level that is believed to withstand any near-term future attacks
 #  -'FIPS': A level that conforms to the FIPS140-2 requirements
 rhel10cis_crypto_policy: 'DEFAULT'
-## Controls 1.6.x and Controls 5.1.x
-# This variable contains the value of the crypto policy module(combinations of policies and
-# sub-policies) to be allowed as default setting. Allowed options are defined in 'vars/main.yml' file,
-# using 'rhel10cis_allowed_crypto_policies_modules' variable, which currently are:
-#    - 'OSPP'
-#    - 'AD-SUPPORT'
-#    - 'AD-SUPPORT-LEGACY'
-rhel10cis_crypto_policy_module: ''
 ## Controls 1.6.x
 # This variable contains the value of the crypto policy module(combinations of policies and
 # sub-policies) to be allowed as default setting. Allowed options are defined in 'vars/main.yml' file,
@@ -743,10 +738,6 @@ rhel10cis_httpd_mask: false
 rhel10cis_nginx_server: false
 # Set this variable to `true` to mask service `nginx`.
 rhel10cis_nginx_mask: false
-# Set this variable to `true` to keep service `xinetd`; otherwise, the service is uninstalled.
-rhel10cis_xinetd_server: false
-# Set this variable to `true` to mask service `xinetd`.
-rhel10cis_xinetd_mask: false
 # Set this variable to `true` to keep service `xwindow`; otherwise, the service is uninstalled.
 rhel10cis_xwindow_server: false  # will remove mask not an option
 
@@ -989,6 +980,8 @@ rhel10cis_authselect_custom_profile_name: cis_example_profile
 # Name of the existing authselect profile to copy - options can be found with
 # ```authselect list``` on the host to be configured
 rhel10cis_authselect_default_profile_to_copy: "sssd --symlink-meta"
+# Features enabled on the current profile (e.g. with-mkhomedir, with-sudo) are kept when the custom
+# profile is selected, if the custom profile supports them.
 
 ## Control 5.3.2.1.1
 # This variable sets the amount of tries a password can be entered, before a user is locked.
@@ -1081,9 +1074,6 @@ rhel10cis_passwd_dictcheck_file: etc/security/pwquality.conf.d/50-pwdictcheck.co
 # When set to '0', dictionary checks are disabled. CIS states that it shall always be set to '1'.
 rhel10cis_passwd_dictcheck_value: 1
 
-# This variable is used in one of the config files to ensure password quality checking is enforced
-rhel10cis_passwd_quality_enforce_value: 1
-
 ## Control 5.3.2.2.7 - Ensure password quality is enforced for the root user
 # This variable holds the path to the configuration file that will be created (or overwritten if already existing)
 # in order to implement the 'Ensure password quality is enforced for the root user' control.
@@ -1125,7 +1115,7 @@ rhel10cis_force_user_warnage: false
 
 ## Control 5.4.1.5 - Ensure inactive password lock is configured
 # This variable specifies the number of days of inactivity before an account will be locked.
-# CIS requires a value of 30 days or less.
+# CIS requires a value of 45 days or less, the default is 30.
 
 rhel10cis_inactive_lock_days: 30
 
@@ -1291,33 +1281,30 @@ rhel10cis_journald_runtimekeepfree: 100G
 rhel10cis_journald_maxfilesec: 1month
 
 ## Control 6.2.2.1.2 - Ensure systemd-journal-upload authentication is configured
-# This uses a template file that is populated by using the following variables.
-# This is only used if the /etc/systemd/journal-upload.conf file does not exist.
-# If the file exists, the template will not be used.
-rhel10cis_journal_remote_upload_config_file: remote_upload.conf.j2
+# The following variables populate /etc/systemd/journal-upload.conf. The template is used when the
+# file does not exist; when it exists, each setting is updated in place.
 # 'rhel10cis_journal_upload_url' is the ip address to upload the journal entries to
 #  URL value may specify either just the hostname or both the protocol and hostname. 'https' is the default. The port
 #  number may be specified after a colon (":"), otherwise 19532 will be used by default.
 rhel10cis_journal_upload_url: 192.168.50.42
-## Control 6.2.2.1.2 - Ensure systemd-journal-remote is configured
+## Control 6.2.2.1.2 - Ensure systemd-journal-upload authentication is configured
 # This variable specifies the path to the private key file used by the remote journal
 # server to authenticate itself to the client. This key is used alongside the server's
 # public certificate to establish secure communication. The path below has the default
 # path/file, but it is also allowed for a user to create its custom path/filename.
 rhel10cis_journal_upload_serverkeyfile: "/etc/ssl/private/journal-upload.pem"
-## Control 6.2.2.1.2 - Ensure systemd-journal-remote is configured
+## Control 6.2.2.1.2 - Ensure systemd-journal-upload authentication is configured
 # This variable specifies the path to the public certificate file of the remote journal
 # server. This certificate is used to verify the authenticity of the remote server. The path
 # below has the default path/file, but it is also allowed for a user to create its custom
 # path/filename.
 rhel10cis_journal_servercertificatefile: "/etc/ssl/certs/journal-upload.pem"
-## Control 6.2.2.1.2 - Ensure systemd-journal-remote is configured
+## Control 6.2.2.1.2 - Ensure systemd-journal-upload authentication is configured
 # This variable specifies the path to a file containing one or more public certificates
 # of certificate authorities (CAs) that the client trusts. These trusted certificates are used
 # to validate the authenticity of the remote server's certificate. The path below has the default
 ## path/file, but it is also allowed for a user to create its custom path/filename.
 rhel10cis_journal_trustedcertificatefile: "/etc/ssl/ca/trusted.pem"
-# ATTENTION: Uncomment the keyword below when values are set!
 
 ## Control 6.2.3.5 | PATCH | Ensure logging is configured
 # This variable governs if current Ansible role should manage syslog settings
@@ -1530,7 +1517,7 @@ rhel10cis_ownership_adjust: true
 
 ## Control 7.1.13 - Ensure SUID and SGID files are reviewed
 # This variable is a toggle for enabling/disabling the automated removal
-# of the SUID bit from all files on all mounts.
+# of the SUID and SGID bits from all files on all mounts.
 # Possible values are `true` and `false`.
 rhel10cis_suid_sgid_adjust: false
 

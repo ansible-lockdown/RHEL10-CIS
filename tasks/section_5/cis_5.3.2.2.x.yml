@@ -11,6 +11,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - patch
     - pam
     - rule_5.3.2.2.1
     - rule_5.3.2.2.2
@@ -29,6 +30,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.2.2.1
     - NIST800-53R5_IA-5
@@ -36,15 +38,13 @@
   block:
     - name: "5.3.2.2.1 | PATCH | Ensure password number of changed characters is configured | Remove difok from conf files except expected file"
       when:
-        - "rhel10cis_passwd_difok_file not in item.path"
+        - item != '/' ~ rhel10cis_passwd_difok_file
         - rhel10cis_disruption_high
-      ansible.builtin.replace:
-        path: "{{ item.path }}"
-        regexp: "difok\\s*=\\s*\\d+\\b"
-        replace: ""
-      with_items:
-        - "{{ prelim_pam_pwquality_confs.files }}"
-        - { path: '/etc/security/pwquality.conf'}
+      ansible.builtin.lineinfile:
+        path: "{{ item }}"
+        regexp: '^\s*difok\s*='
+        state: absent
+      loop: "{{ ['/etc/security/pwquality.conf'] + (prelim_pam_pwquality_confs.files | default([]) | map(attribute='path') | list) }}"
 
     - name: "5.3.2.2.1 | PATCH | Ensure password number of changed characters is configured | Ensure difok file exists"
       ansible.builtin.template:
@@ -60,8 +60,8 @@
         - rhel10cis_disruption_high
       ansible.builtin.replace:
         path: "/etc/pam.d/{{ item }}-auth"
-        regexp: ^(\s*password\s+(requisite|required|sufficient)\s+pam_pwquality\.so)(.*)\sdifok=\d*(.*$)
-        replace: \1\2\3
+        regexp: ^(\s*password\s+(?:requisite|required|sufficient)\s+pam_pwquality\.so\b.*?)\s+difok\s*=\s*\S+(.*)$
+        replace: \1\2
       loop:
         - password
         - system
@@ -72,8 +72,8 @@
         - rhel10cis_disruption_high
       ansible.builtin.replace:
         path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/{{ item }}-auth"
-        regexp: ^(\s*password\s+(requisite|required|sufficient)\s+pam_pwquality\.so)(.*)\sdifok=\d*(.*$)
-        replace: \1\2\3
+        regexp: ^(\s*password\s+(?:requisite|required|sufficient)\s+pam_pwquality\.so\b.*?)\s+difok\s*=\s*\S+(.*)$
+        replace: \1\2
       loop:
         - password
         - system
@@ -84,6 +84,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.2.2.2
     - NIST800-53R5_IA-5
@@ -91,15 +92,13 @@
   block:
     - name: "5.3.2.2.2 | PATCH | Ensure password length is configured | Remove minlen from conf files except expected file"
       when:
-        - "rhel10cis_passwd_minlen_file not in item.path"
+        - item != '/' ~ rhel10cis_passwd_minlen_file
         - rhel10cis_disruption_high
-      ansible.builtin.replace:
-        path: "{{ item.path }}"
-        regexp: "minlen\\s*=\\s*\\d+\\b"
-        replace: ""
-      with_items:
-        - "{{ prelim_pam_pwquality_confs.files }}"
-        - { path: '/etc/security/pwquality.conf'}
+      ansible.builtin.lineinfile:
+        path: "{{ item }}"
+        regexp: '^\s*minlen\s*='
+        state: absent
+      loop: "{{ ['/etc/security/pwquality.conf'] + (prelim_pam_pwquality_confs.files | default([]) | map(attribute='path') | list) }}"
     - name: "5.3.2.2.2 | PATCH | Ensure password length is configured | Ensure minlen file exists"
       ansible.builtin.template:
         src: "{{ rhel10cis_passwd_minlen_file }}.j2"
@@ -114,8 +113,8 @@
         - rhel10cis_disruption_high
       ansible.builtin.replace:
         path: "/etc/pam.d/{{ item }}-auth"
-        regexp: ^(\s*password\s+(requisite|required|sufficient)\s+pam_pwquality\.so)(.*)\sminlen=\d*(.*$)
-        replace: \1\2\3
+        regexp: ^(\s*password\s+(?:requisite|required|sufficient)\s+pam_pwquality\.so\b.*?)\s+minlen\s*=\s*\S+(.*)$
+        replace: \1\2
       loop:
         - password
         - system
@@ -126,8 +125,8 @@
         - rhel10cis_disruption_high
       ansible.builtin.replace:
         path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/{{ item }}-auth"
-        regexp: ^(\s*password\s+(requisite|required|sufficient)\s+pam_pwquality\.so)(.*)\sminlen=\d*(.*$)
-        replace: \1\2\3
+        regexp: ^(\s*password\s+(?:requisite|required|sufficient)\s+pam_pwquality\.so\b.*?)\s+minlen\s*=\s*\S+(.*)$
+        replace: \1\2
       loop:
         - password
         - system
@@ -138,6 +137,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - manual
     - patch
     - rule_5.3.2.2.3
     - NIST800-53R5_IA-5
@@ -145,15 +145,13 @@
   block:
     - name: "5.3.2.2.3 | PATCH | Ensure password complexity is configured | Remove pwd complex settings from conf files except expected file"
       when:
-        - "rhel10cis_passwd_complex_file not in item.path"
+        - item != '/' ~ rhel10cis_passwd_complex_file
         - rhel10cis_disruption_high
-      ansible.builtin.replace:
-        path: "{{ item.path }}"
-        regexp: "(minclass|[dulo]credit)\\s*=\\s*(-\\d|\\d+)\\b"
-        replace: ""
-      with_items:
-        - "{{ prelim_pam_pwquality_confs.files }}"
-        - { path: '/etc/security/pwquality.conf'}
+      ansible.builtin.lineinfile:
+        path: "{{ item }}"
+        regexp: '^\s*(minclass|[dulo]credit)\s*='
+        state: absent
+      loop: "{{ ['/etc/security/pwquality.conf'] + (prelim_pam_pwquality_confs.files | default([]) | map(attribute='path') | list) }}"
 
     - name: "5.3.2.2.3 | PATCH | Ensure password complexity is configured | Ensure complexity file exists"
       ansible.builtin.template:
@@ -168,24 +166,20 @@
         - not rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
       ansible.builtin.replace:
-        path: "/etc/pam.d/{{ item }}-auth"
-        regexp: ^(\s*password\s+(requisite|required|sufficient)\s+pam_pwquality\.so)(.*)\s(minclass=[0-3]|[dulo]credit=[^-]\d*)(.*$)
-        replace: \1\2\4
-      loop:
-        - password
-        - system
+        path: "/etc/pam.d/{{ item[0] }}-auth"
+        regexp: ^(\s*password\s+(?:requisite|required|sufficient)\s+pam_pwquality\.so\b.*?)\s+{{ item[1] }}\s*=\s*\S+(.*)$
+        replace: \1\2
+      loop: "{{ ['password', 'system'] | product(['minclass', 'dcredit', 'ucredit', 'lcredit', 'ocredit']) | list }}"
 
     - name: "5.3.2.2.3 | PATCH | Ensure password complexity is configured | Remove complexity from pam files AuthSelect"
       when:
         - rhel10cis_allow_authselect_updates
         - rhel10cis_disruption_high
       ansible.builtin.replace:
-        path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/{{ item }}-auth"
-        regexp: ^(\s*password\s+(requisite|required|sufficient)\s+pam_pwquality\.so)(.*)\s(minclass=[0-3]|[dulo]credit=[^-]\d*)(.*$)
-        replace: \1\2\4
-      loop:
-        - password
-        - system
+        path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/{{ item[0] }}-auth"
+        regexp: ^(\s*password\s+(?:requisite|required|sufficient)\s+pam_pwquality\.so\b.*?)\s+{{ item[1] }}\s*=\s*\S+(.*)$
+        replace: \1\2
+      loop: "{{ ['password', 'system'] | product(['minclass', 'dcredit', 'ucredit', 'lcredit', 'ocredit']) | list }}"
       notify: Authselect update
 
 - name: "5.3.2.2.4 | PATCH | Ensure password same consecutive characters is configured"
@@ -193,20 +187,21 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.2.2.4
     - NIST800-53R5_IA-5
     - pam
   block:
     - name: "5.3.2.2.4 | PATCH | Ensure password same consecutive characters is configured | Remove maxrepeat settings from conf files except expected file"
-      when: "rhel10cis_passwd_maxrepeat_file not in item.path"
-      ansible.builtin.replace:
-        path: "{{ item.path }}"
-        regexp: "maxrepeat\\s*=\\s*\\d+\\b"
-        replace: ""
-      with_items:
-        - "{{ prelim_pam_pwquality_confs.files }}"
-        - { path: '/etc/security/pwquality.conf'}
+      when:
+        - item != '/' ~ rhel10cis_passwd_maxrepeat_file
+        - rhel10cis_disruption_high
+      ansible.builtin.lineinfile:
+        path: "{{ item }}"
+        regexp: '^\s*maxrepeat\s*='
+        state: absent
+      loop: "{{ ['/etc/security/pwquality.conf'] + (prelim_pam_pwquality_confs.files | default([]) | map(attribute='path') | list) }}"
 
     - name: "5.3.2.2.4 | PATCH | Ensure password same consecutive characters is configured | Ensure maxrepeat file exists"
       ansible.builtin.template:
@@ -222,8 +217,8 @@
         - rhel10cis_disruption_high
       ansible.builtin.replace:
         path: "/etc/pam.d/{{ item }}-auth"
-        regexp: ^(\s*password\s+(requisite|required|sufficient)\s+pam_pwquality\.so)(.*)\smaxrepeat\s*=\s*\d*(.*$)
-        replace: \1\2\3
+        regexp: ^(\s*password\s+(?:requisite|required|sufficient)\s+pam_pwquality\.so\b.*?)\s+maxrepeat\s*=\s*\S+(.*)$
+        replace: \1\2
       loop:
         - password
         - system
@@ -234,8 +229,8 @@
         - rhel10cis_disruption_high
       ansible.builtin.replace:
         path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/{{ item }}-auth"
-        regexp: ^(\s*password\s+(requisite|required|sufficient)\s+pam_pwquality\.so)(.*)\smaxrepeat\s*=\s*\d*(.*$)
-        replace: \1\2\3
+        regexp: ^(\s*password\s+(?:requisite|required|sufficient)\s+pam_pwquality\.so\b.*?)\s+maxrepeat\s*=\s*\S+(.*)$
+        replace: \1\2
       loop:
         - password
         - system
@@ -246,6 +241,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.2.2.5
     - NIST800-53R5_IA-5
@@ -253,15 +249,13 @@
   block:
     - name: "5.3.2.2.5 | PATCH | Ensure password maximum sequential characters is configured | Remove maxsequence settings from conf files except expected file"
       when:
-        - "rhel10cis_passwd_maxsequence_file not in item.path"
+        - item != '/' ~ rhel10cis_passwd_maxsequence_file
         - rhel10cis_disruption_high
-      ansible.builtin.replace:
-        path: "{{ item.path }}"
-        regexp: "maxsequence\\s*=\\s*\\d+\\b"
-        replace: ""
-      with_items:
-        - "{{ prelim_pam_pwquality_confs.files }}"
-        - { path: '/etc/security/pwquality.conf'}
+      ansible.builtin.lineinfile:
+        path: "{{ item }}"
+        regexp: '^\s*maxsequence\s*='
+        state: absent
+      loop: "{{ ['/etc/security/pwquality.conf'] + (prelim_pam_pwquality_confs.files | default([]) | map(attribute='path') | list) }}"
 
     - name: "5.3.2.2.5 | PATCH | Ensure password maximum sequential characters is configured | Ensure maxsequence file exists"
       ansible.builtin.template:
@@ -277,8 +271,8 @@
         - rhel10cis_disruption_high
       ansible.builtin.replace:
         path: "/etc/pam.d/{{ item }}-auth"
-        regexp: ^(\s*password\s+(requisite|required|sufficient)\s+pam_pwquality\.so)(.*)\smaxsequence\s*=\s*\d*(.*$)
-        replace: \1\2\3
+        regexp: ^(\s*password\s+(?:requisite|required|sufficient)\s+pam_pwquality\.so\b.*?)\s+maxsequence\s*=\s*\S+(.*)$
+        replace: \1\2
       loop:
         - password
         - system
@@ -289,8 +283,8 @@
         - rhel10cis_disruption_high
       ansible.builtin.replace:
         path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/{{ item }}-auth"
-        regexp: ^(\s*password\s+(requisite|required|sufficient)\s+pam_pwquality\.so)(.*)\smaxsequence\s*=\s*\d*(.*$)
-        replace: \1\2\3
+        regexp: ^(\s*password\s+(?:requisite|required|sufficient)\s+pam_pwquality\.so\b.*?)\s+maxsequence\s*=\s*\S+(.*)$
+        replace: \1\2
       loop:
         - password
         - system
@@ -301,20 +295,21 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.2.2.6
     - NIST800-53R5_IA-5
     - pam
   block:
     - name: "5.3.2.2.6 | PATCH | Ensure password dictionary check is enabled | Remove dictcheck settings from conf files except expected file"
-      when: "rhel10cis_passwd_dictcheck_file not in item.path"
-      ansible.builtin.replace:
-        path: "{{ item.path }}"
-        regexp: "dictcheck\\s*=\\s*\\d+\\b"
-        replace: ""
-      with_items:
-        - "{{ prelim_pam_pwquality_confs.files }}"
-        - { path: '/etc/security/pwquality.conf'}
+      when:
+        - item != '/' ~ rhel10cis_passwd_dictcheck_file
+        - rhel10cis_disruption_high
+      ansible.builtin.lineinfile:
+        path: "{{ item }}"
+        regexp: '^\s*dictcheck\s*='
+        state: absent
+      loop: "{{ ['/etc/security/pwquality.conf'] + (prelim_pam_pwquality_confs.files | default([]) | map(attribute='path') | list) }}"
 
     - name: "5.3.2.2.6 | PATCH | Ensure password dictionary check is enabled | Ensure dictcheck file exists"
       ansible.builtin.template:
@@ -330,12 +325,11 @@
         - rhel10cis_disruption_high
       ansible.builtin.replace:
         path: "/etc/pam.d/{{ item }}-auth"
-        regexp: ^(\s*password\s+(requisite|required|sufficient)\s+pam_pwquality\.so)(.*)\sdictcheck\s*=\s*\d*(.*$)
-        replace: \1\2\3
+        regexp: ^(\s*password\s+(?:requisite|required|sufficient)\s+pam_pwquality\.so\b.*?)\s+dictcheck\s*=\s*\S+(.*)$
+        replace: \1\2
       loop:
         - password
         - system
-      notify: Authselect update
 
     - name: "5.3.2.2.6 | PATCH | Ensure password dictionary check is enabled | Remove dictcheck from pam files AuthSelect"
       when:
@@ -343,8 +337,8 @@
         - rhel10cis_disruption_high
       ansible.builtin.replace:
         path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/{{ item }}-auth"
-        regexp: ^(\s*password\s+(requisite|required|sufficient)\s+pam_pwquality\.so)(.*)\sdictcheck\s*=\s*\d*(.*$)
-        replace: \1\2\3
+        regexp: ^(\s*password\s+(?:requisite|required|sufficient)\s+pam_pwquality\.so\b.*?)\s+dictcheck\s*=\s*\S+(.*)$
+        replace: \1\2
       loop:
         - password
         - system
@@ -355,6 +349,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.3.2.2.7
     - NIST800-53R5_IA-5

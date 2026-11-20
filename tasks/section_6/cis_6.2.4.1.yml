@@ -5,6 +5,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - logfiles
     - rule_6.2.4.1
@@ -14,6 +15,7 @@
     - name: "6.2.4.1 | AUDIT | Ensure access to all logfiles has been configured | find log files"
       ansible.builtin.command: find /var/log/ -type f -exec ls {} \;
       changed_when: false
+      check_mode: false
       failed_when: false
       register: discovered_logfiles
 
@@ -35,7 +37,7 @@
     - name: "6.2.4.1 | PATCH | Ensure access to all logfiles has been configured | change permissions tmp min 664"
       when:
         - discovered_logfiles_to_set | length > 0
-        - item is match("/var/log/((u|b|w)tmp*|lastlog)")
+        - item | basename is match('(lastlog([.].*)?|(wtmp|btmp)([.-].*)?|README)$')
       ansible.builtin.file:
         path: "{{ item }}"
         mode: 'ug-x,o-wx'
@@ -46,7 +48,8 @@
     - name: "6.2.4.1 | PATCH | Ensure access to all logfiles has been configured | change permissions else all 640"
       when:
         - discovered_logfiles_to_set | length > 0
-        - item is not match("/var/log/((u|b|w)tmp*|lastlog|sssd)")
+        - item | basename is not match('(lastlog([.].*)?|(wtmp|btmp)([.-].*)?|README)$')
+        - item is not match('/var/log/sssd')
       ansible.builtin.file:
         path: "{{ item }}"
         mode: 'u-x,g-wx,o-rwx'

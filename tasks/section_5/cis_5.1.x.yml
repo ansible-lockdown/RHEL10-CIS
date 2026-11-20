@@ -16,6 +16,8 @@
     group: root
     mode: 'u-x,go-rwx'
     state: touch
+    access_time: preserve
+    modification_time: preserve
 
 - name: "PRELIM | PATCH | sshd_config.d/50-redhat.conf exists"
   when:
@@ -24,6 +26,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_5.1.10
     - rule_5.1.11
@@ -37,6 +40,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - permissions
@@ -71,6 +75,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - permissions
@@ -101,6 +106,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.3
@@ -130,6 +136,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.4
@@ -142,6 +149,8 @@
         path: "{{ rhel10cis_sshd_config_file }}"
         regexp: "^AllowUsers"
         line: "AllowUsers {{ rhel10cis_sshd_allowusers }}"
+        insertbefore: '(?i)^\s*(Include|Match)\s'
+        firstmatch: true
         validate: sshd -t -f %s
       notify: Restart sshd
 
@@ -151,6 +160,8 @@
         path: "{{ rhel10cis_sshd_config_file }}"
         regexp: "^AllowGroups"
         line: "AllowGroups {{ rhel10cis_sshd_allowgroups }}"
+        insertbefore: '(?i)^\s*(Include|Match)\s'
+        firstmatch: true
         validate: sshd -t -f %s
       notify: Restart sshd
 
@@ -160,7 +171,7 @@
         path: "{{ rhel10cis_sshd_config_file }}"
         regexp: "^DenyUsers"
         line: "DenyUsers {{ rhel10cis_sshd_denyusers }}"
-        insertbefore: "^Match"
+        insertbefore: '(?i)^\s*(Include|Match)\s'
         firstmatch: true
         validate: sshd -t -f %s
       notify: Restart sshd
@@ -171,6 +182,8 @@
         path: "{{ rhel10cis_sshd_config_file }}"
         regexp: "^DenyGroups"
         line: "DenyGroups {{ rhel10cis_sshd_denygroups }}"
+        insertbefore: '(?i)^\s*(Include|Match)\s'
+        firstmatch: true
         validate: sshd -t -f %s
       notify: Restart sshd
 
@@ -179,6 +192,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.5
@@ -189,8 +203,12 @@
     - NIST800-53R5_IA-5
   ansible.builtin.lineinfile:
     path: "{{ rhel10cis_sshd_config_file }}"
-    regexp: '^Banner'
+    regexp: '(?i)^\s*Banner\s'
     line: 'Banner /etc/issue.net'
+    insertbefore: '(?i)^\s*(Include|Match)\s'
+    firstmatch: true
+    validate: sshd -t -f %s
+  notify: Restart sshd
 
 - name: "5.1.6 | PATCH | Ensure sshd Ciphers are configured"
   when:
@@ -230,6 +248,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.7
@@ -244,6 +263,8 @@
         path: "{{ rhel10cis_sshd_config_file }}"
         regexp: '^ClientAliveInterval'
         line: "ClientAliveInterval {{ rhel10cis_sshd_clientaliveinterval }}"
+        insertbefore: '(?i)^\s*(Include|Match)\s'
+        firstmatch: true
         validate: sshd -t -f %s
       notify: Restart sshd
 
@@ -252,6 +273,8 @@
         path: "{{ rhel10cis_sshd_config_file }}"
         regexp: '^ClientAliveCountMax'
         line: "ClientAliveCountMax {{ rhel10cis_sshd_clientalivecountmax }}"
+        insertbefore: '(?i)^\s*(Include|Match)\s'
+        firstmatch: true
         validate: sshd -t -f %s
       notify: Restart sshd
 
@@ -260,6 +283,7 @@
   tags:
     - level2-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.8
@@ -268,8 +292,10 @@
     - name: "5.1.8 | PATCH | Ensure sshd DisableForwarding is enabled | config file"
       ansible.builtin.lineinfile:
         path: "{{ rhel10cis_sshd_config_file }}"
-        regexp: (?i)^(#|)\s*DisableForwarding
+        regexp: '(?i)^\s*DisableForwarding\s'
         line: 'DisableForwarding yes'
+        insertbefore: '(?i)^\s*(Include|Match)\s'
+        firstmatch: true
         validate: sshd -t -f %s
       notify: Restart sshd
 
@@ -288,6 +314,7 @@
   tags:
     - level2-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.9
@@ -296,8 +323,10 @@
     - name: "5.1.9 | PATCH | Ensure sshd GSSAPIAuthentication is disabled | ssh config"
       ansible.builtin.lineinfile:
         path: "{{ rhel10cis_sshd_config_file }}"
-        regexp: (?i)^(#|)\s*GSSAPIAuthentication
+        regexp: '(?i)^\s*GSSAPIAuthentication\s'
         line: GSSAPIAuthentication no
+        insertbefore: '(?i)^\s*(Include|Match)\s'
+        firstmatch: true
         validate: sshd -t -f %s
       notify: Restart sshd
 
@@ -315,14 +344,17 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.10
     - NIST800-53R5_CM-6
   ansible.builtin.lineinfile:
     path: "{{ rhel10cis_sshd_config_file }}"
-    regexp: (?i)^(#|)\s*HostbasedAuthentication
+    regexp: '(?i)^\s*HostbasedAuthentication\s'
     line: 'HostbasedAuthentication no'
+    insertbefore: '(?i)^\s*(Include|Match)\s'
+    firstmatch: true
     validate: sshd -t -f %s
   notify: Restart sshd
 
@@ -331,6 +363,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.11
@@ -341,9 +374,9 @@
     - NIST800-53R5_IA-5
   ansible.builtin.lineinfile:
     path: "{{ rhel10cis_sshd_config_file }}"
-    regexp: (?i)^(#|)\s*IgnoreRhosts
+    regexp: '(?i)^\s*IgnoreRhosts\s'
     line: 'IgnoreRhosts yes'
-    insertbefore: "^Match"
+    insertbefore: '(?i)^\s*(Include|Match)\s'
     firstmatch: true
     validate: sshd -t -f %s
   notify: Restart sshd
@@ -384,15 +417,16 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.13
     - NIST800-53R5_CM-6
   ansible.builtin.lineinfile:
     path: "{{ rhel10cis_sshd_config_file }}"
-    regexp: (?i)^(#|)\s*LoginGraceTime
+    regexp: '(?i)^\s*LoginGraceTime\s'
     line: "LoginGraceTime {{ rhel10cis_sshd_logingracetime }}"
-    insertbefore: "^Match"
+    insertbefore: '(?i)^\s*(Include|Match)\s'
     firstmatch: true
     validate: sshd -t -f %s
   notify: Restart sshd
@@ -402,6 +436,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.14
@@ -410,9 +445,9 @@
     - NIST800-53R5_SI-5
   ansible.builtin.lineinfile:
     path: "{{ rhel10cis_sshd_config_file }}"
-    regexp: (?i)^(#|)\s*LogLevel
+    regexp: '(?i)^\s*LogLevel\s'
     line: 'LogLevel {{ rhel10cis_ssh_loglevel }}'
-    insertbefore: "^Match"
+    insertbefore: '(?i)^\s*(Include|Match)\s'
     firstmatch: true
     validate: sshd -t -f %s
   notify: Restart sshd
@@ -456,15 +491,16 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.16
     - NIST800-53R5_AU-3
   ansible.builtin.lineinfile:
     path: "{{ rhel10cis_sshd_config_file }}"
-    regexp: (?i)^(#)?MaxAuthTries \d
+    regexp: '(?i)^\s*MaxAuthTries\s'
     line: 'MaxAuthTries {{ rhel10cis_ssh_maxauthtries }}'
-    insertbefore: "^Match"
+    insertbefore: '(?i)^\s*(Include|Match)\s'
     firstmatch: true
     validate: sshd -t -f %s
   notify: Restart sshd
@@ -474,6 +510,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.17
@@ -484,8 +521,10 @@
     - NIST800-53R5_IA-5
   ansible.builtin.lineinfile:
     path: "{{ rhel10cis_sshd_config_file }}"
-    regexp: (?i)^(#|)\s*MaxStartups
+    regexp: '(?i)^\s*MaxStartups\s'
     line: 'MaxStartups {{ rhel10cis_ssh_maxstartups }}'
+    insertbefore: '(?i)^\s*(Include|Match)\s'
+    firstmatch: true
     validate: sshd -t -f %s
   notify: Restart sshd
 
@@ -494,6 +533,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.18
@@ -504,8 +544,10 @@
     - NIST800-53R5_IA-5
   ansible.builtin.lineinfile:
     path: "{{ rhel10cis_sshd_config_file }}"
-    regexp: (?i)^(#|)\s*MaxSessions
+    regexp: '(?i)^\s*MaxSessions\s'
     line: 'MaxSessions {{ rhel10cis_ssh_maxsessions }}'
+    insertbefore: '(?i)^\s*(Include|Match)\s'
+    firstmatch: true
     validate: sshd -t -f %s
   notify: Restart sshd
 
@@ -514,14 +556,17 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.19
     - NIST800-53R5_CM-6
   ansible.builtin.lineinfile:
     path: "{{ rhel10cis_sshd_config_file }}"
-    regexp: (?i)^(#|)\s*PermitEmptyPasswords
+    regexp: '(?i)^\s*PermitEmptyPasswords\s'
     line: 'PermitEmptyPasswords no'
+    insertbefore: '(?i)^\s*(Include|Match)\s'
+    firstmatch: true
     validate: sshd -t -f %s
   notify: Restart sshd
 
@@ -530,6 +575,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.20
@@ -539,8 +585,10 @@
     - name: "5.1.20 | PATCH | Ensure sshd PermitRootLogin is disabled | config file"
       ansible.builtin.lineinfile:
         path: "{{ rhel10cis_sshd_config_file }}"
-        regexp: (?i)^(#|)\s*PermitRootLogin
+        regexp: '(?i)^\s*PermitRootLogin\s'
         line: 'PermitRootLogin no'
+        insertbefore: '(?i)^\s*(Include|Match)\s'
+        firstmatch: true
         validate: sshd -t -f %s
       notify: Restart sshd
 
@@ -555,6 +603,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.21
@@ -565,8 +614,10 @@
     - NIST800-53R5_IA-5
   ansible.builtin.lineinfile:
     path: "{{ rhel10cis_sshd_config_file }}"
-    regexp: (?i)^(#|)\s*PermitUserEnvironment
+    regexp: '(?i)^\s*PermitUserEnvironment\s'
     line: 'PermitUserEnvironment no'
+    insertbefore: '(?i)^\s*(Include|Match)\s'
+    firstmatch: true
     validate: sshd -t -f %s
   notify: Restart sshd
 
@@ -575,6 +626,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - sshd
     - rule_5.1.22
@@ -585,7 +637,9 @@
     - NIST800-53R5_IA-5
   ansible.builtin.lineinfile:
     path: "{{ rhel10cis_sshd_config_file }}"
-    regexp: (?i)^(#|)\s*UsePAM
+    regexp: '(?i)^\s*UsePAM\s'
     line: 'UsePAM yes'
+    insertbefore: '(?i)^\s*(Include|Match)\s'
+    firstmatch: true
     validate: sshd -t -f %s
   notify: Restart sshd

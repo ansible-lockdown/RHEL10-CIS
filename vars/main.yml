@@ -23,9 +23,9 @@ rhel10cis_allowed_crypto_policies_modules:
   # The following are already included in 1.6.x or 5.1 controls
   - 'NO-SHA1'
   - 'NO-SSHCBC'
-  - 'NO-SSHETM'
-  - 'NO-SSHWEAKCIPHER'
-  - 'NO-SSHWEAKMAC'
+  - 'NO-SSHWEAKCIPHERS'
+  - 'NO-SSHWEAKMACS'
+  - 'NO-WEAKMAC'
 
 # Ability to change the default shell
 # Note this can change how some of the ansible.builtin.shell tasks work and may require adjustments to args.executable for those tasks
@@ -162,7 +162,7 @@ proxy_pkgs:
 proxy_services:
   - squid.service
 
-company_title: 'MindPoint Group - A Tyto Athene Company'
+company_title: 'MindPoint Group - A Quantum Sky Company'
 file_managed_by_ansible: |-
   # File managed by ansible as part of {{ benchmark }} benchmark
   # As part of Ansible-lockdown

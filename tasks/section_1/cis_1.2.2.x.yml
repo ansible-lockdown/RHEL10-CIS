@@ -7,10 +7,12 @@
   tags:
     - level1-server
     - level1-workstation
+    - manual
     - patch
     - rule_1.2.2.1
     - NIST800-53R5_SI-2
   ansible.builtin.package:
     name: "*"
     state: latest
+    update_cache: true
   notify: Set reboot required

@@ -7,6 +7,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_1.3.1.1
     - NIST800-53R5_AC-3
@@ -22,20 +23,37 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - scored
     - patch
     - rule_1.3.1.2
     - NIST800-53R5_AC-3
     - NIST800-53R5_MP-2
-  ansible.builtin.replace:
-    path: /etc/default/grub
-    regexp: "{{ item }}"
-    replace: ""
-  loop:
-    - selinux=0
-    - enforcing=0
-  failed_when: false
-  notify: Grub2cfg
+  block:
+    - name: "1.3.1.2 | AUDIT | Ensure SELinux is not disabled in bootloader configuration | Check for grub defaults"
+      ansible.builtin.stat:
+        path: /etc/default/grub
+      register: discovered_grub_defaults
+
+    - name: "1.3.1.2 | PATCH | Ensure SELinux is not disabled in bootloader configuration | Remove from grub defaults"
+      when: discovered_grub_defaults.stat.exists
+      ansible.builtin.replace:
+        path: /etc/default/grub
+        regexp: '[ \t]*\b(?:selinux|enforcing)=0\b'
+        replace: ''
+      notify: Grub2cfg
+
+    - name: "1.3.1.2 | AUDIT | Ensure SELinux is not disabled in bootloader configuration | Get boot entry arguments"
+      ansible.builtin.command: grubby --info=ALL
+      changed_when: false
+      check_mode: false
+      register: discovered_grubby_selinux_args
+
+    - name: "1.3.1.2 | PATCH | Ensure SELinux is not disabled in bootloader configuration | Remove from boot entries"
+      when: discovered_grubby_selinux_args.stdout is search('\\b(?:selinux|enforcing)=0\\b')
+      ansible.builtin.command: grubby --update-kernel=ALL --remove-args="selinux=0 enforcing=0"
+      changed_when: true
+      notify: Set reboot required
 
 # State set to enforcing because control 1.3.1.5 requires enforcing to be set
 - name: "1.3.1.3 | PATCH | Ensure SELinux policy is configured"
@@ -45,6 +63,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - selinux
     - patch
     - rule_1.3.1.3
@@ -62,6 +81,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - selinux
     - patch
     - rule_1.3.1.4
@@ -80,6 +100,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - selinux
     - patch
     - rule_1.3.1.5
@@ -98,6 +119,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - manual
     - audit
     - services
     - rule_1.3.1.6
@@ -112,6 +134,7 @@
         executable: "{{ rhel10cis_shell_executable }}"
       failed_when: false
       changed_when: false
+      check_mode: false
       register: discovered_unconf_services
 
     - name: "1.3.1.6 | AUDIT | Ensure no unconfined services exist | Message on unconfined services"
@@ -131,6 +154,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_1.3.1.7
     - NIST800-53R5_AC-3
@@ -145,6 +169,7 @@
     - "'setroubleshoot' in ansible_facts['packages']"
   tags:
     - level1-server
+    - automated
     - selinux
     - patch
     - rule_1.3.1.8
