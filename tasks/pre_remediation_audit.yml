@@ -84,8 +84,15 @@
     AUDIT_CONTENT_LOCATION: "{{ audit_conf_dest | default('/opt') }}"
     AUDIT_FILE: goss.yml
 
+- name: Pre Audit | Audit not run in check mode
+  when: ansible_check_mode
+  ansible.builtin.set_fact:
+    pre_audit_results: "not run in check mode"
+
 - name: Pre Audit | Capture audit data if json format
-  when: audit_format == "json"
+  when:
+    - audit_format == "json"
+    - not ansible_check_mode
   block:
     - name: Pre Audit | Capture audit data if json format
       ansible.builtin.shell: |
@@ -101,7 +108,9 @@
         pre_audit_results: "{{ pre_audit_summary_json.stdout }}"
 
 - name: Pre Audit | Capture audit data if documentation format
-  when: audit_format == "documentation"
+  when:
+    - audit_format == "documentation"
+    - not ansible_check_mode
   block:
     - name: Pre Audit | Capture audit data if documentation format
       ansible.builtin.shell: |

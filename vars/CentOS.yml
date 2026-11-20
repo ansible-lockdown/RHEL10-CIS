@@ -1,4 +1,7 @@
 ---
 
-os_gpg_key_pubkey_name: centos-gpg-keys
-os_gpg_key_pubkey_content: "builder@centos.org 9.0"
+# OS Specific Settings
+# CentOS is not supported (see the OS assert in tasks/main.yml); values kept for structure only
+
+os_gpg_key_pubkey_name: gpg-pubkey-8483c65d-5ccc5b19
+os_gpg_key_pubkey_content: "CentOS (CentOS Official Signing Key) <security@centos.org> 8483c65d"

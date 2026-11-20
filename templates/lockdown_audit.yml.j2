@@ -25,9 +25,9 @@ rhel10cis_section7: {{ rhel10cis_section7 }}
 rhel10cis_level_1: {{ rhel10cis_level_1 }}
 rhel10cis_level_2: {{ rhel10cis_level_2 }}
 
-## Section 1.6 - Mandatory Access Control
-# This variable governs whether SELinux is disabled or not. If SELinux is NOT DISABLED by setting
-# 'rhel10cis_selinux_disable' to 'true', the 1.6 subsection will be executed.
+## Section 1.3 - Mandatory Access Control
+# This variable governs whether the SELinux controls run. When 'rhel10cis_selinux_disable' is
+# 'false' (the default) the 1.3.1 subsection is executed; set it to 'true' to skip it.
 rhel10cis_selinux_disable: {{ rhel10cis_selinux_disable }}
 # This variable is used in a preliminary task, handling grub2 paths either in case of
 # UEFI boot('/etc/grub2-efi.cfg') or in case of BIOS legacy-boot('/etc/grub2.cfg').
@@ -453,6 +453,8 @@ rhel10cis_rule_7_2_7: {{ rhel10cis_rule_7_2_7 }}
 rhel10cis_rule_7_2_8: {{ rhel10cis_rule_7_2_8 }}
 rhel10cis_rule_7_2_9: {{ rhel10cis_rule_7_2_9 }}
 
+############
+
 ## Section 1 vars
 
 ## Control 1.4.1
@@ -522,8 +524,6 @@ rhel10cis_httpd_server: {{ rhel10cis_httpd_server }}
 rhel10cis_httpd_mask: {{ rhel10cis_httpd_mask }}
 rhel10cis_nginx_server: {{ rhel10cis_nginx_server }}
 rhel10cis_nginx_mask: {{ rhel10cis_nginx_mask }}
-rhel10cis_xinetd_server: {{ rhel10cis_xinetd_server }}
-rhel10cis_xinetd_mask: {{ rhel10cis_xinetd_mask }}
 rhel10cis_xwindow_server: {{ rhel10cis_xwindow_server }}  # will remove mask not an option
 rhel10cis_is_mail_server: {{ rhel10cis_is_mail_server }}
 
@@ -606,9 +606,7 @@ rhel10cis_logfile_perms_exclude: {{ rhel10cis_logfile_perms_exclude | to_json }}
 
 ## Control 5.2.4
 # This will leave NOPASSWD intact for these users
-rhel10cis_sudoers_exclude_nopasswd_list:
-  - ec2-user
-  - vagrant
+rhel10cis_sudoers_exclude_nopasswd_list: {{ rhel10cis_sudoers_exclude_nopasswd_list | to_json }}
 
 ## Control 5.2 - Ensure access to the 'su' command is restricted
 # This variable determines the name of the group of users that are allowed to use the su command.
@@ -626,16 +624,18 @@ rhel10cis_passwd_complex_option: {{ rhel10cis_passwd_complex_option }}
   # This variable governs after how many days a password expires.
   # CIS requires a value of 365 or less.
 rhel10cis_pass_max_days: {{ rhel10cis_pass_max_days }}
+rhel10cis_force_user_maxdays: {{ rhel10cis_force_user_maxdays }}
   ## Control 5.4.1.2 - Ensure minimum days between a password change is 7 or more
   # This variable specifies the minimum number of days allowed between changing
   # passwords. CIS requires a value of at least 1.
 rhel10cis_pass_min_days: {{ rhel10cis_pass_min_days }}
+rhel10cis_force_user_mindays: {{ rhel10cis_force_user_mindays }}
   ## Control 5.4.1.3 - Ensure password expiration warning days is 7 or more
   # This variable governs, how many days before a password expires, the user will be warned.
   # CIS requires a value of at least 7.
 rhel10cis_pass_warn_age: {{ rhel10cis_pass_warn_age }}
-  ## Control 5.4.1.3 - This variable specifies the number of days of inactivity before an account will be locked.
-  # CIS requires a value of 30 days or less.
+  ## Control 5.4.1.5 - This variable specifies the number of days of inactivity before an account will be locked.
+  # CIS requires a value of 45 days or less.
 rhel10cis_inactive_lock_days: {{ rhel10cis_inactive_lock_days }}
 
 ## PAM AND Authselect
@@ -753,6 +753,19 @@ rhel10cis_journald_maxfilesec: 1month
 #  - 'true', current system will act as a log SERVER, enabling centralized log management(by protecting log integrity
 # from local attacks on remote clients)
 rhel10cis_system_is_log_server: {{ rhel10cis_system_is_log_server }}
+
+# 1.2.1.3 The role sets repo_gpgcheck only when enable_repogpg is true and rhel_default_repo is false
+rhel10cis_enable_repogpg: {{ rhel10cis_enable_repogpg }}
+rhel10cis_rhel_default_repo: {{ rhel10cis_rhel_default_repo }}
+
+# The role makes higher risk changes (e.g. 5.3.2.3.3 PAM edits) only when this is true
+rhel10cis_disruption_high: {{ rhel10cis_disruption_high }}
+# 5.3.1.1-5.3.1.4 The role changes the authselect profile only when this and rhel10cis_disruption_high are true
+rhel10cis_allow_authselect_updates: {{ rhel10cis_allow_authselect_updates }}
+# 5.4.2.7 Accounts the role leaves with a valid shell
+rhel10cis_system_users_shell: {{ rhel10cis_system_users_shell | to_json }}
+# 7.2.9 The role changes dot files only when this and rhel10cis_disruption_high are true
+rhel10cis_dotperm_ansiblemanaged: {{ rhel10cis_dotperm_ansiblemanaged }}
 
 ## Control 6.2.3.6 - Ensure rsyslog is configured to send logs to a remote log host
 # This variable governs if 'rsyslog' service should be automatically configured to forward messages to a

@@ -7,6 +7,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - aide
     - patch
     - rule_6.1.1
@@ -23,6 +24,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - aide
     - patch
     - rule_6.1.1
@@ -54,6 +56,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - aide
     - patch
     - rule_6.1.1
@@ -105,10 +108,10 @@
             dest: /var/lib/aide/aide.db.gz
             remote_src: true
             mode: 'u-x,g-wx,o-rwx'
-          register: discovered_aide_db_cp
           failed_when:
             - not ansible_check_mode
             - discovered_aide_db_cp.failed
+          register: discovered_aide_db_cp
 
 - name: "6.1.2 | PATCH | Ensure filesystem integrity is regularly checked"
   when:
@@ -118,6 +121,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - aide
     - file_integrity
     - patch
@@ -159,6 +163,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - aide
     - file_integrity
     - patch

@@ -8,7 +8,7 @@
 ## controls
 
 # Firewall
-rhel10cis_firewall: None
+rhel10cis_firewall: 'none'  # string, not null - anything other than firewalld skips section 4.1 and its audit
 
 # SElinux
 rhel10cis_selinux_disable: true

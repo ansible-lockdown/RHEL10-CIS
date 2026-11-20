@@ -1,6 +1,128 @@
 # Changes to rhel10CIS
 
 ## CIS Benchmark 1.0.1
+## November 2026 - QA fixes
+
+- README rendered from the common template
+- audit binary syver v0.16.0
+- audit_bin_verify_signature: optional sqv check of the signed syver checksums
+- 5.2.4: playbook user lock check matches the exact username
+- 5.2.4: lock and password asserts skipped for users in rhel10cis_sudoers_exclude_nopasswd_list (addresses https://github.com/ansible-lockdown/RHEL10-CIS/issues/129) - Thank you @presleydc
+- 3.2.x: modprobe install and blacklist lines matched per item
+- 5.3.2.1.1, 5.3.2.1.2: faillock.conf regexp matches existing deny and unlock_time lines
+- 1.1.2.1.x: rhel10cis_tmp_svc defaults to auto - detects tmp.mount or fstab
+- 1.1.2.1.x: tmp.mount enabled when managed by systemd
+- /tmp remount busy warning sets reboot required
+- boot type detected before the pre-remediation audit
+- container discovery guarded when virtualization_type is undefined
+- injected facts replaced with ansible_facts
+- route flush handlers no longer write /etc/sysctl.conf
+- auditd immutable rules change requests a reboot
+- 98-auditd_exception.rules excludes only the listed users
+- 5.3.2.2.x pam capture and 6.2.1.1 tagged patch
+- check_mode false on read-only discovery tasks
+- rhel10cis_force_user_maxdays and rhel10cis_force_user_mindays passed to the audit
+- audit summary reports not run in check mode
+- automated and manual tags on all controls
+- 5.3.1.1 tagged automated
+- company name MindPoint Group - A Quantum Sky Company
+- 5.4.2.7: system accounts selected by UID below UID_MIN or 65534 (addresses https://github.com/ansible-lockdown/RHEL10-CIS/issues/131) - Thank you @bunnywkwk
+- 5.4.2.7, 5.4.2.8: account names matched exactly
+- 5.4.2.7: playbook user and accounts already on nologin or false skipped
+- interactive users exclude /usr/bin/false and match whole account names
+- 5.4.1.1: PASS_MAX_DAYS discovery min and max order fixed
+- 5.4.1.x, 5.4.2.8, 7.2.2: user module never creates a home directory
+- 7.2.2: empty password accounts locked per user
+- 1.6.x: crypto policy applied when the module is missing from the current policy
+- 6.2.4.1: lastlog, wtmp, btmp file classes match the benchmark list
+- 5.3.1.1: authselect select keeps features enabled on the current profile
+- 2.1.18: nginx-plus removed with nginx, mask covers either package (as RHEL9-CIS issue https://github.com/ansible-lockdown/RHEL9-CIS/issues/483) - Thank you @JoannaSeen
+- 1.4.2: every file in /boot/grub2 set root:root 0600, no files created
+- 5.4.3.3: login.defs UMASK line set without rewriting comments
+- 7.2.8: default ACLs skip home directories that do not exist
+- authselect handlers flushed after 5.3.x
+- 1.1.1.11: discovery script runs in check mode
+- 1.1.2.x.1: missing separate partition warnings fire
+- 5.4.2.2, 5.4.2.3: GID 0 discovery awk quoting fixed
+- 5.4.2.2: removed accounts dropped from the captured user lists
+- 5.4.1.5: existing user list matches password hashes
+- 5.4.1.6: current date computed in a shell
+- 5.3.2.1.1, 5.3.2.1.2: pam_faillock argument removal keeps the control field
+- 5.3.2.1.3: even_deny_root and root_unlock_time removed in one run
+- 5.3.2.4.2 - 5.3.2.4.4: pam_unix remember, hash and use_authtok edits ported from RHEL9-CIS
+- 5.2.2: !use_pty removed from sudoers files
+- 5.4.3.1: nologin lines in /etc/shells commented out
+- 7.2.7: duplicate group names read from the group database
+- 7.2.8: excess permissions removed from existing home directories
+- 7.1.5 - 7.1.8: shadow and gshadow files mode 0000
+- 1.2.1.3: per-OS repo_gpgcheck override uses rhel10cis_enable_repogpg
+- 5.3.2.2.x, 5.3.2.3.x: pwquality and pwhistory option removal keeps the control field and line tail
+- 5.3.2.2.3: all inline complexity options removed in one run
+- 5.3.2.3.3: use_authtok added to pam_pwhistory
+- 5.2.6: timestamp_timeout matched with spaces and negative values
+- 5.2.4: empty exclude list handled
+- 1.5.1: hard core lines in limits.d commented out
+- 1.5.x: sysctl.conf keys matched at the start of the line
+- 1.5.8: randomize_va_space key
+- 1.3.1.2: SELinux disable arguments removed from every boot entry with grubby
+- 1.3.1.2, 6.2.1.3: file edits skipped when the file is absent
+- 4.1.4: zone target set per active zone, only where the target is ACCEPT (as RHEL9-CIS)
+- 2.3.3: chronyd -u root removed
+- 3.1.2: wireless adapter check uses find output
+- 5.4.2.2: GID 0 account names matched exactly
+- 5.4.2.5: root PATH checks read the PATH value
+- 6.2.1.2: tmpfiles override read from /etc
+- 6.2.1.3: journald.conf path
+- 6.2.1.4: rsyslog stopped only when installed
+- 6.2.2.1.2: insertafter matches the [Upload] section
+- 6.2.2.1.4: systemd-journal-remote package checked
+- 6.3.1.1: audit-libs package checked
+- 6.3.4.x: audit tools mode u-x
+- 7.1.11: sticky bit set per directory
+- 7.1.13: SGID removed with SUID
+- 7.1.x: relative symbolic file modes
+- crypto policy module checked against the allowed list
+- NO-SSHETM removed from the allowed crypto policy modules
+- initrd rebuilt when its sysctl files differ from the system (rhel10cis_disruption_high)
+- rhel10cis_os_enable_repogpg holds the OS default, rhel10cis_enable_repogpg can be set in inventory
+- rhel10cis_disruption_high, rhel10cis_enable_repogpg and rhel10cis_rhel_default_repo passed to the audit
+- rhel10cis_xinetd_server and rhel10cis_xinetd_mask removed
+- no_log on bootloader password and /etc/shadow reads
+- unused templates and Remounting /boot/efi handler removed
+- community.crypto removed from requirements and meta
+- GitHub Actions pinned to release tags, actions.lock and dependabot added
+- README tracking tags aligned
+- 5.3.1.5: missing pam_unix entries reported as a warning (as RHEL9-CIS)
+- 7.2.9: dot file owner matched on the exact home directory
+- crypto policy discovery runs for every crypto control, not only 1.6.1
+- NO-SSHWEAKCIPHERS module follows rhel10cis_rule_5_1_6
+- 5.1.5: Banner change validated and restarts sshd
+- 5.1.x: sshd_config settings inserted before Include and Match
+- 5.1.x: sshd_config regexps match active lines only
+- sshd config file touch idempotent
+- 4.1.4: no-op permanent zone task removed
+- 5.4.1.5: INACTIVE default matched exactly
+- 5.4.3.3: weak umask values in /etc/profile.d tightened
+- 5.4.2.6: /root/.bashrc umask set
+- 7.2.8: home directories created for interactive users only
+- 5.4.2.7: accounts set to nologin dropped from the interactive user list
+- 5.3.2.2.x: pwquality cleanup removes active lines only, gated on rhel10cis_disruption_high
+- 5.3.2.3.2: enforce_for_root regexp
+- 5.3.2.4.1: nullok removed from pam_unix lines only
+- 5.3.1.1: check mode safe without the custom profile
+- 50-pwcomplexity.conf: stray pragma line removed
+- handlers: ignore_errors removed from sysctl flush and grub2 handlers
+- 7.2.4 - 7.2.6: unused pwck -r pipe removed
+- 60-disable_ipv6.conf: VLAN interface names written with /
+- 7.1.11: df errors no longer fail the sticky bit discovery
+- authselect, system shell, dot file and NOPASSWD exclusion settings passed to the audit
+- molecule: stale 3.1.2 override and sysctl.conf touch removed
+- molecule scenarios run the audit
+- vars/CentOS.yml aligned with the other OS files
+- 1.2.2.1: package metadata refreshed before updating
+- 5.4.3.3: compliant symbolic umask values left unchanged
+
+## CIS Benchmark 1.0.1
 ## October 2026 - QA fixes
 
 - auditd: privileged commands discovery pipefail line join fixed

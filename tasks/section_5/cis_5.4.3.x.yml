@@ -5,6 +5,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - shells
     - rule_5.4.3.1
@@ -15,14 +16,15 @@
     - NIST800-53R5_IA-5
   ansible.builtin.replace:
     path: /etc/shells
-    regexp: nologin
-    replace: ""
+    regexp: ^([ \t]*[^#\s].*nologin.*)$
+    replace: '# \1'
 
 - name: "5.4.3.2 | PATCH | Ensure default user shell timeout is configured"
   when: rhel10cis_rule_5_4_3_2
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - shell
     - rule_5.4.3.2
@@ -45,6 +47,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - umask
     - rule_5.4.3.3
@@ -52,6 +55,24 @@
     - NIST800-53R5_AC-3
     - NIST800-53R5_MP-2
   block:
+    - name: "5.4.3.3 | AUDIT | Ensure default user umask is configured | Find shell initialization files setting umask"
+      ansible.builtin.shell: |
+        set -o pipefail
+        grep -lPsi -- '^\h*umask\h+\S' /etc/profile /etc/bashrc /etc/bash.bashrc /etc/profile.d/sh.local /etc/profile.d/*.sh
+      args:
+        executable: "{{ rhel10cis_shell_executable }}"
+      changed_when: false
+      check_mode: false
+      failed_when: discovered_umask_files.rc not in [ 0, 1, 2 ]
+      register: discovered_umask_files
+
+    - name: "5.4.3.3 | PATCH | Ensure default user umask is configured | Tighten weak umask statements"
+      ansible.builtin.replace:
+        path: "{{ item }}"
+        regexp: '(?i)^(\s*umask\s+)(?!(?:0?[0-7][2367]7|u=[rwx]{0,3},g=[rx]{0,2},o=)(?:[\s#;]|$))[^\s#;]+'
+        replace: '\g<1>{{ rhel10cis_bash_umask }}'
+      loop: "{{ discovered_umask_files.stdout_lines }}"
+
     - name: "5.4.3.3 | PATCH | Ensure default user umask is configured | add profile script"
       ansible.builtin.template:
         src: etc/profile.d/60_default_umask.sh.j2
@@ -61,7 +82,7 @@
         mode: 'go-w'
 
     - name: "5.4.3.3 | PATCH | Ensure default user umask is configured | update login.defs"
-      ansible.builtin.replace:
+      ansible.builtin.lineinfile:
         path: /etc/login.defs
-        regexp: (?i)(umask\s+\d*)
-        replace: "UMASK {{ rhel10cis_bash_umask }}"
+        regexp: '^\s*UMASK\s+'
+        line: "UMASK {{ rhel10cis_bash_umask }}"

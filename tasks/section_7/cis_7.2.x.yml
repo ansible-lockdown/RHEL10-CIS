@@ -5,6 +5,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - audit
     - rule_7.2.1
     - user_accounts
@@ -13,6 +14,7 @@
     - name: "7.2.1 | AUDIT | Ensure accounts in /etc/passwd use shadowed passwords | Get users not using shadowed passwords"
       ansible.builtin.command: awk -F':' '($2 != "x" ) { print $1}' /etc/passwd
       changed_when: false
+      check_mode: false
       failed_when: false
       register: discovered_nonshadowed_users
 
@@ -35,6 +37,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_7.2.2
     - user
@@ -45,6 +48,7 @@
       ansible.builtin.command: awk -F":" '($2 == "" ) { print $1 }' /etc/shadow
       changed_when: false
       check_mode: false
+      no_log: true
       register: discovered_empty_password_acct
 
     - name: "7.2.2 | PATCH | Ensure /etc/shadow password fields are not empty | Lock users with empty password"
@@ -52,14 +56,15 @@
       ansible.builtin.user:
         name: "{{ item }}"
         password_lock: true
-      loop:
-        - "{{ discovered_empty_password_acct.stdout_lines }}"
+        create_home: false
+      loop: "{{ discovered_empty_password_acct.stdout_lines }}"
 
 - name: "7.2.3 | AUDIT | Ensure all groups in /etc/passwd exist in /etc/group"
   when: rhel10cis_rule_7_2_3
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - audit
     - rule_7.2.3
     - groups
@@ -97,6 +102,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - audit
     - rule_7.2.4
     - user
@@ -105,7 +111,7 @@
     - name: "7.2.4 | AUDIT | Ensure no duplicate UIDs exist | Check for duplicate UIDs"
       ansible.builtin.shell: |
         set -o pipefail
-        pwck -r | awk -F: '{if ($3 in uid) print $1 ; else uid[$3]}' /etc/passwd
+        awk -F: '{if ($3 in uid) print $1 ; else uid[$3]}' /etc/passwd
       args:
         executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
@@ -130,6 +136,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - audit
     - rule_7.2.5
     - groups
@@ -142,7 +149,7 @@
     - name: "7.2.5 | AUDIT | Ensure no duplicate GIDs exist | Check for duplicate GIDs"
       ansible.builtin.shell: |
         set -o pipefail
-        pwck -r | awk -F: '{if ($3 in users) print $1 ; else users[$3]}' /etc/group
+        awk -F: '{if ($3 in gids) print $1 ; else gids[$3]}' /etc/group
       args:
         executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
@@ -167,6 +174,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - audit
     - rule_7.2.6
     - user
@@ -179,7 +187,7 @@
     - name: "7.2.6 | AUDIT | Ensure no duplicate user names exist | Check for duplicate User Names"
       ansible.builtin.shell: |
         set -o pipefail
-        pwck -r | awk -F: '{if ($1 in users) print $1 ; else users[$1]}' /etc/passwd
+        awk -F: '{if ($1 in users) print $1 ; else users[$1]}' /etc/passwd
       args:
         executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
@@ -204,6 +212,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - audit
     - rule_7.2.7
     - groups
@@ -216,7 +225,7 @@
     - name: "7.2.7 | AUDIT | Ensure no duplicate group names exist | Check for duplicate group names"
       ansible.builtin.shell: |
         set -o pipefail
-        getent passwd | cut -d: -f1 | sort -n | uniq -d
+        getent group | cut -d: -f1 | sort -n | uniq -d
       args:
         executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
@@ -241,6 +250,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - users
     - rule_7.2.8
@@ -252,6 +262,7 @@
         state: present
 
     - name: "7.2.8 | PATCH | Ensure local interactive user home directories are configured | Create dir if absent" # noqa risky-file-permissions
+      when: item.id in prelim_interactive_users | map(attribute='username') | list
       ansible.builtin.file:
         path: "{{ item.dir }}"
         state: directory
@@ -260,6 +271,21 @@
       loop: "{{ prelim_captured_passwd_data | selectattr('uid', '>=', prelim_min_int_uid | int) | selectattr('uid', '<=', prelim_max_int_uid | int) | list }}"
       loop_control:
         label: "{{ item.id }}"
+
+    - name: "7.2.8 | AUDIT | Ensure local interactive user home directories are configured | Find existing home directories"
+      when: not system_is_container
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop: "{{ prelim_interactive_users | map(attribute='home') | list }}"
+      register: discovered_interactive_homes
+
+    - name: "7.2.8 | PATCH | Ensure local interactive user home directories are configured | Remove excess permissions"
+      when: not system_is_container
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: 'g-w,o-rwx'
+      loop: "{{ discovered_interactive_homes.results | default([]) | selectattr('stat.isdir', 'defined') | selectattr('stat.isdir') | map(attribute='item') | list }}"
 
     # set default ACLs so the homedir has an effective umask of 0027
     - name: "7.2.8 | PATCH | Ensure local interactive user home directories are configured | Set group ACL"
@@ -270,7 +296,7 @@
         etype: group
         permissions: rx
         state: present
-      loop: "{{ prelim_interactive_users | map(attribute='home') | list }}"
+      loop: "{{ discovered_interactive_homes.results | default([]) | selectattr('stat.isdir', 'defined') | selectattr('stat.isdir') | map(attribute='item') | list }}"
 
     - name: "7.2.8 | PATCH | Ensure local interactive user home directories are configured | Set other ACL"
       when: not system_is_container
@@ -280,7 +306,7 @@
         etype: other
         permissions: 0
         state: present
-      loop: "{{ prelim_interactive_users | map(attribute='home') | list }}"
+      loop: "{{ discovered_interactive_homes.results | default([]) | selectattr('stat.isdir', 'defined') | selectattr('stat.isdir') | map(attribute='item') | list }}"
 
 - name: "7.2.9 | PATCH | Ensure local interactive user dot files access is configured"
   when:
@@ -289,6 +315,7 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - patch
     - rule_7.2.9
     - user
@@ -303,7 +330,7 @@
       tags: always
       ansible.builtin.shell: |
         set -o pipefail
-        grep -E -v '^(root|halt|sync|shutdown)' /etc/passwd | awk -F: '(!index($7, "sbin/nologin") && $7 != "/bin/nologin" && $7 != "/bin/false" && $7 != "/dev/null") { print $6 }'
+        grep -E -v '^(root|halt|sync|shutdown):' /etc/passwd | awk -F: '($7 !~ /(nologin|false)$/ && $7 != "/dev/null") { print $6 }'
       args:
         executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
@@ -311,6 +338,7 @@
       register: discovered_interactive_users_home
 
     - name: "7.2.9 | AUDIT | Ensure local interactive user dot files access is configured"
+      when: discovered_interactive_users_home.stdout_lines | length > 0
       ansible.builtin.shell: |
         set -o pipefail
         find {{ discovered_interactive_users_home.stdout_lines | list | join(' ') }} -name "\.*" -type f
@@ -323,7 +351,7 @@
 
     - name: "7.2.9 | AUDIT | Ensure local interactive user dot files access is configured | Warning on files found"
       when:
-        - discovered_homedir_hidden_files.stdout | length > 0
+        - discovered_homedir_hidden_files.stdout | default('') | length > 0
         - not rhel10cis_dotperm_ansiblemanaged
       ansible.builtin.debug:
         msg:
@@ -331,7 +359,7 @@
 
     - name: "7.2.9 | AUDIT | Ensure local interactive user dot files access is configured | Set warning count"
       when:
-        - discovered_homedir_hidden_files.stdout | length > 0
+        - discovered_homedir_hidden_files.stdout | default('') | length > 0
         - not rhel10cis_dotperm_ansiblemanaged
       ansible.builtin.import_tasks:
         file: warning_facts.yml
@@ -340,17 +368,17 @@
 
     - name: "7.2.9 | AUDIT | Ensure local interactive user dot files access is configured"
       when:
-        - discovered_homedir_hidden_files.stdout | length > 0
+        - discovered_homedir_hidden_files.stdout | default('') | length > 0
         - rhel10cis_dotperm_ansiblemanaged
       block:
         - name: "7.2.9 | AUDIT | Ensure local interactive user dot files access is configured | Changes files if configured .bash_history & .netrc"
           when:
-            - discovered_homedir_hidden_files.stdout | length > 0
+            - discovered_homedir_hidden_files.stdout | default('') | length > 0
             - item | basename in ['.bash_history','.netrc']
           ansible.builtin.file:
             path: "{{ item }}"
             mode: 'u-x,go-rwx'
-          failed_when: discovered_dot_bash_history_to_change.state not in '[ file, absent ]'
+          failed_when: discovered_dot_bash_history_to_change.state not in ['file', 'absent']
           register: discovered_dot_bash_history_to_change
           loop: "{{ discovered_homedir_hidden_files.stdout_lines }}"
 
@@ -358,16 +386,18 @@
           ansible.builtin.file:
             path: '{{ item }}'
             mode: 'u-x,go-wx'
-          failed_when: discovered_dot_mode_to_change.state not in '[ file, absent ]'
+          failed_when: discovered_dot_mode_to_change.state not in ['file', 'absent']
           register: discovered_dot_mode_to_change
           loop: "{{ discovered_homedir_hidden_files.stdout_lines }}"
 
         - name: "7.2.9 | AUDIT | Ensure local interactive user dot files access is configured | Changes files ownerships"
           ansible.builtin.file:
             path: "{{ item }}"
-            owner: "{{ prelim_captured_passwd_data | selectattr('dir', 'in', discovered_interactive_users_home.stdout_lines) | selectattr('dir', 'in', item) | map(attribute='uid') | last }}"
-            group: "{{ prelim_captured_passwd_data | selectattr('dir', 'in', discovered_interactive_users_home.stdout_lines) | selectattr('dir', 'in', item) | map(attribute='gid') | last }}"
-          failed_when: discovered_dot_ownership_to_change.state not in '[ file, absent ]'
+            owner: "{{ prelim_captured_passwd_data | selectattr('dir', 'equalto', dot_file_home) | map(attribute='uid') | first | default(omit) }}"
+            group: "{{ prelim_captured_passwd_data | selectattr('dir', 'equalto', dot_file_home) | map(attribute='gid') | first | default(omit) }}"
+          vars:
+            dot_file_home: "{% set ns = namespace(home='') %}{% for h in discovered_interactive_users_home.stdout_lines %}{% if item.startswith(h ~ '/') and h | length > ns.home | length %}{% set ns.home = h %}{% endif %}{% endfor %}{{ ns.home }}"
+          failed_when: discovered_dot_ownership_to_change.state not in ['file', 'absent']
           register: discovered_dot_ownership_to_change
           loop: "{{ discovered_homedir_hidden_files.stdout_lines }}"
 
@@ -375,13 +405,15 @@
           ansible.builtin.file:
             path: '{{ item }}'
             mode: 'go-w'
-            owner: "{{ prelim_captured_passwd_data | selectattr('dir', 'in', discovered_interactive_users_home.stdout_lines) | selectattr('dir', 'in', item) | map(attribute='uid') | last }}"
-            group: "{{ prelim_captured_passwd_data | selectattr('dir', 'in', discovered_interactive_users_home.stdout_lines) | selectattr('dir', 'in', item) | map(attribute='gid') | last }}"
+            owner: "{{ prelim_captured_passwd_data | selectattr('dir', 'equalto', dot_file_home) | map(attribute='uid') | first | default(omit) }}"
+            group: "{{ prelim_captured_passwd_data | selectattr('dir', 'equalto', dot_file_home) | map(attribute='gid') | first | default(omit) }}"
+          vars:
+            dot_file_home: "{% set ns = namespace(home='') %}{% for h in discovered_interactive_users_home.stdout_lines %}{% if item.startswith(h ~ '/') and h | length > ns.home | length %}{% set ns.home = h %}{% endif %}{% endfor %}{{ ns.home }}"
           with_items: "{{ discovered_homedir_hidden_files.stdout_lines }}"
 
         - name: "7.2.9 | AUDIT | Ensure local interactive user dot files access is configured | rename .forward or .rhosts files"
           when:
-            - item | basename in ['.forward','.rhosts']
+            - item | basename in ['.forward', '.rhost', '.rhosts']
             - item is not search ("CIS")
           ansible.builtin.command: "mv {{ item }} {{ item }}_CIS_TOBEREVIEWED"
           changed_when: true

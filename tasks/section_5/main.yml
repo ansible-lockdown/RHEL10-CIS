@@ -1,5 +1,4 @@
 ---
-# Access, Authentication, and Authorization
 
 - name: "SECTION | 5.1 | Configure SSH Server"
   when: "'openssh-server' in ansible_facts['packages']"
@@ -29,6 +28,9 @@
 - name: "SECTION | 5.3.2.4.x | Configure pam_unix module"
   ansible.builtin.import_tasks:
     file: cis_5.3.2.4.x.yml
+
+- name: "SECTION | 5.3.x | Apply the authselect profile before later sections run"
+  ansible.builtin.meta: flush_handlers
 
 - name: "SECTION | 5.4.1.x | Configure shadow password suite parameters"
   ansible.builtin.import_tasks:

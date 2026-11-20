@@ -8,7 +8,7 @@
   tags:
     - level1-server
     - level1-workstation
-    - manual
+    - automated
     - patch
     - authselect
     - rule_5.3.1.1
@@ -21,12 +21,16 @@
         creates: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}"
 
     - name: "5.3.1.1 | AUDIT | Ensure active authselect profile includes pam modules | get profile features"
+      when: not ansible_check_mode or prelim_authselect_profile_exists.rc == 0
       ansible.builtin.command: "/usr/bin/authselect list-features custom/{{ rhel10cis_authselect_custom_profile_name }}"
       changed_when: false
+      check_mode: false
       register: discovered_authselect_profile_features
 
     - name: "5.3.1.1 | PATCH | Ensure active authselect profile includes pam modules | Add missing pam modules to config | pwquality"
-      when: "'with-pwquality' not in discovered_authselect_profile_features.stdout_lines"
+      when:
+        - discovered_authselect_profile_features is not skipped
+        - "'with-pwquality' not in discovered_authselect_profile_features.stdout_lines"
       ansible.builtin.lineinfile:
         path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/{{ item }}-auth"
         regexp: ^password\s*requisite\s*pam_pwquality.so.*
@@ -36,9 +40,13 @@
         - password
 
     - name: "5.3.1.1 | PATCH | Ensure active authselect profile includes pam modules | Backup and Add pam modules"
-      when: (rhel10cis_authselect_custom_profile_name not in prelim_authselect_current_profile.stdout)
-      ansible.builtin.command: "/usr/bin/authselect select custom/{{ rhel10cis_authselect_custom_profile_name }} --force --backup=rhel10cis-preremediate-{{ lookup('pipe', 'date +%Y-%m-%d-%H%M') }}"
+      when:
+        - discovered_authselect_profile_features is not skipped
+        - rhel10cis_authselect_custom_profile_name not in prelim_authselect_current_profile.stdout
+      ansible.builtin.command: "/usr/bin/authselect select custom/{{ rhel10cis_authselect_custom_profile_name }} {{ discovered_authselect_keep_features | join(' ') }} --force --backup=rhel10cis-preremediate-{{ lookup('pipe', 'date +%Y-%m-%d-%H%M') }}"
       changed_when: true
+      vars:
+        discovered_authselect_keep_features: "{{ prelim_authselect_current_profile.stdout.split()[1:] | intersect(discovered_authselect_profile_features.stdout_lines) }}"
 
 - name: "5.3.1.2 | PATCH | Ensure pam_faillock module is enabled"
   when:
@@ -94,54 +102,42 @@
   changed_when: true
   notify: Authselect update
 
-- name: "5.3.1.5 | PATCH | Ensure pam_unix module is enabled"
-  when:
-    - rhel10cis_rule_5_3_1_5
-    - rhel10cis_disruption_high
-    - rhel10cis_allow_authselect_updates
+- name: "5.3.1.5 | AUDIT | Ensure pam_unix module is enabled"
+  when: rhel10cis_rule_5_3_1_5
   tags:
     - level1-server
     - level1-workstation
     - automated
-    - patch
+    - audit
     - NIST800-53R5_IA-5
     - authselect
     - rule_5.3.1.5
   block:
-    - name: "5.3.1.5 | AUDIT | Ensure pam_unix module is enabled"
+    - name: "5.3.1.5 | AUDIT | Ensure pam_unix module is enabled | Find missing pam_unix stack entries"
       ansible.builtin.shell: |
         set -o pipefail
-        grep -P -- '\b(pam_unix\.so)\b' /etc/authselect/"$(head -1 /etc/authselect/authselect.conf)"/{system,password}-auth
+        for l_file in /etc/pam.d/system-auth /etc/pam.d/password-auth; do
+          for l_type in auth account password session; do
+            grep -Pq -- "^\h*${l_type}\h+\H+\h+pam_unix\.so\b" "$l_file" || echo "$l_file:$l_type"
+          done
+        done
       args:
         executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
-      failed_when: discovered_authselect_pam_unix.rc not in [ 0, 1 ]
-      register: discovered_authselect_pam_unix
+      check_mode: false
+      register: discovered_pam_unix_missing
 
-    - name: "5.3.1.5 | PATCH | Ensure pam_unix module is enabled | system-auth"
-      when: "'system-auth:password' not in discovered_authselect_pam_unix.stdout"
-      ansible.builtin.lineinfile:
-        path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/system-auth"
-        regexp: "{{ item.regexp }}"
-        line: "{{ item.line }}"
-        backrefs: true
-        insertafter: "{{ item.after | default(omit) }}"
-        insertbefore: "{{ item.before | default(omit) }}"
-        loop:
-          - { regexp: "^(auth\\s+)sufficient(\\s+pam_unix.so.*)(.*)", line: "\\1sufficient\\2\\3", after: "^auth.*pam_faillock.*preauth" }
-          - { regexp: "^(password\\s+)sufficient(\\s+pam_unix.so.*)(.*)", line: "\\1sufficient\\2\\3", before: "^password.*pam_deny.so" }
-      notify: Authselect update
+    - name: "5.3.1.5 | AUDIT | Ensure pam_unix module is enabled | Warn if pam_unix entries are missing"
+      when: discovered_pam_unix_missing.stdout | length > 0
+      ansible.builtin.debug:
+        msg:
+          - "Warning!! pam_unix.so is missing from these PAM stacks"
+          - "{{ discovered_pam_unix_missing.stdout_lines }}"
+          - "Restore the entries in the active authselect profile templates and run authselect apply-changes"
 
-    - name: "5.3.1.5 | PATCH | Ensure pam_unix module is enabled | password-auth"
-      when: "'password-auth:password' not in discovered_authselect_pam_unix.stdout"
-      ansible.builtin.lineinfile:
-        path: "/etc/authselect/custom/{{ rhel10cis_authselect_custom_profile_name }}/password-auth"
-        line: "{{ item.line }}"
-        regexp: "{{ item.regexp }}"
-        backrefs: true
-        insertafter: "{{ item.after | default(omit) }}"
-        insertbefore: "{{ item.before | default(omit) }}"
-        loop:
-          - { regexp: "^(auth\\s+)sufficient(\\s+pam_unix.so.*)(.*)", line: "\\1sufficient\\2\\2", after: "^auth.*pam_faillock.*preauth" }
-          - { regexp: "^(password\\s+)sufficient(\\s+pam_unix.so.*)(.*)", line: "\\1sufficient\\2\\3", before: "^password.*pam_deny.so" }
-      notify: Authselect update
+    - name: "5.3.1.5 | AUDIT | Ensure pam_unix module is enabled | Warn count"
+      when: discovered_pam_unix_missing.stdout | length > 0
+      ansible.builtin.import_tasks:
+        file: warning_facts.yml
+      vars:
+        warn_control_id: '5.3.1.5'

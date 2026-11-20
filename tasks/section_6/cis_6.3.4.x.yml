@@ -9,6 +9,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - auditd
     - rule_6.3.4.1
@@ -33,6 +34,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - auditd
     - rule_6.3.4.5
@@ -50,6 +52,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - auditd
     - rule_6.3.4.1
@@ -70,6 +73,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - auditd
     - rule_6.3.4.2
@@ -79,7 +83,7 @@
     - NIST800-53R5_CM-7
   ansible.builtin.file:
     path: "{{ discovered_auditd_logfile.stdout }}"
-    mode: 'o-x,g-wx,o-rwx'
+    mode: 'u-x,g-wx,o-rwx'
     owner: root
     group: root
 
@@ -88,6 +92,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - auditd
     - rule_6.3.4.5
@@ -106,6 +111,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - auditd
     - rule_6.3.4.6
@@ -123,6 +129,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - auditd
     - rule_6.3.4.7
@@ -140,6 +147,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - auditd
     - rule_6.3.4.8
@@ -158,6 +166,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - auditd
     - rule_6.3.4.9
@@ -176,6 +185,7 @@
   tags:
     - level2-server
     - level2-workstation
+    - automated
     - patch
     - auditd
     - rule_6.3.4.10

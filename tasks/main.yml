@@ -1,5 +1,4 @@
 ---
-# tasks file for RHEL10-CIS
 
 - name: "Check OS version and family"
   when: os_check
@@ -18,7 +17,7 @@
     success_msg: "This role is running a supported version of ansible {{ ansible_version.full }} >= {{ min_ansible_version }}"
 
 - name: "Setup rules if container"
-  when: ansible_connection == 'docker' or ansible_facts['virtualization_type'] in ["docker", "lxc", "openvz", "podman", "container"]
+  when: ansible_connection in ['docker', 'community.docker.docker'] or (ansible_facts['virtualization_type'] is defined and ansible_facts['virtualization_type'] in ["docker", "lxc", "openvz", "podman", "container"])
   tags:
     - container_discovery
     - always
@@ -54,7 +53,7 @@
 - name: "Check crypto-policy module input"
   when:
     - rhel10cis_rule_1_6_1
-    - rhel10cis_crypto_policy_module | length > 0
+    - rhel10cis_additional_crypto_policy_module | length > 0
   tags:
     - rule_1.6.1
     - crypto
@@ -84,7 +83,7 @@
     - name: "Check password set for {{ rhel10cis_playbook_user }} | password state"  # noqa name[template]
       ansible.builtin.shell: |
           set -o pipefail
-          (grep {{ rhel10cis_playbook_user }} /etc/shadow || echo 'not found:not found') | awk -F: '{print $2}'
+          awk -F: -v u='{{ rhel10cis_playbook_user }}' '$1 == u {print $2; f=1} END {if (!f) print "not found"}' /etc/shadow
       changed_when: false
       failed_when: false
       check_mode: false
@@ -98,6 +97,7 @@
         msg: "No local account found for {{ rhel10cis_playbook_user }} user. Skipping local account checks."
 
     - name: "Check local account"
+      when: rhel10cis_playbook_user not in rhel10cis_sudoers_exclude_nopasswd_list
       block:
         - name: "Check password set for {{ rhel10cis_playbook_user }} | Assert local password set"  # noqa name[template]
           ansible.builtin.assert:
@@ -126,12 +126,14 @@
     - name: "Authselect discoveries | Check custom profile exist and get settings"
       ansible.builtin.command: "authselect list-features custom/{{ rhel10cis_authselect_custom_profile_name }}"
       changed_when: false
+      check_mode: false
       failed_when: prelim_authselect_profile_exists.rc not in [ 0, 1, 2 ]
       register: prelim_authselect_profile_exists
 
     - name: "Authselect discoveries | Check if custom profile is current"
-      ansible.builtin.command: "authselect current"
+      ansible.builtin.command: "authselect current --raw"
       changed_when: false
+      check_mode: false
       register: prelim_authselect_current_profile
 
 - name: "Ensure root password is set or locked"
@@ -152,6 +154,7 @@
       args:
         executable: "{{ rhel10cis_shell_executable }}"
       changed_when: false
+      check_mode: false
       failed_when: prelim_root_passwd_set.stdout not in [ 'P', 'L' ]
       register: prelim_root_passwd_set
 
@@ -234,7 +237,7 @@
   when:
     - create_benchmark_facts
     - (post_audit_results is defined) or
-      (ansible_local['compliance_facts']['lockdown_audit_details']['audit_summary'] is undefined and post_audit_results is undefined)
+      (ansible_facts['local']['compliance_facts']['lockdown_audit_details']['audit_summary'] is undefined and post_audit_results is undefined)
   tags:
     - always
     - benchmark
@@ -245,7 +248,7 @@
         state: directory
         owner: root
         group: root
-        mode: 'u=rwx,go=rx'
+        mode: 'u+rwx,go-w'
 
     - name: Create ansible facts file and levels applied if audit facts not present
       ansible.builtin.template:
@@ -253,7 +256,7 @@
         dest: "{{ ansible_facts_path }}/compliance_facts.fact"
         owner: root
         group: root
-        mode: 'u-x,go=r'
+        mode: 'u-x,go-wx'
 
 - name: Fetch audit files
   when:

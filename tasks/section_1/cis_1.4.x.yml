@@ -7,10 +7,12 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - grub
     - patch
     - rule_1.4.1
     - NIST800-53R5_AC-3
+  no_log: true
   block:
     - name: "1.4.1 | PATCH | Ensure bootloader password is set | Set fact if using salt (no python passlib required)"
       when: rhel10cis_bootloader_salt | length == 0
@@ -36,20 +38,22 @@
   tags:
     - level1-server
     - level1-workstation
+    - automated
     - grub
     - patch
     - rule_1.4.2
     - NIST800-53R5_CM-6
-  ansible.builtin.file:
-    path: "/boot/grub2/{{ item }}"
-    owner: root
-    group: root
-    mode: "{{ item.mode | default('u-x,go-rwx') }}"
-    state: touch
-    modification_time: preserve
-    access_time: preserve
-  loop:
-    - fonts
-    - grub.cfg
-    - grubenv
-    - user.cfg
+  block:
+    - name: "1.4.2 | AUDIT | Ensure access to bootloader config is configured | Find grub config files"
+      ansible.builtin.find:
+        paths: /boot/grub2
+        file_type: file
+      register: discovered_grub2_files
+
+    - name: "1.4.2 | PATCH | Ensure access to bootloader config is configured | Set owner and mode"
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        owner: root
+        group: root
+        mode: 'u-x,go-rwx'
+      loop: "{{ discovered_grub2_files.files }}"

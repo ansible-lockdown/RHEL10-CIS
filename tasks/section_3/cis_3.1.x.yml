@@ -31,6 +31,7 @@
       when: "'kernel' in rhel10cis_ipv6_disable_method"
       ansible.builtin.command: grubby --info=ALL
       changed_when: false
+      check_mode: false
       failed_when: false
       register: discovered_rhel10cis_3_1_1_ipv6_status
 
@@ -45,6 +46,7 @@
   when: rhel10cis_rule_3_1_2
   tags:
     - level1-server
+    - automated
     - patch
     - rule_3.1.2
     - wireless
@@ -61,9 +63,9 @@
       failed_when: discovered_wireless_adapters.rc not in [ 0, 1 ]
       register: discovered_wireless_adapters
 
-    - name: "3.1.2 | AUDIT | Ensure wireless interfaces are not available | if wireless adapter present"
+    - name: "3.1.2 | PATCH | Ensure wireless interfaces are not available | Install NetworkManager if wireless adapter present"
       when:
-        - discovered_wireless_adapters.rc == 0
+        - discovered_wireless_adapters.stdout | length > 0
         - "'NetworkManager' not in ansible_facts['packages']"
         - rhel10cis_install_network_manager
       ansible.builtin.package:
@@ -103,6 +105,7 @@
   tags:
     - level1-server
     - level2-workstation
+    - automated
     - patch
     - bluetooth
     - rule_3.1.3
